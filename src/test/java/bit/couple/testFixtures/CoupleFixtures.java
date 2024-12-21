@@ -24,18 +24,14 @@ public class CoupleFixtures {
                 .id(1L)
                 .email("email1@naver.com")
                 .nickName("nickname1")
-                .gender("남성")
                 .platform(OauthPlatformType.KAKAO)
-                .registerDate(LocalDateTime.now())
                 .build();
 
         User user2 = User.builder()
                 .id(2L)
                 .email("email2@naver.com")
                 .nickName("nickname2")
-                .gender("여성")
                 .platform(OauthPlatformType.KAKAO)
-                .registerDate(LocalDateTime.now())
                 .build();
         return List.of(user1, user2);
     }

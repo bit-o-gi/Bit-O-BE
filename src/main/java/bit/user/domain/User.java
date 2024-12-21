@@ -16,18 +16,18 @@ public class User {
     private final Long id;
     private final String email;
     private final String nickName;
-    private final String gender;
     private final OauthPlatformType platform;
-    private final LocalDateTime registerDate;
     private final Couple couple;
+    private final Long providerUserId;
+    private final LocalDateTime connectedDt;
 
     public static User from(UserCreateRequest userCreateRequest) {
         return User.builder()
+                .connectedDt(userCreateRequest.getConnectedDt())
+                .providerUserId(userCreateRequest.getProviderUserId())
                 .email(userCreateRequest.getEmail())
                 .nickName(userCreateRequest.getNickName())
-                .gender(userCreateRequest.getGender())
                 .platform(userCreateRequest.getPlatform())
-                .registerDate(userCreateRequest.getRegisterDate())
                 .build();
     }
 
@@ -36,9 +36,7 @@ public class User {
                 .id(this.id)
                 .email(this.getEmail())
                 .nickName(this.getNickName())
-                .gender(this.getGender())
                 .platform(this.getPlatform())
-                .registerDate(this.getRegisterDate())
                 .couple(couple)
                 .build();
     }

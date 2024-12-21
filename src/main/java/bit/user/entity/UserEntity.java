@@ -23,10 +23,12 @@ public class UserEntity extends BaseEntity {
 
     private String nickName;
 
-    private String gender;
-
     @Enumerated(EnumType.STRING)
     private OauthPlatformType platform;
+
+    private Long providerUserId;
+
+    private LocalDateTime connectedDt;
 
     @ManyToOne
     @JoinColumn(name = "couple_id")
@@ -39,6 +41,8 @@ public class UserEntity extends BaseEntity {
         userEntity.nickName = user.getNickName();
         userEntity.platform = user.getPlatform();
         userEntity.couple = user.getCouple();
+        userEntity.providerUserId = user.getProviderUserId();
+        userEntity.connectedDt = user.getConnectedDt();
         return userEntity;
     }
 
@@ -47,7 +51,6 @@ public class UserEntity extends BaseEntity {
                 .id(id)
                 .email(email)
                 .nickName(nickName)
-                .gender(gender)
                 .platform(platform)
                 .couple(couple)
                 .build();

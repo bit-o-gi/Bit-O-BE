@@ -55,14 +55,12 @@ class AnServiceTest {
                 .email("writer@example.com")
                 .nickName("Writer")
                 .platform(OauthPlatformType.KAKAO)
-                .registerDate(LocalDateTime.now())
                 .build();
         User withPeople = User.builder()
                 .id(2L)
                 .email("withpeople@example.com")
                 .nickName("WithPeople")
                 .platform(OauthPlatformType.KAKAO)
-                .registerDate(LocalDateTime.now())
                 .build();
 
         // UserEntity로 변환

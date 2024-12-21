@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 class KakaoUserInfoTest {
 
-    @DisplayName("카카오 서비스에서 주는 response body로부터 KakaoUserInfo 객체를 생성할 수 있다.")
+    @DisplayName("카카오 auth 서비스 에서 주는 유저정보로 부터 KakaoUserInfo 도메인 객체를 생성할 수 있다.")
     @Test
     void createKakaoUserInfoByResponseBody() throws Exception {
         // given
@@ -22,10 +22,12 @@ class KakaoUserInfoTest {
         // then
         assertThat(kakaoUserInfo).extracting(
                 "connectedAt",
+                "id",
                 "email",
                 "nickname"
         ).containsExactly(
                 OffsetDateTime.parse(jsonNodeSample.get("connected_at").asText()).toLocalDateTime(),
+                jsonNodeSample.get("id").asLong(),
                 jsonNodeSample.get("kakao_account").get("email").asText(),
                 jsonNodeSample.get("properties").get("nickname").asText()
         );

@@ -10,7 +10,7 @@ public interface UserService {
 
     User getByEmail(String email);
 
-    User create(UserCreateRequest userCreateRequest);
+    User createUser(UserCreateRequest userCreateRequest);
 
     boolean isRegisteredEmail(String email);
 
