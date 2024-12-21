@@ -3,7 +3,7 @@ package bit.couple.testFixtures;
 import bit.couple.domain.Couple;
 import bit.couple.enums.CoupleStatus;
 import bit.user.domain.User;
-import bit.user.oauth.enums.OauthPlatformStatus;
+import bit.user.oauth.enums.OauthPlatformType;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,7 +25,7 @@ public class CoupleFixtures {
                 .email("email1@naver.com")
                 .nickName("nickname1")
                 .gender("남성")
-                .platform(OauthPlatformStatus.KAKAO)
+                .platform(OauthPlatformType.KAKAO)
                 .registerDate(LocalDateTime.now())
                 .build();
 
@@ -34,7 +34,7 @@ public class CoupleFixtures {
                 .email("email2@naver.com")
                 .nickName("nickname2")
                 .gender("여성")
-                .platform(OauthPlatformStatus.KAKAO)
+                .platform(OauthPlatformType.KAKAO)
                 .registerDate(LocalDateTime.now())
                 .build();
         return List.of(user1, user2);

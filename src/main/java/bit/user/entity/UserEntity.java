@@ -3,7 +3,7 @@ package bit.user.entity;
 import bit.base.BaseEntity;
 import bit.couple.domain.Couple;
 import bit.user.domain.User;
-import bit.user.oauth.enums.OauthPlatformStatus;
+import bit.user.oauth.enums.OauthPlatformType;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -26,9 +26,7 @@ public class UserEntity extends BaseEntity {
     private String gender;
 
     @Enumerated(EnumType.STRING)
-    private OauthPlatformStatus platform;
-
-    private LocalDateTime registerDate;
+    private OauthPlatformType platform;
 
     @ManyToOne
     @JoinColumn(name = "couple_id")
@@ -40,7 +38,6 @@ public class UserEntity extends BaseEntity {
         userEntity.email = user.getEmail();
         userEntity.nickName = user.getNickName();
         userEntity.platform = user.getPlatform();
-        userEntity.registerDate = user.getRegisterDate();
         userEntity.couple = user.getCouple();
         return userEntity;
     }
@@ -52,7 +49,6 @@ public class UserEntity extends BaseEntity {
                 .nickName(nickName)
                 .gender(gender)
                 .platform(platform)
-                .registerDate(registerDate)
                 .couple(couple)
                 .build();
     }

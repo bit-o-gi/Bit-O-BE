@@ -2,7 +2,7 @@ package bit.user.domain;
 
 import bit.couple.domain.Couple;
 import bit.user.dto.UserCreateRequest;
-import bit.user.oauth.enums.OauthPlatformStatus;
+import bit.user.oauth.enums.OauthPlatformType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,7 +17,7 @@ public class User {
     private final String email;
     private final String nickName;
     private final String gender;
-    private final OauthPlatformStatus platform;
+    private final OauthPlatformType platform;
     private final LocalDateTime registerDate;
     private final Couple couple;
 

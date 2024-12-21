@@ -1,5 +1,5 @@
 package bit.user.oauth.enums;
 
-public enum OauthPlatformStatus {
+public enum OauthPlatformType {
     KAKAO, NAVER, GOOGLE;
 }
