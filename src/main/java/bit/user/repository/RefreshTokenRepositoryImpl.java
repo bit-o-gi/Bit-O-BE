@@ -14,11 +14,11 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
 
     @Override
     public Optional<RefreshToken> findByRefreshToken(String refreshToken) {
-        return Optional.empty();
+        return refreshTokenJpaRepository.findByRefreshToken(refreshToken);
     }
 
     @Override
     public Optional<RefreshToken> findByUserId(Long userId) {
-        return Optional.empty();
+        return refreshTokenJpaRepository.findByUserId(userId);
     }
 }

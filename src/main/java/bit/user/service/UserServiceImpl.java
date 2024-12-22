@@ -5,7 +5,9 @@ import bit.user.domain.User;
 import bit.user.dto.UserCreateRequest;
 import bit.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
+
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,10 @@ public class UserServiceImpl implements UserService {
 
     public User createUser(UserCreateRequest userCreateRequest) {
         return userRepository.save(User.from(userCreateRequest));
+    }
+
+    public User findById(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
 
     public User getById(Long id) {
