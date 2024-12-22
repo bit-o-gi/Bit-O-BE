@@ -21,4 +21,9 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
     public Optional<RefreshToken> findByUserId(Long userId) {
         return refreshTokenJpaRepository.findByUserId(userId);
     }
+
+    @Override
+    public RefreshToken save(RefreshToken refreshToken) {
+        return refreshTokenJpaRepository.save(refreshToken);
+    }
 }
