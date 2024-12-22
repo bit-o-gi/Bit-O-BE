@@ -1,5 +1,6 @@
 package bit.exception;
 
+import bit.user.exception.KaKaoRestTemplateProcessingException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -43,5 +44,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> internalServerException(Exception e, HttpServletRequest request) {
         log.error("Error Code : {}, Url : {}, message : {}", HttpStatus.INTERNAL_SERVER_ERROR, request.getRequestURI(), e.getMessage(), e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error");
+    }
+
+    @ExceptionHandler(KaKaoRestTemplateProcessingException.class)
+    public ResponseEntity<String> handleKaKaoException(KaKaoRestTemplateProcessingException e) {
+        log.error("Error Code : {}, message : {}", HttpStatus.BAD_REQUEST, e.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body("카카오 통신 중 문제가 발생했습니다.");
     }
 }

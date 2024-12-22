@@ -16,7 +16,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    public User create(UserCreateRequest userCreateRequest) {
+    public User createUser(UserCreateRequest userCreateRequest) {
         return userRepository.save(User.from(userCreateRequest));
     }
 

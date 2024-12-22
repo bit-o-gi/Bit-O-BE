@@ -1,6 +1,6 @@
 package bit.user.domain;
 
-import static bit.user.oauth.enums.OauthPlatformStatus.KAKAO;
+import static bit.user.oauth.enums.OauthPlatformType.KAKAO;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import bit.user.dto.UserCreateRequest;
@@ -17,9 +17,8 @@ class UserTest {
         UserCreateRequest userCreateRequest = UserCreateRequest.builder()
                 .email("pjhwork97@gmail.com")
                 .nickName("AIJoBumSuk")
-                .gender("Male")
                 .platform(KAKAO)
-                .registerDate(LocalDateTime.of(2024, 8, 27, 13, 5, 12))
+                .providerUserId(12345131L)
                 .build();
 
         // when
@@ -29,15 +28,13 @@ class UserTest {
         assertThat(user).extracting(
                 "email",
                 "nickName",
-                "gender",
-                "platform",
-                "registerDate"
+                "providerUserId",
+                "platform"
         ).containsExactly(
                 "pjhwork97@gmail.com",
                 "AIJoBumSuk",
-                "Male",
-                KAKAO,
-                LocalDateTime.of(2024, 8, 27, 13, 5, 12)
+                12345131L,
+                KAKAO
         );
     }
 

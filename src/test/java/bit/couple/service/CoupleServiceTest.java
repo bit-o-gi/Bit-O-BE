@@ -34,8 +34,8 @@ class CoupleServiceTest {
         // given
         List<User> users = CoupleFixtures.initialUsers();
 
-        userService.create(UserCreateRequest.fromUser(users.get(0)));
-        userService.create(UserCreateRequest.fromUser(users.get(1)));
+        userService.createUser(UserCreateRequest.fromUser(users.get(0)));
+        userService.createUser(UserCreateRequest.fromUser(users.get(1)));
 
         String senderEmail = users.get(0).getEmail();
         String receiverEmail = users.get(1).getEmail();

@@ -1,6 +1,6 @@
 package bit.schedule.util;
 
-import static bit.user.oauth.enums.OauthPlatformStatus.KAKAO;
+import static bit.user.oauth.enums.OauthPlatformType.KAKAO;
 
 import bit.user.domain.User;
 import bit.user.entity.UserEntity;

@@ -1,6 +1,6 @@
 package bit.user.service;
 
-import static bit.user.oauth.enums.OauthPlatformStatus.KAKAO;
+import static bit.user.oauth.enums.OauthPlatformType.KAKAO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -24,9 +24,7 @@ class UserServiceImplTest {
                 .id(1L)
                 .email("pjhwork97@gmail.com")
                 .nickName("MR_JO")
-                .gender("Male")
                 .platform(KAKAO)
-                .registerDate(LocalDateTime.of(2021, 1, 1, 23, 22, 43))
                 .build()
         );
     }
@@ -42,15 +40,11 @@ class UserServiceImplTest {
         assertThat(user).extracting(
                 "email",
                 "nickName",
-                "gender",
-                "platform",
-                "registerDate"
+                "platform"
         ).containsExactly(
                 "pjhwork97@gmail.com",
                 "MR_JO",
-                "Male",
-                KAKAO,
-                LocalDateTime.of(2021, 1, 1, 23, 22, 43)
+                KAKAO
         );
     }
 
@@ -79,28 +73,25 @@ class UserServiceImplTest {
 
     @DisplayName("유저 정보를 저장한다")
     @Test
-    void createUserTest() {
+    void createUserUserTest() {
         // given
         UserCreateRequest userCreateRequest = UserCreateRequest.builder()
                 .email("pjhwork97@gmail.com")
                 .nickName("MR_JO")
-                .gender("Male")
                 .platform(KAKAO)
                 .build();
 
         // when
-        User user = userService.create(userCreateRequest);
+        User user = userService.createUser(userCreateRequest);
 
         // then
         assertThat(user).extracting(
                         "email",
                         "nickName",
-                        "gender",
                         "platform")
                 .containsExactly(
                         "pjhwork97@gmail.com",
                         "MR_JO",
-                        "Male",
                         KAKAO);
     }
 

@@ -15,10 +15,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.List;
 
@@ -54,8 +52,8 @@ class CoupleControllerTest {
         // given
         List<User> users = CoupleFixtures.initialUsers();
 
-        userService.create(UserCreateRequest.fromUser(users.get(0)));
-        userService.create(UserCreateRequest.fromUser(users.get(1)));
+        userService.createUser(UserCreateRequest.fromUser(users.get(0)));
+        userService.createUser(UserCreateRequest.fromUser(users.get(1)));
 
         String receiverEmail = users.get(0).getEmail();
         String senderEmail = users.get(1).getEmail();

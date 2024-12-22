@@ -7,7 +7,7 @@ import bit.anniversary.dto.AnReqDto;
 import bit.anniversary.entity.Anniversary;
 import bit.user.domain.User;
 import bit.user.entity.UserEntity;
-import bit.user.oauth.enums.OauthPlatformStatus;
+import bit.user.oauth.enums.OauthPlatformType;
 import bit.user.repository.UserJpaRepository;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,15 +38,13 @@ class AnRepositoryTest {
                 .id(1L)
                 .email("writer@example.com")
                 .nickName("Writer")
-                .platform(OauthPlatformStatus.KAKAO)
-                .registerDate(LocalDateTime.now())
+                .platform(OauthPlatformType.KAKAO)
                 .build();
         User withPeople = User.builder()
                 .id(2L)
                 .email("withpeople@example.com")
                 .nickName("WithPeople")
-                .platform(OauthPlatformStatus.KAKAO)
-                .registerDate(LocalDateTime.now())
+                .platform(OauthPlatformType.KAKAO)
                 .build();
 
         // UserEntity로 변환하여 저장

@@ -22,7 +22,6 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @RequiredArgsConstructor
 public class KaKaoLoginServiceImpl implements OAuthService {
-
     private final UserService userService;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
@@ -30,8 +29,8 @@ public class KaKaoLoginServiceImpl implements OAuthService {
     @Override
     public String getToken(String code, String clientId, String redirectUri, String clientSecret) {
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
         MultiValueMap<String, String> httpBody = new LinkedMultiValueMap<>();
+        headers.add("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
         httpBody.add("grant_type", "authorization_code");
         httpBody.add("client_id", clientId);
         httpBody.add("redirect_uri", redirectUri);
@@ -58,20 +57,22 @@ public class KaKaoLoginServiceImpl implements OAuthService {
         if (response.getStatusCode() == HttpStatus.OK) {
             String responseBody = Optional.ofNullable(response.getBody())
                     .orElseThrow(() -> new KaKaoRestTemplateProcessingException("카카오 로그인 중 응답이 없습니다."));
-            try {
-                JsonNode jsonNode = objectMapper.readTree(responseBody);
-                createUserDomain(jsonNode);
-            } catch (JsonProcessingException e) {
-                throw new KaKaoRestTemplateProcessingException("카카오 로그인 중 에러가 발생하였습니다.");
-            }
+            createUserDomain(parseJson(responseBody));
         }
-
         return response.getBody();
     }
 
     private void createUserDomain(JsonNode jsonNode) {
         if (!userService.isRegisteredEmail(KakaoUserInfo.of(jsonNode).getEmail())) {
-            userService.create(UserCreateRequest.fromKakaoUser(KakaoUserInfo.of(jsonNode)));
+            userService.createUser(UserCreateRequest.fromKakaoUser(KakaoUserInfo.of(jsonNode)));
+        }
+    }
+
+    private JsonNode parseJson(String responseBody) throws KaKaoRestTemplateProcessingException {
+        try {
+            return objectMapper.readTree(responseBody);
+        } catch (JsonProcessingException e) {
+            throw new KaKaoRestTemplateProcessingException("카카오 로그인 중 에러가 발생하였습니다.");
         }
     }
 }

@@ -1,55 +1,48 @@
 package bit.user.dto;
 
 import bit.user.domain.User;
-import bit.user.oauth.enums.OauthPlatformStatus;
+import bit.user.oauth.enums.OauthPlatformType;
 import bit.user.oauth.kakao.domain.KakaoUserInfo;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@Builder
+@Schema(description = "유저 등록 DTO")
 public class UserCreateRequest {
-    private final Long id;
-
+    @Schema(description = "이메일 주소", example = "abc@email.com", required = true)
     private final String email;
 
+    @Schema(description = "닉네임")
     private final String nickName;
 
-    private final String gender;
+    @Schema(description = "가입 플랫폼", example = "KAKAO", required = true)
+    private final OauthPlatformType platform;
 
-    private final OauthPlatformStatus platform;
+    @Schema(description = "Oauth 프로바이더 제공 id", example = "366332253")
+    private Long providerUserId;
 
-    private final LocalDateTime registerDate;
-
-    @Builder
-    public UserCreateRequest(Long id, String email, String nickName, String gender, OauthPlatformStatus platform,
-                             LocalDateTime registerDate) {
-        this.id = id;
-        this.email = email;
-        this.nickName = nickName;
-        this.gender = gender;
-        this.platform = platform;
-        this.registerDate = registerDate;
-    }
+    @Schema(description = "Oauth 연동 시간")
+    private LocalDateTime connectedDt;
 
     public static UserCreateRequest fromKakaoUser(KakaoUserInfo info) {
         return UserCreateRequest.builder()
+                .connectedDt(info.getConnectedAt())
+                .providerUserId(info.getId())
                 .email(info.getEmail())
                 .nickName(info.getNickname())
-                .platform(OauthPlatformStatus.KAKAO)
-                .registerDate(info.getConnectedAt())
+                .platform(OauthPlatformType.KAKAO)
                 .build();
     }
 
     public static UserCreateRequest fromUser(User userInfo) {
         return UserCreateRequest.builder()
-                .id(userInfo.getId())
                 .email(userInfo.getEmail())
                 .nickName(userInfo.getNickName())
-                .gender(userInfo.getGender())
                 .platform(userInfo.getPlatform())
-                .registerDate(userInfo.getRegisterDate())
                 .build();
     }
 }
