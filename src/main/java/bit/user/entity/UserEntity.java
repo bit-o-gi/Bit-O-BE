@@ -5,15 +5,16 @@ import bit.couple.domain.Couple;
 import bit.user.domain.User;
 import bit.user.oauth.enums.OauthPlatformType;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
-
+import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
-@Entity
-@Getter
 @Table(name = "bit_o_user")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@Entity
 public class UserEntity extends BaseEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,7 +27,7 @@ public class UserEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private OauthPlatformType platform;
 
-    private Long providerUserId;
+    private Long providerId;
 
     private LocalDateTime connectedDt;
 
@@ -41,7 +42,7 @@ public class UserEntity extends BaseEntity {
         userEntity.nickName = user.getNickName();
         userEntity.platform = user.getPlatform();
         userEntity.couple = user.getCouple();
-        userEntity.providerUserId = user.getProviderUserId();
+        userEntity.providerId = user.getProviderId();
         userEntity.connectedDt = user.getConnectedDt();
         return userEntity;
     }
