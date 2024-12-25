@@ -13,13 +13,13 @@ import java.time.LocalDateTime;
 @Builder
 @Schema(description = "유저 등록 DTO")
 public class UserCreateRequest {
-    @Schema(description = "이메일 주소", example = "abc@email.com", required = true)
+    @Schema(description = "이메일 주소", example = "abc@email.com")
     private final String email;
 
     @Schema(description = "닉네임")
     private final String nickName;
 
-    @Schema(description = "가입 플랫폼", example = "KAKAO", required = true)
+    @Schema(description = "가입 플랫폼", example = "KAKAO")
     private final OauthPlatformType platform;
 
     @Schema(description = "Oauth 프로바이더 제공 id", example = "366332253")
