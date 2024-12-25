@@ -63,6 +63,9 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok'
     testCompileOnly 'org.projectlombok:lombok'
 
+    // Oauth2
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
     // h2
     runtimeOnly 'com.h2database:h2'
 
