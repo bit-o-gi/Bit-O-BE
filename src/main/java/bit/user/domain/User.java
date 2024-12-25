@@ -29,7 +29,7 @@ public class User implements UserDetails {
     public static User from(UserCreateRequest userCreateRequest) {
         return User.builder()
                 .connectedDt(userCreateRequest.getConnectedDt())
-                .providerId(userCreateRequest.getProviderUserId())
+                .providerId(userCreateRequest.getProviderId())
                 .email(userCreateRequest.getEmail())
                 .nickName(userCreateRequest.getNickName())
                 .platform(userCreateRequest.getPlatform())

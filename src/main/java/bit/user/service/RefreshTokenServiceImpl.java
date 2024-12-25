@@ -12,7 +12,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
-    public RefreshToken findByRefreshToken(String refreshToken) {
+    public RefreshToken getByRefreshToken(String refreshToken) {
         return refreshTokenRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new IllegalArgumentException("Unexpected RefreshToken"));
     }

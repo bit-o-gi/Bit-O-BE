@@ -23,7 +23,7 @@ public class UserCreateRequest {
     private final OauthPlatformType platform;
 
     @Schema(description = "Oauth 프로바이더 제공 id", example = "366332253")
-    private Long providerUserId;
+    private Long providerId;
 
     @Schema(description = "Oauth 연동 시간")
     private LocalDateTime connectedDt;
@@ -31,7 +31,7 @@ public class UserCreateRequest {
     public static UserCreateRequest fromKakaoUser(KakaoUserInfo info) {
         return UserCreateRequest.builder()
                 .connectedDt(info.getConnectedAt())
-                .providerUserId(info.getId())
+                .providerId(info.getId())
                 .email(info.getEmail())
                 .nickName(info.getNickname())
                 .platform(OauthPlatformType.KAKAO)

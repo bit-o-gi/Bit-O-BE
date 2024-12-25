@@ -21,8 +21,8 @@ public class TokenServiceImpl implements TokenService {
             throw new IllegalArgumentException("Invalid RefreshToken");
         }
 
-        Long userId = refreshTokenService.findByRefreshToken(refreshToken).getUserId();
-        User user = userService.findById(userId);
+        Long userId = refreshTokenService.getByRefreshToken(refreshToken).getUserId();
+        User user = userService.getById(userId);
         return tokenProvider.generateToken(user, Duration.ofHours(2));
     }
 }
