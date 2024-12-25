@@ -4,10 +4,9 @@ import static bit.user.oauth.enums.OauthPlatformType.KAKAO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import bit.mock.FakeUserRepository;
+import bit.user.mock.FakeUserRepository;
 import bit.user.domain.User;
 import bit.user.dto.UserCreateRequest;
-import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

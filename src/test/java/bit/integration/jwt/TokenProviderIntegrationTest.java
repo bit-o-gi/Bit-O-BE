@@ -1,5 +1,8 @@
-package bit.config.jwt;
+package bit.integration.jwt;
 
+import bit.config.jwt.JwtFactory;
+import bit.config.jwt.JwtProperties;
+import bit.config.jwt.TokenProvider;
 import bit.user.domain.User;
 import bit.user.repository.UserRepository;
 import io.jsonwebtoken.Jwts;
@@ -19,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class TokenProviderTest {
+public class TokenProviderIntegrationTest {
     @Autowired
     private TokenProvider tokenProvider;
 

@@ -1,7 +1,8 @@
-package bit.couple.service;
+package bit.integration.Couple;
 
 import bit.couple.dto.CoupleCreateRequest;
-import bit.couple.testFixtures.CoupleFixtures;
+import bit.couple.fixture.CoupleFixtures;
+import bit.couple.service.CoupleService;
 import bit.user.domain.User;
 import bit.user.dto.UserCreateRequest;
 import bit.user.service.UserServiceImpl;
@@ -18,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ActiveProfiles("test")
-class CoupleServiceTest {
+class CoupleServiceIntegrationTest {
 
     @Autowired
     CoupleService coupleService;

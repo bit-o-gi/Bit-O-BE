@@ -1,4 +1,4 @@
-package bit.mock;
+package bit.user.mock;
 
 import bit.user.domain.User;
 import bit.user.repository.UserRepository;

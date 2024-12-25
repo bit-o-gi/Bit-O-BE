@@ -3,7 +3,7 @@ package bit.couple.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import bit.couple.enums.CoupleStatus;
-import bit.couple.testFixtures.CoupleFixtures;
+import bit.couple.fixture.CoupleFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

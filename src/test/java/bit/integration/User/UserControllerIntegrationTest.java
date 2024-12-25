@@ -1,4 +1,4 @@
-package bit.user.controller;
+package bit.integration.User;
 
 import bit.config.jwt.JwtFactory;
 import bit.config.jwt.JwtProperties;
@@ -7,7 +7,6 @@ import bit.user.domain.User;
 import bit.user.dto.AccessTokenCreateRequest;
 import bit.user.repository.RefreshTokenRepository;
 import bit.user.repository.UserRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,7 +23,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -32,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-class UserControllerTest {
+class UserControllerIntegrationTest {
     @Autowired
     protected MockMvc mockmvc;
 
