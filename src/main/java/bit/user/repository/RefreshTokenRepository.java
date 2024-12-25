@@ -10,5 +10,4 @@ public interface RefreshTokenRepository {
     Optional<RefreshToken> findByRefreshToken(String refreshToken);
 
     RefreshToken save(RefreshToken refreshToken);
-
 }

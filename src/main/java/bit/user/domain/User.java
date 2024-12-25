@@ -6,25 +6,30 @@ import bit.user.oauth.enums.OauthPlatformType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 
 @Getter
 @Builder
 @AllArgsConstructor
-public class User {
+public class User implements UserDetails {
     private final Long id;
     private final String email;
     private final String nickName;
     private final OauthPlatformType platform;
     private final Couple couple;
-    private final Long providerUserId;
+    private final Long providerId;
     private final LocalDateTime connectedDt;
 
     public static User from(UserCreateRequest userCreateRequest) {
         return User.builder()
                 .connectedDt(userCreateRequest.getConnectedDt())
-                .providerUserId(userCreateRequest.getProviderUserId())
+                .providerId(userCreateRequest.getProviderUserId())
                 .email(userCreateRequest.getEmail())
                 .nickName(userCreateRequest.getNickName())
                 .platform(userCreateRequest.getPlatform())
@@ -41,4 +46,39 @@ public class User {
                 .build();
     }
 
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return UserDetails.super.isEnabled();
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("user"));
+    }
+
+    @Override
+    public String getPassword() {
+        return "";
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
 }
