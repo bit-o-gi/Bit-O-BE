@@ -7,12 +7,15 @@ import bit.user.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import bit.user.repository.RefreshTokenRepository;
 import bit.user.service.UserService;
 import bit.util.CookieUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -27,7 +30,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     public static final String REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
     public static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(14);
     public static final Duration ACCESS_TOKEN_DURATION = Duration.ofDays(1);
-    public static final String REDIRECT_PATH = "/";
+    public static final String REDIRECT_PATH = "http://localhost:3000/login";
 
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -35,10 +38,11 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private final UserService userService;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
-                                        Authentication authentication) throws IOException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        User user = userService.getByEmail((String) oAuth2User.getAttributes().get("email"));
+        Map<String, Object> kakaoAccount = (Map<String, Object>) oAuth2User.getAttributes().get("kakao_account");
+        String email = (String) kakaoAccount.get("email");
+        User user = userService.getByEmail(email);
 
         // 리프레시 토큰 생성 -> 저장 -> 쿠키에 저장
         String refreshToken = tokenProvider.generateToken(user, REFRESH_TOKEN_DURATION);
@@ -84,5 +88,4 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 .queryParam("token", token)
                 .build().toString();
     }
-
 }

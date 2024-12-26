@@ -70,17 +70,15 @@ public class WebSecurityConfig {
 
         // 토큰 재발급은 인증 없이 접근 가능, 나머지는 인증 필요
         http.authorizeRequests()
-                .requestMatchers("/api/**/token").permitAll()
-                .requestMatchers("/api/**").authenticated()
+                .requestMatchers("/api/v1/token/**").permitAll()
+                .requestMatchers("/api/v1/**").authenticated()
                 .anyRequest().permitAll();
 
         http.oauth2Login()
-                .loginPage("/login")
-                .authorizationEndpoint()
-                // AUTH 관련 상태 저장
+                .authorizationEndpoint() // AUTH 관련 상태 저장
                 .authorizationRequestRepository(oAuth2AuthorizationRequestBasedOnCookieRepository())
                 .and()
-                .successHandler(oAuth2SuccessHandler()) // 인증 성공 시 실행할 핸들러
+                .successHandler(oAuth2SuccessHandler())// 인증 성공 시 실행할 핸들러
                 .userInfoEndpoint()
                 .userService(oAuth2UserCustomService);
 
