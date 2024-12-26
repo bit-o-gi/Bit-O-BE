@@ -2,7 +2,6 @@ package bit.user.dto;
 
 import bit.user.domain.User;
 import bit.user.oauth.enums.OauthPlatformType;
-import bit.user.oauth.kakao.domain.KakaoUserInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,16 +26,6 @@ public class UserCreateRequest {
 
     @Schema(description = "Oauth 연동 시간")
     private LocalDateTime connectedDt;
-
-    public static UserCreateRequest fromKakaoUser(KakaoUserInfo info) {
-        return UserCreateRequest.builder()
-                .connectedDt(info.getConnectedAt())
-                .providerId(info.getId())
-                .email(info.getEmail())
-                .nickName(info.getNickname())
-                .platform(OauthPlatformType.KAKAO)
-                .build();
-    }
 
     public static UserCreateRequest fromUser(User userInfo) {
         return UserCreateRequest.builder()

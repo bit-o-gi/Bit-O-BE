@@ -1,9 +1,7 @@
 package bit.user.service;
 
 import bit.user.domain.User;
-import bit.user.entity.UserEntity;
 import bit.user.oauth.enums.OauthPlatformType;
-import bit.user.repository.UserJpaRepository;
 import bit.user.repository.UserRepository;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
@@ -11,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
