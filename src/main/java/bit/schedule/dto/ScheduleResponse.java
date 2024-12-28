@@ -1,6 +1,7 @@
 package bit.schedule.dto;
 
 import bit.schedule.domain.Schedule;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
@@ -9,17 +10,23 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode
 @Getter
 public class ScheduleResponse {
-    private Long id;
+    @Schema(description = "스케줄 ID", example = "1")
+    private final Long id;
 
-    private String nickName;
+    @Schema(description = "닉네임", example = "user1")
+    private final String nickName;
 
-    private String title;
+    @Schema(description = "제목", example = "제목")
+    private final String title;
 
-    private String content;
+    @Schema(description = "내용", example = "내용")
+    private final String content;
 
-    private LocalDateTime startDateTime;
+    @Schema(description = "시작 일시", example = "2024-12-01T00:00:00")
+    private final LocalDateTime startDateTime;
 
-    private LocalDateTime endDateTime;
+    @Schema(description = "종료 일시", example = "2024-12-02T00:00:00")
+    private final LocalDateTime endDateTime;
 
     public ScheduleResponse(Schedule schedule) {
         this.id = schedule.getId();
