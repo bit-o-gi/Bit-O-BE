@@ -4,7 +4,6 @@ import static bit.user.oauth.enums.OauthPlatformType.KAKAO;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import bit.user.dto.UserCreateRequest;
-import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +17,7 @@ class UserTest {
                 .email("pjhwork97@gmail.com")
                 .nickName("AIJoBumSuk")
                 .platform(KAKAO)
-                .providerUserId(12345131L)
+                .providerId(12345131L)
                 .build();
 
         // when
@@ -28,7 +27,7 @@ class UserTest {
         assertThat(user).extracting(
                 "email",
                 "nickName",
-                "providerUserId",
+                "providerId",
                 "platform"
         ).containsExactly(
                 "pjhwork97@gmail.com",

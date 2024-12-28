@@ -5,7 +5,10 @@ import bit.user.domain.User;
 import bit.user.dto.UserCreateRequest;
 import bit.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
+
 import java.util.List;
+
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +31,10 @@ public class UserServiceImpl implements UserService {
     public User getByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
+    }
+
+    public Optional<User> findById(Long userId) {
+        return userRepository.findById(userId);
     }
 
     public boolean isRegisteredEmail(String email) {

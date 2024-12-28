@@ -1,4 +1,4 @@
-package bit.mock;
+package bit.user.mock;
 
 import bit.user.domain.User;
 import bit.user.repository.UserRepository;
@@ -34,5 +34,10 @@ public class FakeUserRepository implements UserRepository {
 
     public Optional<User> findByEmail(String email) {
         return data.stream().filter(u -> u.getEmail().equals(email)).findFirst();
+    }
+
+    @Override
+    public void deleteAll() {
+        data.clear();
     }
 }

@@ -3,6 +3,7 @@ import bit.user.dto.UserResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 @Tag(name = "User API", description = "유저 관련 API")
 public interface UserControllerDoc {
@@ -10,5 +11,5 @@ public interface UserControllerDoc {
             , responses = {
             @ApiResponse(responseCode = "200", description = "조회 성공")
     })
-    UserResponse getUserByEmail(@PathVariable String email);
+    ResponseEntity<UserResponse> getUserByEmail(@PathVariable String email);
 }

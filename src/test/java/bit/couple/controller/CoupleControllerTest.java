@@ -3,7 +3,7 @@ package bit.couple.controller;
 import bit.couple.domain.Couple;
 import bit.couple.dto.CoupleCreateRequest;
 import bit.couple.service.CoupleService;
-import bit.couple.testFixtures.CoupleFixtures;
+import bit.couple.fixture.CoupleFixtures;
 import bit.user.domain.User;
 import bit.user.dto.UserCreateRequest;
 import bit.user.service.UserService;
@@ -28,8 +28,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = CoupleController.class)
-@ActiveProfiles("test")
 @WithMockUser
+@ActiveProfiles("test")
 class CoupleControllerTest {
 
     private final String COUPLE_PATH = "/api/v1/couple";
