@@ -63,9 +63,14 @@ public class WebSecurityConfig {
 
         // 토큰 재발급은 인증 없이 접근 가능, 나머지는 인증 필요
         http.authorizeRequests()
-                .requestMatchers("/api/v1/token/**").permitAll()
+                .requestMatchers("/api/v1/user/token").permitAll()
                 .requestMatchers("/api/v1/**").authenticated()
                 .anyRequest().permitAll();
+
+        // /api 시작 일 경우 401 반환
+        http.exceptionHandling()
+                .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
+                        new AntPathRequestMatcher("/api/**"));
 
         http.oauth2Login()
                 .authorizationEndpoint() // AUTH 관련 상태 저장
@@ -81,10 +86,6 @@ public class WebSecurityConfig {
 
         http.logout().logoutSuccessUrl("/login");
 
-        // /api 시작 일 경우 401 반환
-        http.exceptionHandling()
-                .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
-                        new AntPathRequestMatcher("/api/**"));
 
         return http.build();
     }
