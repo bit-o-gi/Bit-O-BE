@@ -60,20 +60,20 @@ public class WebSecurityConfig {
         // 헤더 확인할 커스텀 필터 추가
         http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
-
         // 토큰 재발급은 인증 없이 접근 가능, 나머지는 인증 필요
         http.authorizeRequests()
                 .requestMatchers("/api/v1/user/token").permitAll()
                 .requestMatchers("/api/v1/**").authenticated()
                 .anyRequest().permitAll();
 
-        // /api 시작 일 경우 401 반환
+        // /api 시작 일 경우 401 반환하도록 예외 처리
         http.exceptionHandling()
                 .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
                         new AntPathRequestMatcher("/api/**"));
 
         http.oauth2Login()
-                .authorizationEndpoint() // AUTH 관련 상태 저장
+                .authorizationEndpoint()
+                // Authorization 요청과 관련된 상태 저장
                 .authorizationRequestRepository(oAuth2AuthorizationRequestBasedOnCookieRepository())
                 .and()
                 .successHandler(oAuth2SuccessHandler())// 인증 성공 시 실행할 핸들러
