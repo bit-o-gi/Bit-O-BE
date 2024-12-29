@@ -29,4 +29,9 @@ public class UserController implements UserControllerDoc {
         return ResponseEntity.status(HttpStatus.CREATED).body(new AccessTokenResponse(newAccessToken));
     }
 
+    @PostMapping("/fake/token")
+    public ResponseEntity<AccessTokenResponse> createFakeAccessToken() {
+        String newAccessToken = tokenService.createNewFakeToken();
+        return ResponseEntity.status(HttpStatus.CREATED).body(new AccessTokenResponse(newAccessToken));
+    }
 }

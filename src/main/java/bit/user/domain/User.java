@@ -67,7 +67,7 @@ public class User implements UserDetails {
         return UserDetails.super.isEnabled();
     }
 
-    @Override
+    @Override // 권한 반환
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("user"));
     }

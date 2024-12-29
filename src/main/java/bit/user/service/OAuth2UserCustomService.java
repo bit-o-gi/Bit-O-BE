@@ -24,11 +24,13 @@ public class OAuth2UserCustomService extends DefaultOAuth2UserService {
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+        // 요청을 바탕으로 유저 정보를 담은 객체 반환
         OAuth2User user = super.loadUser(userRequest);
         saveOrUpdate(user);
         return user;
     }
 
+    // 유저가 있으면 업데이트, 없으면 유저 생성
     private void saveOrUpdate(OAuth2User user) {
         Map<String, Object> attribute = user.getAttributes();
         // Kakao 사용자 정보에서 nickname을 가져옴
