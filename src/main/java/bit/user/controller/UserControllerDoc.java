@@ -19,7 +19,13 @@ public interface UserControllerDoc {
 
     @Operation(summary = "엑세스 토큰 발급 API", description = "리프레시 토큰을 보내 액세스 토큰을 발급한다."
             , responses = {
-            @ApiResponse(responseCode = "200", description = "조회 성공")
+            @ApiResponse(responseCode = "201", description = "발급 성공")
     })
     ResponseEntity<AccessTokenResponse> createAccessToken(@RequestBody AccessTokenCreateRequest request);
+
+    @Operation(summary = "엑세스 토큰 발급 API (개발자용)", description = "테스트 하기 쉽게 액세스 토큰 발급 (백엔드 개발자용)"
+            , responses = {
+            @ApiResponse(responseCode = "201", description = "발급 성공")
+    })
+    ResponseEntity<AccessTokenResponse> createFakeAccessToken();
 }

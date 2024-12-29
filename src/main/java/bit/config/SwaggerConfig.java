@@ -1,6 +1,5 @@
 package bit.config;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -25,7 +24,7 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI customOpenApi() {
         // JWT 방식의 Security Scheme 정의
-        final String securitySchemeName = "액세스 토큰을 입력 해 주세요";
+        final String securitySchemeName = "액세스 토큰을 입력";
 
         return new OpenAPI()
                 .info(new Info()

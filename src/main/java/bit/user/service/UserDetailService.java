@@ -1,6 +1,5 @@
 package bit.user.service;
 
-import bit.user.repository.UserJpaRepository;
 import bit.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

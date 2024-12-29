@@ -63,6 +63,7 @@ public class WebSecurityConfig {
         // 토큰 재발급은 인증 없이 접근 가능, 나머지는 인증 필요
         http.authorizeRequests()
                 .requestMatchers("/api/v1/user/token").permitAll()
+                .requestMatchers("/api/v1/user/fake/token").permitAll()
                 .requestMatchers("/api/v1/**").authenticated()
                 .anyRequest().permitAll();
 

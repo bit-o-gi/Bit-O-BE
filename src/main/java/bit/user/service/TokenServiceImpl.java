@@ -26,4 +26,13 @@ public class TokenServiceImpl implements TokenService {
         User user = userService.getById(userId);
         return tokenProvider.generateToken(user, Duration.ofHours(2));
     }
+
+    @Override
+    public String createNewFakeToken() {
+        User user = User.builder()
+                .id(0L)
+                .email("fakeEmail@fakeDomain.com")
+                .build();
+        return tokenProvider.generateToken(user, Duration.ofHours(3));
+    }
 }
