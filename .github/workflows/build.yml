@@ -1,18 +1,20 @@
+# 워크플로의 이름 지정
 name: Java Build and Deploy
 
+# 워크플로가 시작될 조건 지정
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
+    runs-on: ubuntu-latest # 실행 환경 지정
+    # 실행 스텝 지정
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          submodules: true
+          submodules: recursive # 모든 레벨의 서브모듈을 초기화
           token: ${{ secrets.GIT_TOKEN }}
 
       - name: Set up JDK 17
@@ -22,14 +24,14 @@ jobs:
           distribution: 'zulu'
 
       - name: Make gradlew executable
-        run: chmod +x ./gradlew
+        run: chmod +x gradlew
 
       - name: Build with Gradle
         run: ./gradlew build -x test
 
       - name: Check if JAR file exists
         run: |
-          if [ -f ./build/libs/BitO-1.0.0.jar ]; then
+          if [ -f ./build/libs/BitO-1.0.1.jar ]; then
             echo "JAR file exists."
           else
             echo "JAR file does not exist."
@@ -41,8 +43,8 @@ jobs:
           username: ec2-user
           host: ${{ secrets.SERVER_IP }}
           key: ${{ secrets.SERVER_KEY }}
-          source: "./build/libs/BitO-1.0.0.jar"
-          target: "/home/ec2-user/BitO-1.0.0.jar"
+          source: "./build/libs/BitO-1.0.1.jar"
+          target: "/home/ec2-user/BitO-1.0.1.jar"
 
 
   deploy:
