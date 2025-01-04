@@ -47,7 +47,7 @@ jobs:
           key: ${{ secrets.SERVER_KEY }}
           port: 22
           source: "./build/libs/BitO-1.0.1.jar"
-          target: "/home/ec2-user/"
+          target: "/home/ec2-user/test"
           strip_components: 2
 
   deploy:
