@@ -48,6 +48,7 @@ jobs:
           port: 22
           source: "./build/libs/BitO-1.0.1.jar"
           target: "/home/ec2-user/BitO-1.0.1.jar"
+          strip_components: 2
 
 
   deploy:
