@@ -48,8 +48,8 @@ jobs:
           port: 22
           source: "./build/libs/BitO-1.0.1.jar"
           target: "/home/ec2-user/"
-          strip_components: 3
-          rm: true  # 파일이 있을 경우 삭제하고 복사
+          strip_components: 2
+          overwrite: true
 
   deploy:
     needs: build
