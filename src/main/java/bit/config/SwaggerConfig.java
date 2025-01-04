@@ -16,7 +16,7 @@ public class SwaggerConfig {
     @Bean
     public GroupedOpenApi publicApi() {
         return GroupedOpenApi.builder()
-                .group("bit-o-api")
+                .group("Bit-o-api")
                 .pathsToMatch("/api/**")
                 .build();
     }
@@ -24,7 +24,7 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI customOpenApi() {
         // JWT 방식의 Security Scheme 정의
-        final String securitySchemeName = "액세스 토큰을 입력";
+        final String securitySchemeName = "액세스 토큰을 입력하세요.";
 
         return new OpenAPI()
                 .info(new Info()
