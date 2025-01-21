@@ -1,7 +1,8 @@
-package bit.user.service;
+package bit.auth.service;
 
 import bit.config.jwt.TokenProvider;
 import bit.user.domain.User;
+import bit.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

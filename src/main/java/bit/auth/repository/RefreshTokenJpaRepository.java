@@ -1,6 +1,6 @@
-package bit.user.repository;
+package bit.auth.repository;
 
-import bit.user.domain.RefreshToken;
+import bit.auth.domain.RefreshToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

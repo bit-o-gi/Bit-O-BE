@@ -3,9 +3,9 @@ package bit.config;
 import bit.config.jwt.TokenAuthenticationFilter;
 import bit.config.jwt.TokenProvider;
 import bit.config.oauth.OAuth2SuccessHandler;
-import bit.user.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
-import bit.user.repository.RefreshTokenRepository;
-import bit.user.service.OAuth2UserCustomService;
+import bit.auth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
+import bit.auth.repository.RefreshTokenRepository;
+import bit.auth.service.OAuth2UserCustomService;
 import bit.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -54,7 +54,7 @@ public class WebSecurityConfig {
                 .httpBasic().disable()
                 .formLogin().disable()
                 .logout().disable();
-        
+
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         // 헤더 확인할 커스텀 필터 추가
@@ -62,8 +62,8 @@ public class WebSecurityConfig {
 
         // 토큰 재발급은 인증 없이 접근 가능, 나머지는 인증 필요
         http.authorizeRequests()
-                .requestMatchers("/api/v1/user/token").permitAll()
-                .requestMatchers("/api/v1/user/fake/token").permitAll()
+                .requestMatchers("/api/v1/auth/token").permitAll()
+                .requestMatchers("/api/v1/auth/fake/token").permitAll()
                 .requestMatchers("/api/v1/**").authenticated()
                 .anyRequest().permitAll();
 
@@ -86,7 +86,6 @@ public class WebSecurityConfig {
                 .frameOptions().deny();
 
         http.logout().logoutSuccessUrl("/login");
-
 
         return http.build();
     }

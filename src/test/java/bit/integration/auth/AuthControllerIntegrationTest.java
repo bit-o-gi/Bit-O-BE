@@ -1,11 +1,11 @@
-package bit.integration.User;
+package bit.integration.auth;
 
 import bit.config.jwt.JwtFactory;
 import bit.config.jwt.JwtProperties;
-import bit.user.domain.RefreshToken;
+import bit.auth.domain.RefreshToken;
 import bit.user.domain.User;
-import bit.user.dto.AccessTokenCreateRequest;
-import bit.user.repository.RefreshTokenRepository;
+import bit.auth.dto.AccessTokenCreateRequest;
+import bit.auth.repository.RefreshTokenRepository;
 import bit.user.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-class UserControllerIntegrationTest {
+class AuthControllerIntegrationTest {
     @Autowired
     protected MockMvc mockmvc;
 
@@ -59,8 +59,6 @@ class UserControllerIntegrationTest {
     @Test
     void createTokenIsSuccessful() throws Exception {
         // given
-        final String url = "/api/v1/user/token";
-
         User testUser = userRepository.save(
                 User.builder()
                         .email("test@test.com")
@@ -72,14 +70,13 @@ class UserControllerIntegrationTest {
 
         refreshTokenRepository.save(new RefreshToken(testUser.getId(), refreshToken));
 
-//        AccessTokenCreateRequest requestDto = AccessTokenCreateRequest.builder().refreshToken(refreshToken).build();
         AccessTokenCreateRequest requestDto = new AccessTokenCreateRequest();
         requestDto.setRefreshToken(refreshToken);
 
         String requestBody = objectMapper.writeValueAsString(requestDto);
 
         // when
-        ResultActions resultActions = mockmvc.perform(post(url).contentType(MediaType.APPLICATION_JSON).content(requestBody));
+        ResultActions resultActions = mockmvc.perform(post("/api/v1/auth/token").contentType(MediaType.APPLICATION_JSON).content(requestBody));
 
         // then
         resultActions.andExpect(status().isCreated())

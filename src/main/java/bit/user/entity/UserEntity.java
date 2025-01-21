@@ -3,7 +3,7 @@ package bit.user.entity;
 import bit.base.BaseEntity;
 import bit.couple.domain.Couple;
 import bit.user.domain.User;
-import bit.user.oauth.enums.OauthPlatformType;
+import bit.user.enums.OauthPlatformType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

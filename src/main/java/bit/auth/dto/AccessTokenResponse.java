@@ -1,4 +1,4 @@
-package bit.user.dto;
+package bit.auth.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

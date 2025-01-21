@@ -3,7 +3,7 @@ package bit.couple.fixture;
 import bit.couple.domain.Couple;
 import bit.couple.enums.CoupleStatus;
 import bit.user.domain.User;
-import bit.user.oauth.enums.OauthPlatformType;
+import bit.user.enums.OauthPlatformType;
 import java.lang.reflect.Field;
 import java.util.List;
 

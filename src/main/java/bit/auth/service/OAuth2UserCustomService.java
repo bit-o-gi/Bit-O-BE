@@ -1,7 +1,7 @@
-package bit.user.service;
+package bit.auth.service;
 
 import bit.user.domain.User;
-import bit.user.oauth.enums.OauthPlatformType;
+import bit.user.enums.OauthPlatformType;
 import bit.user.repository.UserRepository;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;

@@ -2,7 +2,7 @@ package bit.user.domain;
 
 import bit.couple.domain.Couple;
 import bit.user.dto.UserCreateRequest;
-import bit.user.oauth.enums.OauthPlatformType;
+import bit.user.enums.OauthPlatformType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
