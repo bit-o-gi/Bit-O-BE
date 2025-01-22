@@ -2,6 +2,7 @@ package bit.config.jwt;
 
 import bit.user.domain.User;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -52,13 +53,28 @@ public class TokenProvider {
         }
     }
 
+    // 토큰 만료 여부 확인
+    public boolean expiredToken(String token) {
+        try {
+            Date expiration = Jwts.parser()
+                    .setSigningKey(jwtProperties.getSecretKey())
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getExpiration();
+            return expiration.before(new Date());
+        } catch (ExpiredJwtException e) {
+            return true;
+        }
+    }
+
     // 토큰 기반으로 인증 정보를 가져오는 메서드
     public Authentication getAuthentication(String token) {
         Claims claims = getClaims(token);
         Set<SimpleGrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
 
         return new UsernamePasswordAuthenticationToken(
-                new org.springframework.security.core.userdetails.User(claims.getSubject(), "", authorities), token, authorities);
+                new org.springframework.security.core.userdetails.User(claims.getSubject(), "", authorities), token,
+                authorities);
     }
 
     // 토큰 기반으로 유저 ID를 가져오는 메서드
