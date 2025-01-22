@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -25,6 +26,7 @@ import static bit.schedule.util.ScheduleRequestFixture.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -32,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = ScheduleController.class)
 @Import(GlobalExceptionHandler.class)
+@WithMockUser
 class ScheduleControllerTest {
 
     @Autowired
@@ -92,8 +95,9 @@ class ScheduleControllerTest {
         mockMvc.perform(
                         post("/api/v1/schedule")
                                 .contentType("application/json")
-                                .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
+                                .content(objectMapper.writeValueAsString(request))
+                                .with(csrf()))
+                .andExpect(status().isCreated())
                 .andDo(print())
                 .andExpect(content().json(objectMapper.writeValueAsString(response)));
     }
@@ -125,7 +129,8 @@ class ScheduleControllerTest {
                 mockMvc.perform(
                                 post("/api/v1/schedule")
                                         .contentType("application/json")
-                                        .content(objectMapper.writeValueAsString(request)))
+                                        .content(objectMapper.writeValueAsString(request))
+                                        .with(csrf()))
                         .andExpect(status().isBadRequest())
                         .andExpect(content().json(expectedErrorMessage))
                         .andDo(print());
@@ -164,7 +169,8 @@ class ScheduleControllerTest {
         mockMvc.perform(
                         put("/api/v1/schedule/0")
                                 .contentType("application/json")
-                                .content(objectMapper.writeValueAsString(request)))
+                                .content(objectMapper.writeValueAsString(request))
+                                .with(csrf()))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().json(objectMapper.writeValueAsString(response)));
@@ -181,7 +187,8 @@ class ScheduleControllerTest {
         //Then
         mockMvc.perform(
                         delete("/api/v1/schedule/0")
-                                .contentType("application/json"))
+                                .contentType("application/json")
+                                .with(csrf()))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().json(objectMapper.writeValueAsString(response)));
