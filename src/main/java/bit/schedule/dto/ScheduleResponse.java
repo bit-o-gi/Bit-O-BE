@@ -1,6 +1,7 @@
 package bit.schedule.dto;
 
 import bit.schedule.domain.Schedule;
+import bit.user.entity.UserEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -31,6 +32,15 @@ public class ScheduleResponse {
     public ScheduleResponse(Schedule schedule) {
         this.id = schedule.getId();
         this.nickName = schedule.getUser().getNickName();
+        this.title = schedule.getTitle();
+        this.content = schedule.getContent();
+        this.startDateTime = schedule.getStartDateTime();
+        this.endDateTime = schedule.getEndDateTime();
+    }
+
+    public ScheduleResponse(Schedule schedule, UserEntity user) {
+        this.id = schedule.getId();
+        this.nickName = user.getNickName();
         this.title = schedule.getTitle();
         this.content = schedule.getContent();
         this.startDateTime = schedule.getStartDateTime();

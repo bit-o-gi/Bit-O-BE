@@ -6,8 +6,10 @@ import bit.user.domain.User;
 import bit.user.enums.OauthPlatformType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 
 @Table(name = "bit_o_user")
@@ -31,9 +33,20 @@ public class UserEntity extends BaseEntity {
 
     private LocalDateTime connectedDt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "couple_id")
     private Couple couple;
+
+    @Builder
+    public UserEntity(Long id, String email, String nickName, OauthPlatformType platform, Long providerId, LocalDateTime connectedDt, Couple couple) {
+        this.id = id;
+        this.email = email;
+        this.nickName = nickName;
+        this.platform = platform;
+        this.providerId = providerId;
+        this.connectedDt = connectedDt;
+        this.couple = couple;
+    }
 
     public static UserEntity from(User user) {
         UserEntity userEntity = new UserEntity();

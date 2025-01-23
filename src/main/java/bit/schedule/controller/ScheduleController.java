@@ -1,5 +1,6 @@
 package bit.schedule.controller;
 
+import bit.auth.domain.UserPrincipal;
 import bit.schedule.dto.ScheduleCreateRequest;
 import bit.schedule.dto.ScheduleResponse;
 import bit.schedule.dto.ScheduleUpdateRequest;
@@ -7,6 +8,7 @@ import bit.schedule.service.ScheduleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,37 +21,37 @@ public class ScheduleController implements ScheduleControllerDoc {
 
     @GetMapping("/{scheduleId}")
     @ResponseStatus(HttpStatus.OK)
-    public ScheduleResponse getSchedule(@PathVariable Long scheduleId) {
-        return scheduleService.getSchedule(scheduleId);
+    public ScheduleResponse getSchedule(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable Long scheduleId) {
+        return scheduleService.getSchedule(userPrincipal.getId(), scheduleId);
     }
 
-    @GetMapping("/user/{userId}")
+    @GetMapping("/user")
     @ResponseStatus(HttpStatus.OK)
-    public List<ScheduleResponse> getScheduleByUser(@PathVariable Long userId) {
-        return scheduleService.getSchedulesByUserId(userId);
+    public List<ScheduleResponse> getScheduleByUser(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        return scheduleService.getSchedulesByUserId(userPrincipal.getId());
     }
 
-    @GetMapping("/couple/{coupleId}")
+    @GetMapping("/couple")
     @ResponseStatus(HttpStatus.OK)
-    public List<ScheduleResponse> getScheduleByCouple(@PathVariable Long coupleId) {
-        return scheduleService.getSchedulesByCoupleId(coupleId);
+    public List<ScheduleResponse> getScheduleByCouple(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        return scheduleService.getCoupleSchedulesByUserId(userPrincipal.getId());
     }
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
-    public ScheduleResponse createSchedule(@Valid @RequestBody ScheduleCreateRequest scheduleCreateRequest) {
-        return scheduleService.saveSchedule(scheduleCreateRequest);
+    public ScheduleResponse createSchedule(@AuthenticationPrincipal UserPrincipal userPrincipal, @Valid @RequestBody ScheduleCreateRequest scheduleCreateRequest) {
+        return scheduleService.saveSchedule(userPrincipal.getId(), scheduleCreateRequest);
     }
 
     @PutMapping("/{scheduleId}")
     @ResponseStatus(HttpStatus.OK)
-    public ScheduleResponse updateSchedule(@PathVariable Long scheduleId, @Valid @RequestBody ScheduleUpdateRequest scheduleUpdateRequest) {
-        return scheduleService.updateSchedule(scheduleId, scheduleUpdateRequest);
+    public ScheduleResponse updateSchedule(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable Long scheduleId, @Valid @RequestBody ScheduleUpdateRequest scheduleUpdateRequest) {
+        return scheduleService.updateSchedule(userPrincipal.getId(), scheduleId, scheduleUpdateRequest);
     }
 
     @DeleteMapping("/{scheduleId}")
     @ResponseStatus(HttpStatus.OK)
-    public ScheduleResponse deleteSchedule(@PathVariable Long scheduleId) {
-        return scheduleService.deleteSchedule(scheduleId);
+    public ScheduleResponse deleteSchedule(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable Long scheduleId) {
+        return scheduleService.deleteSchedule(userPrincipal.getId(), scheduleId);
     }
 }
