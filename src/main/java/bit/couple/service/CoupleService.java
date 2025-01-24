@@ -5,7 +5,6 @@ import bit.couple.dto.CoupleCreateCommand;
 import bit.couple.enums.CoupleStatus;
 import bit.couple.exception.CoupleException.CoupleNotFoundException;
 import bit.couple.repository.CoupleRepository;
-import bit.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,31 +14,27 @@ import org.springframework.transaction.annotation.Transactional;
 public class CoupleService {
 
     private final CoupleRepository coupleRepository;
-    private final UserService userService;
 
     @Transactional
     public void createCouple(CoupleCreateCommand command) {
-        String sender = command.getSenderEmail();
-        String receiver = command.getReceiverEmail();
-
         Couple savedCouple = coupleRepository.save(
-                Couple.of(sender, receiver, CoupleStatus.CREATING)
+                Couple.of(command.getCode(), null, CoupleStatus.CREATING)
         );
-
-        userService.updateCouple(sender, receiver, savedCouple);
     }
 
-    public void approveCouple(Long coupleId) {
-        Couple couple = coupleRepository.findById(coupleId).orElseThrow(CoupleNotFoundException::new);
+    @Transactional
+    public void approveCouple(String code1, String code2) {
+        Couple couple = coupleRepository.findByCode1AndCode2(code1, code2)
+                .orElseThrow(CoupleNotFoundException::new);
         couple.approve();
         coupleRepository.save(couple);
     }
 
+    @Transactional
     public void deleteCouple(Long coupleId) {
         if (!coupleRepository.existsById(coupleId)) {
             throw new CoupleNotFoundException();
         }
-        // TODO: 바로 지우는 대신 스케줄링 등록
         coupleRepository.deleteById(coupleId);
     }
 }

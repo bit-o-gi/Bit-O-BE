@@ -10,11 +10,12 @@ import lombok.RequiredArgsConstructor;
 @Builder
 @RequiredArgsConstructor
 public class CoupleCreateRequest implements BaseRequest<Couple> {
-    private final String senderEmail;
-    private final String receiverEmail;
+//    private final String senderEmail;
+//    private final String receiverEmail;
+    private final String code;
 
     @Override
     public CoupleCreateCommand toCommand() {
-        return new CoupleCreateCommand(senderEmail, receiverEmail);
+        return new CoupleCreateCommand(code);
     }
 }

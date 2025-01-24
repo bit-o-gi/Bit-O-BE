@@ -26,10 +26,10 @@ public class CoupleController {
         coupleService.createCouple(coupleCreateRequest.toCommand());
     }
 
-    @PutMapping("/{coupleId}")
+    @PutMapping("/{code1}/{code2}")
     @ResponseStatus(HttpStatus.OK)
-    public void approveCouple(@PathVariable Long coupleId) {
-        coupleService.approveCouple(coupleId);
+    public void approveCouple(@PathVariable String code1, @PathVariable String code2) {
+        coupleService.approveCouple(code1, code2);
     }
 
     @DeleteMapping("/{coupleId}")

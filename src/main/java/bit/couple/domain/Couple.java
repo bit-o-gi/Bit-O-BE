@@ -24,17 +24,17 @@ public class Couple extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String sender;
+    private String code1;
 
-    private String receiver;
+    private String code2;
 
     @Enumerated(EnumType.STRING)
     private CoupleStatus status;
 
-    public static Couple of(String sender, String receiver, CoupleStatus status) {
+    public static Couple of(String code1, String code2, CoupleStatus status) {
         return Couple.builder()
-                .sender(sender)
-                .receiver(receiver)
+                .code1(code1)
+                .code2(code2)
                 .status(status)
                 .build();
     }
