@@ -1,6 +1,8 @@
 package bit.config.jwt;
 
+import bit.auth.domain.UserPrincipal;
 import bit.user.domain.User;
+import bit.user.service.UserDetailService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Header;
@@ -22,6 +24,7 @@ import java.util.Set;
 public class TokenProvider {
 
     private final JwtProperties jwtProperties;
+    private final UserDetailService userDetailService;
 
     public String generateToken(User user, Duration expiredAt) {
         Date now = new Date();
@@ -71,10 +74,10 @@ public class TokenProvider {
     public Authentication getAuthentication(String token) {
         Claims claims = getClaims(token);
         Set<SimpleGrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
+        UserPrincipal userDetails = (UserPrincipal) userDetailService.loadUserByUsername(getClaims(token).getSubject());
 
         return new UsernamePasswordAuthenticationToken(
-                new org.springframework.security.core.userdetails.User(claims.getSubject(), "", authorities), token,
-                authorities);
+                userDetails, token, authorities);
     }
 
     // 토큰 기반으로 유저 ID를 가져오는 메서드
