@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -50,42 +52,40 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(final HttpSecurity http) throws Exception {
         // 토큰 방식으로 인증을 하기 때문에 세션 비활성화
-        http.csrf().disable()
-                .httpBasic().disable()
-                .formLogin().disable()
-                .logout().disable();
+        http.csrf(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .logout(AbstractHttpConfigurer::disable);
 
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.sessionManagement(
+                sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         // 헤더 확인할 커스텀 필터 추가
         http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         // 토큰 재발급은 인증 없이 접근 가능, 나머지는 인증 필요
-        http.authorizeRequests()
+        http.authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
                 .requestMatchers("/api/v1/auth/token").permitAll()
                 .requestMatchers("/api/v1/auth/fake/token").permitAll()
                 .requestMatchers("/api/v1/**").authenticated()
-                .anyRequest().permitAll();
+                .anyRequest().permitAll());
 
         // /api 시작 일 경우 401 반환하도록 예외 처리
-        http.exceptionHandling()
+        http.exceptionHandling(exceptionHandling -> exceptionHandling
                 .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
-                        new AntPathRequestMatcher("/api/**"));
+                        new AntPathRequestMatcher("/api/**")));
 
-        http.oauth2Login()
-                .authorizationEndpoint()
-                // Authorization 요청과 관련된 상태 저장
-                .authorizationRequestRepository(oAuth2AuthorizationRequestBasedOnCookieRepository())
-                .and()
+        http.oauth2Login(oauth2Login -> oauth2Login
+                .authorizationEndpoint(
+                        authorizationEndpointConfig -> authorizationEndpointConfig.authorizationRequestRepository(
+                                oAuth2AuthorizationRequestBasedOnCookieRepository()))
                 .successHandler(oAuth2SuccessHandler())// 인증 성공 시 실행할 핸들러
-                .userInfoEndpoint()
-                .userService(oAuth2UserCustomService);
+                .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint.userService(oAuth2UserCustomService)));
 
-        http.cors().configurationSource(corsConfigurationSource())
-                .and().headers()
-                .frameOptions().deny();
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .headers(headers -> headers.frameOptions(FrameOptionsConfig::deny));
 
-        http.logout().logoutSuccessUrl("/login");
+        http.logout(logout -> logout.logoutSuccessUrl("/login"));
 
         return http.build();
     }
