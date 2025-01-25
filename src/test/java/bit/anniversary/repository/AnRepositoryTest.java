@@ -7,7 +7,7 @@ import bit.anniversary.dto.AnReqDto;
 import bit.anniversary.entity.Anniversary;
 import bit.user.domain.User;
 import bit.user.entity.UserEntity;
-import bit.user.oauth.enums.OauthPlatformType;
+import bit.user.enums.OauthPlatformType;
 import bit.user.repository.UserJpaRepository;
 import java.time.LocalDateTime;
 import java.util.List;

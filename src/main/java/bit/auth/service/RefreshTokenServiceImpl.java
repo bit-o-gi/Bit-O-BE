@@ -1,7 +1,7 @@
-package bit.user.service;
+package bit.auth.service;
 
-import bit.user.domain.RefreshToken;
-import bit.user.repository.RefreshTokenRepository;
+import bit.auth.domain.RefreshToken;
+import bit.auth.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -11,9 +11,6 @@ import java.time.LocalDateTime;
 @Getter
 public class ScheduleCreateRequest {
 
-    @NotNull(message = "유저 아이디가 필요합니다.")
-    private Long userId;
-
     @NotNull(message = "제목이 필요합니다.")
     private String title;
 
@@ -27,8 +24,7 @@ public class ScheduleCreateRequest {
     private LocalDateTime endDateTime;
 
     @Builder
-    public ScheduleCreateRequest(Long userId, String title, String content, LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        this.userId = userId;
+    public ScheduleCreateRequest(String title, String content, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         this.title = title;
         this.content = content;
         this.startDateTime = startDateTime;

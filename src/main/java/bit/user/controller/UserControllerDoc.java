@@ -1,13 +1,10 @@
 package bit.user.controller;
-import bit.user.dto.AccessTokenCreateRequest;
-import bit.user.dto.AccessTokenResponse;
 import bit.user.dto.UserResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Tag(name = "User API", description = "유저 관련 API")
 public interface UserControllerDoc {
@@ -17,15 +14,5 @@ public interface UserControllerDoc {
     })
     ResponseEntity<UserResponse> getUserByEmail(@PathVariable String email);
 
-    @Operation(summary = "엑세스 토큰 발급 API", description = "리프레시 토큰을 보내 액세스 토큰을 발급한다."
-            , responses = {
-            @ApiResponse(responseCode = "201", description = "발급 성공")
-    })
-    ResponseEntity<AccessTokenResponse> createAccessToken(@RequestBody AccessTokenCreateRequest request);
 
-    @Operation(summary = "엑세스 토큰 발급 API (개발자용)", description = "테스트 하기 쉽게 액세스 토큰 발급 (백엔드 개발자용)"
-            , responses = {
-            @ApiResponse(responseCode = "201", description = "발급 성공")
-    })
-    ResponseEntity<AccessTokenResponse> createFakeAccessToken();
 }

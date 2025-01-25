@@ -1,4 +1,4 @@
-package bit.integration.Couple;
+package bit.integration.couple;
 
 import bit.couple.dto.CoupleCreateRequest;
 import bit.couple.fixture.CoupleFixtures;

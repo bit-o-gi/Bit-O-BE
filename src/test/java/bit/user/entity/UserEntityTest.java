@@ -1,6 +1,6 @@
 package bit.user.entity;
 
-import static bit.user.oauth.enums.OauthPlatformType.KAKAO;
+import static bit.user.enums.OauthPlatformType.KAKAO;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import bit.user.domain.User;

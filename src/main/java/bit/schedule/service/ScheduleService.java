@@ -7,15 +7,15 @@ import bit.schedule.dto.ScheduleUpdateRequest;
 import java.util.List;
 
 public interface ScheduleService {
-    ScheduleResponse getSchedule(Long scheduleId);
+    ScheduleResponse getSchedule(Long userId, Long scheduleId);
 
     List<ScheduleResponse> getSchedulesByUserId(Long userId);
 
-    List<ScheduleResponse> getSchedulesByCoupleId(Long coupleId);
+    List<ScheduleResponse> getCoupleSchedulesByUserId(Long userId);
 
-    ScheduleResponse saveSchedule(ScheduleCreateRequest scheduleCreateRequest);
+    ScheduleResponse saveSchedule(Long userId, ScheduleCreateRequest scheduleCreateRequest);
 
-    ScheduleResponse updateSchedule(Long scheduleId, ScheduleUpdateRequest scheduleUpdateRequest);
+    ScheduleResponse updateSchedule(Long userId, Long scheduleId, ScheduleUpdateRequest scheduleUpdateRequest);
 
-    ScheduleResponse deleteSchedule(Long scheduleId);
+    ScheduleResponse deleteSchedule(Long userId, Long scheduleId);
 }
