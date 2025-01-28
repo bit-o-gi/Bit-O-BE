@@ -73,7 +73,8 @@ public class TokenProviderIntegrationTest {
     @Test
     void getAuthenticationIsSuccessful() {
         // given
-        String userEmail = "user@email.com";
+        userRepository.save(User.builder().email("test@email.com").build());
+        String userEmail = "test@email.com";
         String token = JwtFactory.builder()
                 .subject(userEmail)
                 .build()
