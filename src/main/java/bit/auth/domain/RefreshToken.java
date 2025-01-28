@@ -1,4 +1,4 @@
-package bit.user.domain;
+package bit.auth.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

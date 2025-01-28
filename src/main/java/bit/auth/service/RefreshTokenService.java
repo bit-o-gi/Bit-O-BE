@@ -1,6 +1,6 @@
-package bit.user.service;
+package bit.auth.service;
 
-import bit.user.domain.RefreshToken;
+import bit.auth.domain.RefreshToken;
 
 public interface RefreshTokenService {
     RefreshToken getByRefreshToken(String refreshToken);

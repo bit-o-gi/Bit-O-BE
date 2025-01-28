@@ -1,7 +1,7 @@
 package bit.user.dto;
 
 import bit.user.domain.User;
-import bit.user.oauth.enums.OauthPlatformType;
+import bit.user.enums.OauthPlatformType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;

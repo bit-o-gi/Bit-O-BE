@@ -1,4 +1,4 @@
-package bit.user.service;
+package bit.auth.service;
 
 public interface TokenService {
     String createNewAccessToken(String refreshToken);

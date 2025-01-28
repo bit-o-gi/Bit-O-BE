@@ -1,10 +1,10 @@
 package bit.config.oauth;
 
 import bit.config.jwt.TokenProvider;
-import bit.user.domain.RefreshToken;
+import bit.auth.domain.RefreshToken;
 import bit.user.domain.User;
-import bit.user.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
-import bit.user.repository.RefreshTokenRepository;
+import bit.auth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
+import bit.auth.repository.RefreshTokenRepository;
 import bit.user.service.UserService;
 import bit.util.CookieUtil;
 import jakarta.servlet.http.HttpServletRequest;
