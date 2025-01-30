@@ -194,6 +194,26 @@ class ScheduleControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(response)));
     }
 
+    @DisplayName("스케줄 수정시 필수 요소가 모두 없으면 에러가 발생한다.")
+    @Test
+    void scheduleUpdateNeedLeastOneElementTest() throws Exception {
+        //Given
+        Schedule schedule = getNewSchedule(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
+        ScheduleUpdateRequest request = ScheduleUpdateRequest.builder().build();
+        ScheduleResponse response = new ScheduleResponse(schedule);
+        when(scheduleService.updateSchedule(any(Long.class), eq(0L), any(ScheduleUpdateRequest.class))).thenReturn(response);
+        //When
+        //Then
+        mockMvc.perform(
+                        put("/api/v1/schedule/0")
+                                .contentType("application/json")
+                                .content(objectMapper.writeValueAsString(request))
+                                .with(csrf())
+                                .with(SecurityMockMvcRequestPostProcessors.user(userPrincipal)))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+    }
+
     @DisplayName("스케줄 삭제 테스트")
     @Test
     void deleteTest() throws Exception {
