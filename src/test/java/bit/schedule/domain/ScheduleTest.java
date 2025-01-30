@@ -20,6 +20,7 @@ class ScheduleTest {
         ScheduleUpdateRequest scheduleUpdateRequest = ScheduleUpdateRequest.builder()
                 .title("title update test")
                 .content("content update test")
+                .location("location update test")
                 .startDateTime(LocalDateTime.of(2024, 9, 1, 1, 1))
                 .endDateTime(LocalDateTime.of(2024, 9, 1, 1, 1))
                 .build();
@@ -29,11 +30,13 @@ class ScheduleTest {
         assertThat(schedule).extracting(
                 "title",
                 "content",
+                "location",
                 "startDateTime",
                 "endDateTime"
         ).containsExactly(
                 "title update test",
                 "content update test",
+                "location update test",
                 LocalDateTime.of(2024, 9, 1, 1, 1),
                 LocalDateTime.of(2024, 9, 1, 1, 1)
         );
