@@ -23,12 +23,11 @@ public class Couple extends BaseEntity { // 클래스 이름을 CoupleConnection
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 커플을 발급한 사용자 (User A)
-    @ManyToOne(fetch = FetchType.LAZY) // User 엔티티와 다대일 관계 설정
-    @JoinColumn(name = "initiator_user_id", nullable = false)
+    //NOTE: 커플을 발급한 사용자 (User A)
+    @ManyToOne(fetch = FetchType.LAZY)     @JoinColumn(name = "initiator_user_id", nullable = false)
     private UserEntity initiatorUser;
 
-    // 커플 요청을 승인한 사용자 (User B)
+    //NOTE: 커플 요청을 승인한 사용자 (User B)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "partner_user_id", nullable = false)
     private UserEntity partnerUser;
@@ -36,7 +35,7 @@ public class Couple extends BaseEntity { // 클래스 이름을 CoupleConnection
     @Enumerated(EnumType.STRING)
     private CoupleStatus status;
 
-    // 정적 팩토리 메서드로 CoupleConnection 생성
+    //NOTE: 정적 팩토리 메서드로 CoupleConnection 생성
     public static Couple of(UserEntity initiatorUser, UserEntity partnerUser, CoupleStatus status) {
         return Couple.builder()
                 .initiatorUser(initiatorUser)
@@ -51,7 +50,7 @@ public class Couple extends BaseEntity { // 클래스 이름을 CoupleConnection
     }
 
 
-    // 상태를 APPROVED로 변경
+    //NOTE: 상태를 APPROVED로 변경
     public void approve() {
         this.status = CoupleStatus.APPROVED;
     }
