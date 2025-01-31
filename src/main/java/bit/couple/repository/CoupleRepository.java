@@ -9,5 +9,5 @@ import java.util.Optional;
 @Repository
 public interface CoupleRepository extends JpaRepository<Couple, Long> {
 
-    Optional<Couple> findByCode1AndCode2(String code1, String code2);
+//    Optional<Couple> findById(String coupleId);
 }

@@ -10,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 @Builder
 @RequiredArgsConstructor
 public class CoupleCreateRequest implements BaseRequest<Couple> {
-//    private final String senderEmail;
-//    private final String receiverEmail;
     private final String code;
 
     @Override
