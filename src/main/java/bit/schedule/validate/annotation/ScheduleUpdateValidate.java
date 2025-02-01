@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ScheduleUpdateValidate {
-    String message() default "제목, 내용, 위치, 시작 일시, 종료 일시 중 하나는 null 이 아니어야 합니다.";
+    String message() default "제목, 내용, 위치, 시작 일시, 종료 일시 모두 null 이면 안됩니다.";
 
     Class<? extends Payload>[] payload() default {};
 
