@@ -13,6 +13,7 @@ public class ScheduleFixture {
                 .user(getNewUserEntity(1L))
                 .title("title")
                 .content("content")
+                .location("location")
                 .startDateTime(start)
                 .endDateTime(end)
                 .build();

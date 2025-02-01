@@ -1,31 +1,31 @@
 package bit.schedule.dto;
 
 
-import jakarta.validation.constraints.NotNull;
+import bit.schedule.validate.annotation.ScheduleUpdateValidate;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@ScheduleUpdateValidate
 public class ScheduleUpdateRequest {
 
-    @NotNull(message = "제목이 필요합니다.")
-    private String title;
+    private final String title;
 
-    @NotNull(message = "내용이 필요합니다.")
-    private String content;
+    private final String content;
 
-    @NotNull(message = "시작 일시가 필요합니다.")
-    private LocalDateTime startDateTime;
+    private final String location;
 
-    @NotNull(message = "종료 일시가 필요합니다.")
-    private LocalDateTime endDateTime;
+    private final LocalDateTime startDateTime;
+
+    private final LocalDateTime endDateTime;
 
     @Builder
-    public ScheduleUpdateRequest(String title, String content, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+    public ScheduleUpdateRequest(String title, String content, String location, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         this.title = title;
         this.content = content;
+        this.location = location;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
     }

@@ -23,6 +23,9 @@ public class ScheduleResponse {
     @Schema(description = "내용", example = "내용")
     private final String content;
 
+    @Schema(description = "위치", example = "위치")
+    private final String location;
+
     @Schema(description = "시작 일시", example = "2024-12-01T00:00:00")
     private final LocalDateTime startDateTime;
 
@@ -34,6 +37,7 @@ public class ScheduleResponse {
         this.nickName = schedule.getUser().getNickName();
         this.title = schedule.getTitle();
         this.content = schedule.getContent();
+        this.location = schedule.getLocation();
         this.startDateTime = schedule.getStartDateTime();
         this.endDateTime = schedule.getEndDateTime();
     }
@@ -43,6 +47,7 @@ public class ScheduleResponse {
         this.nickName = user.getNickName();
         this.title = schedule.getTitle();
         this.content = schedule.getContent();
+        this.location = schedule.getLocation();
         this.startDateTime = schedule.getStartDateTime();
         this.endDateTime = schedule.getEndDateTime();
     }
