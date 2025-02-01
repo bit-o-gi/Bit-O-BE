@@ -4,11 +4,7 @@ import bit.base.BaseEntity;
 import bit.couple.domain.Couple;
 import bit.day.dto.DayCommand;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
@@ -26,7 +22,8 @@ public class Day extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(optional = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "couple_id")
     private Couple couple;
 
     @NotNull

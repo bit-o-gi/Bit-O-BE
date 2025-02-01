@@ -19,10 +19,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/v1/day")
-public class DayController {
-
+@RequiredArgsConstructor
+public class DayController implements DayControllerDoc{
     private final DayService dayService;
 
     @GetMapping("/{id}")
@@ -48,9 +47,8 @@ public class DayController {
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<?> deleteDay(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteDay(@PathVariable Long id) {
         dayService.deleteDay(id);
-        return ResponseEntity.ok().build();
     }
 }
