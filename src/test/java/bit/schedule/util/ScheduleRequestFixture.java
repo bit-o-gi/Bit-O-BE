@@ -11,6 +11,7 @@ public class ScheduleRequestFixture {
         return ScheduleCreateRequest.builder()
                 .title("title")
                 .content("content")
+                .location("location")
                 .startDateTime(start)
                 .endDateTime(end)
                 .build();
@@ -20,6 +21,7 @@ public class ScheduleRequestFixture {
         return ScheduleUpdateRequest.builder()
                 .title("title")
                 .content("content")
+                .location("location")
                 .startDateTime(start)
                 .endDateTime(end)
                 .build();
