@@ -3,6 +3,7 @@ package bit.couple.fixture;
 import bit.couple.domain.Couple;
 import bit.couple.enums.CoupleStatus;
 import bit.user.domain.User;
+import bit.user.entity.UserEntity;
 import bit.user.enums.OauthPlatformType;
 import java.lang.reflect.Field;
 import java.util.List;
@@ -10,7 +11,11 @@ import java.util.List;
 public class CoupleFixtures {
 
     public static Couple initialCouple() throws Exception {
-        Couple couple = Couple.of("test1@test.com", "test2@test.com", CoupleStatus.CREATING);
+        List<User> users = initialUsers();
+        UserEntity initiatorUser = UserEntity.from(users.get(0));
+        UserEntity partnerUser = UserEntity.from(users.get(1));
+
+        Couple couple = Couple.of(initiatorUser, partnerUser, CoupleStatus.CREATING);
         Class<?> clazz = Couple.class;
         Field idField = clazz.getDeclaredField("id");
         idField.setAccessible(true);

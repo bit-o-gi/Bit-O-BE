@@ -4,13 +4,14 @@ import bit.couple.domain.Couple;
 import bit.couple.enums.CoupleStatus;
 import bit.user.domain.User;
 import bit.user.dto.UserResponse;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @Builder
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class CoupleResponDto {
 
     private Long id;

@@ -17,22 +17,61 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
 public class CoupleService {
-    private final HashMap<String, CodeEntry> codeStore = new HashMap<>();
+    private final ConcurrentHashMap<String, CodeEntry> codeStore = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<CodeEntry, String> reverseCodeStore = new ConcurrentHashMap<>();
 
     private final CoupleRepository coupleRepository;
 
     @Transactional
-    public CoupleRcodeResponseDto createCode(UserPrincipal userPrincipal) {
+    public CoupleRcodeResponseDto createCode(User user) {
+        String existingCode = reverseCodeStore.get(new CodeEntry(user, 0));
+
+        if (existingCode != null) {
+            CodeEntry existingEntry = codeStore.get(existingCode);
+
+            // NOTE: 기존 코드가 5분 이내라면 예외 발생
+            if (existingEntry != null && !existingEntry.isExpired()) {
+                throw new CoupleException.CoupleAlreadyExistsException();
+            }
+
+            // NOTE: 5분이 지났다면 기존 코드 삭제
+            removeCode(existingEntry);
+        }
+
         String randomCode;
+
         do {
             randomCode = RandomStringUtils.randomAlphanumeric(12);
-        } while (codeStore.containsKey(randomCode)); // 중복 검사
-        codeStore.put(randomCode, new CodeEntry(userPrincipal.getUser(), System.currentTimeMillis()));
+//            NOTE: 없으면 유일한 코드 만듬.
+        } while (codeStore.putIfAbsent(randomCode, new CodeEntry(user, System.currentTimeMillis())) != null);
+
+        CodeEntry codeEntry = new CodeEntry(user, System.currentTimeMillis());
+
+        codeStore.put(randomCode, codeEntry);
+        reverseCodeStore.put(codeEntry, randomCode);
+
         return CoupleRcodeResponseDto.of(randomCode);
+    }
+
+    public CoupleRcodeResponseDto getCodeByUser(User user) {
+        String code = reverseCodeStore.get(new CodeEntry(user, 0));
+        if (code == null) {
+            throw new CoupleException.CodeNotFoundException();
+        }
+
+        return CoupleRcodeResponseDto.of(code);
+    }
+
+    private void removeCode(CodeEntry codeEntry) {
+        String code = reverseCodeStore.remove(codeEntry);
+        if (code != null) {
+            codeStore.remove(code);
+        }
     }
 
     @Transactional(readOnly = true)
@@ -50,7 +89,7 @@ public class CoupleService {
             Map.Entry<String, CodeEntry> entry = iterator.next();
             long createdAt = entry.getValue().getCreatedAt();
 
-            if (now - createdAt > 5 * 60 * 1000) { // 5분 지난 경우
+            if (now - createdAt > 5 * 60 * 1000) {
                 iterator.remove();
             }
         }
@@ -58,12 +97,16 @@ public class CoupleService {
 
 
     @Transactional
-    public void refreshApprove(CoupleRequestDto coupleRequestDto) {
-        coupleRepository.findById(coupleRequestDto.getId()).orElseThrow(() -> new CoupleException.CoupleNotFoundException()).fromReq(coupleRequestDto);
-    }
+    public void refreshApprove(User user, CoupleRequestDto coupleRequestDto) {
+        Couple couple = coupleRepository.findById(coupleRequestDto.getId())
+                .orElseThrow(CoupleException.CoupleNotFoundException::new);
 
+        couple.validateUserIsInCouple(UserEntity.from(user));
+
+        couple.fromReq(coupleRequestDto);
+    }
     @Transactional
-    public void approveCouple(UserPrincipal userPrincipal, CoupleCreateRequest coupleCreateRequest) {
+    public void confirmCouple(User user, CoupleCreateRequest coupleCreateRequest) {
         //NOTE: 1. codeStore에서 코드로 CodeEntry 조회
         String code = coupleCreateRequest.getCode();
         CodeEntry codeEntry = codeStore.get(code);
@@ -75,7 +118,7 @@ public class CoupleService {
 
         //NOTE: 3. 사용자 A와 사용자 B 가져오기
         User userA = codeEntry.getUser(); // 코드 발급한 사용자 A
-        User userB = userPrincipal.getUser(); // 요청한 사용자 B
+        User userB = user; // 요청한 사용자 B
 
         //NOTE: 4. 커플 생성 로직
         Couple couple = Couple.of(UserEntity.from(userA), UserEntity.from(userB), CoupleStatus.APPROVED);

@@ -4,6 +4,7 @@ import bit.base.BaseEntity;
 import bit.couple.dto.CoupleRequestDto;
 import bit.couple.dto.CoupleResponDto;
 import bit.couple.enums.CoupleStatus;
+import bit.couple.exception.CoupleException;
 import bit.user.domain.User;
 import bit.user.entity.UserEntity;
 import jakarta.persistence.*;
@@ -54,5 +55,9 @@ public class Couple extends BaseEntity { // 클래스 이름을 CoupleConnection
     public void approve() {
         this.status = CoupleStatus.APPROVED;
     }
-
+    public void validateUserIsInCouple(UserEntity user) {
+        if (!this.initiatorUser.equals(user) && !this.partnerUser.equals(user)) {
+            throw new CoupleException.CouplePermissionException(); // 유효성 검사 실패 시 예외 발생
+        }
+    }
 }
