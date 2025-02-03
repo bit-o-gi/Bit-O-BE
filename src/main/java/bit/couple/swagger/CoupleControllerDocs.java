@@ -36,6 +36,11 @@ public interface CoupleControllerDocs {
             responses = {@ApiResponse(responseCode = "200", description = "커플 정보 수정 성공")})
     ResponseEntity<Void> updateCouple(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody CoupleRequestDto coupleRequestDto);
 
+    @Operation(summary = "커플 정보 수정", description = "커플 ID에 속한 유저 정보를 수정합니다.",
+            responses = {@ApiResponse(responseCode = "200", description = "커플 정보 수정 성공")})
+    ResponseEntity<Void> approveCouple(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable Long coupleId);
+
+
     @Operation(summary = "커플 삭제", description = "커플 정보를 삭제합니다.",
             responses = {@ApiResponse(responseCode = "204", description = "커플 삭제 성공")})
     ResponseEntity<Void> deleteCouple(@PathVariable Long coupleId);

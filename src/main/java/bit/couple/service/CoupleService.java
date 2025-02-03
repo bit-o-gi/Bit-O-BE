@@ -97,7 +97,7 @@ public class CoupleService {
 
 
     @Transactional
-    public void refreshApprove(User user, CoupleRequestDto coupleRequestDto) {
+    public void refreshCouple(User user, CoupleRequestDto coupleRequestDto) {
         Couple couple = coupleRepository.findById(coupleRequestDto.getId())
                 .orElseThrow(CoupleException.CoupleNotFoundException::new);
 
@@ -105,6 +105,16 @@ public class CoupleService {
 
         couple.fromReq(coupleRequestDto);
     }
+
+    @Transactional
+    public void coupleApprove(User user, Long coupleId) {
+        Couple couple = coupleRepository.findById(coupleId)
+                .orElseThrow(CoupleException.CoupleNotFoundException::new);
+
+        couple.validateUserIsInCouple(UserEntity.from(user));
+        couple.approve();
+    }
+
     @Transactional
     public void confirmCouple(User user, CoupleCreateRequest coupleCreateRequest) {
         //NOTE: 1. codeStore에서 코드로 CodeEntry 조회

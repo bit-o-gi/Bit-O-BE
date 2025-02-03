@@ -1,10 +1,7 @@
 package bit.couple.service;
 
 import bit.couple.domain.Couple;
-import bit.couple.dto.CoupleCreateRequest;
-import bit.couple.dto.CoupleRequestDto;
-import bit.couple.dto.CoupleRcodeResponseDto;
-import bit.couple.dto.CoupleResponDto;
+import bit.couple.dto.*;
 import bit.couple.enums.CoupleStatus;
 import bit.couple.exception.CoupleException;
 import bit.couple.fixture.CoupleFixtures;
@@ -17,8 +14,13 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
@@ -27,6 +29,12 @@ class CoupleServiceTest {
 
     @InjectMocks
     private CoupleService coupleService;
+
+    @Mock
+    private ConcurrentHashMap<String, CodeEntry> codeStore;  // ✅ Mock 객체로 선언
+
+    @Mock
+    private ConcurrentHashMap<CodeEntry, String> reverseCodeStore;
 
     @Mock
     private CoupleRepository coupleRepository;
@@ -39,10 +47,26 @@ class CoupleServiceTest {
         MockitoAnnotations.openMocks(this);
         users = CoupleFixtures.initialUsers();
         testCouple = CoupleFixtures.initialCouple();
+
+        // Reflection을 사용하여 CoupleService의 codeStore 필드를 Mock으로 변경
+        Field codeStoreField = CoupleService.class.getDeclaredField("codeStore");
+        codeStoreField.setAccessible(true);
+        codeStoreField.set(coupleService, codeStore);  // 실제 `codeStore`를 Mock 객체로 교체
+
+        // 현재 시간 기준으로 CodeEntry 생성
+        User userA = users.get(0);
+        CodeEntry codeEntry = new CodeEntry(userA, System.currentTimeMillis());
+
+        // Mock 설정 추가
+        when(codeStore.get("some-code")).thenReturn(codeEntry); // 유효한 코드 반환
+        when(codeStore.get("invalid-code")).thenReturn(null);   // 존재하지 않는 코드
     }
 
+
+
+
     @Test
-    @DisplayName("✅ 커플 코드 생성 테스트")
+    @DisplayName(" 커플 코드 생성 테스트")
     void testCreateCode() {
         // given
         User user = users.get(0);
@@ -120,7 +144,6 @@ class CoupleServiceTest {
                 .isInstanceOf(CoupleException.CoupleNotFoundException.class);
     }
 
-//    TODO: 실패
     @Test
     @DisplayName("커플 승인 테스트")
     void testConfirmCouple() {

@@ -48,10 +48,17 @@ public class CoupleController implements CoupleControllerDocs {
         return ResponseEntity.status(201).build();
     }
 
-    // TODO: coupleId -> 커플에 속한 유저 수정
+    // NOTE: 커플에 속한 유저 수정
     @PutMapping("/")
     public ResponseEntity<Void> updateCouple(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody CoupleRequestDto coupleRequestDto) {
-        coupleService.refreshApprove(userPrincipal.getUser(), coupleRequestDto);
+        coupleService.refreshCouple(userPrincipal.getUser(), coupleRequestDto);
+        return ResponseEntity.ok().build();
+    }
+
+    // TODO: coupleId -> 커플에 속한 유저 수정
+    @PutMapping("/{coupleId}")
+    public ResponseEntity<Void> approveCouple(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable Long coupleId) {
+        coupleService.coupleApprove(userPrincipal.getUser(), coupleId);
         return ResponseEntity.ok().build();
     }
 
