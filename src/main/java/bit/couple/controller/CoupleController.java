@@ -4,7 +4,7 @@ import bit.auth.domain.UserPrincipal;
 import bit.couple.dto.CoupleCreateRequest;
 import bit.couple.dto.CoupleRcodeResponseDto;
 import bit.couple.dto.CoupleRequestDto;
-import bit.couple.dto.CoupleResponDto;
+import bit.couple.dto.CoupleResponseDto;
 import bit.couple.service.CoupleService;
 import bit.couple.swagger.CoupleControllerDocs;
 import lombok.RequiredArgsConstructor;
@@ -35,8 +35,8 @@ public class CoupleController implements CoupleControllerDocs {
 
     // NOTE: 커플 찾기
     @GetMapping("/{coupleId}")
-    public ResponseEntity<CoupleResponDto> getCouple(@PathVariable Long coupleId) {
-        CoupleResponDto response = coupleService.getCouple(coupleId);
+    public ResponseEntity<CoupleResponseDto> getCouple(@PathVariable Long coupleId) {
+        CoupleResponseDto response = coupleService.getCouple(coupleId);
         return ResponseEntity.ok(response);
     }
 
@@ -51,7 +51,7 @@ public class CoupleController implements CoupleControllerDocs {
     // NOTE: 커플에 속한 유저 수정
     @PutMapping("/")
     public ResponseEntity<Void> updateCouple(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody CoupleRequestDto coupleRequestDto) {
-        coupleService.refreshCouple(userPrincipal.getUser(), coupleRequestDto);
+        coupleService.updateCouple(userPrincipal.getUser(), coupleRequestDto);
         return ResponseEntity.ok().build();
     }
 

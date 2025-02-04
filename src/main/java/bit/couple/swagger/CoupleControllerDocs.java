@@ -4,7 +4,7 @@ import bit.auth.domain.UserPrincipal;
 import bit.couple.dto.CoupleCreateRequest;
 import bit.couple.dto.CoupleRcodeResponseDto;
 import bit.couple.dto.CoupleRequestDto;
-import bit.couple.dto.CoupleResponDto;
+import bit.couple.dto.CoupleResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,7 +26,7 @@ public interface CoupleControllerDocs {
 
     @Operation(summary = "커플 정보 조회", description = "커플 ID를 통해 커플 정보를 조회합니다.",
             responses = {@ApiResponse(responseCode = "200", description = "커플 정보 조회 성공")})
-    ResponseEntity<CoupleResponDto> getCouple(@PathVariable Long coupleId);
+    ResponseEntity<CoupleResponseDto> getCouple(@PathVariable Long coupleId);
 
     @Operation(summary = "커플 연결", description = "커플 코드를 입력하여 커플을 확정합니다.",
             responses = {@ApiResponse(responseCode = "201", description = "커플 연결 성공")})

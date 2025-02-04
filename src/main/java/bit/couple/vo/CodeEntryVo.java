@@ -1,15 +1,14 @@
-package bit.couple.dto;
+package bit.couple.vo;
 
 import bit.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import java.util.Objects;
 
 @Getter
 @AllArgsConstructor
-public class CodeEntry {
+public class CodeEntryVo {
     private final User user;
     private final long createdAt;
 
@@ -21,7 +20,7 @@ public class CodeEntry {
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
-        CodeEntry that = (CodeEntry) obj;
+        CodeEntryVo that = (CodeEntryVo) obj;
         return Objects.equals(user, that.user);
     }
 

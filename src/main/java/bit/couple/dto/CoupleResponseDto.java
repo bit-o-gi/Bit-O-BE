@@ -3,16 +3,14 @@ package bit.couple.dto;
 import bit.couple.domain.Couple;
 import bit.couple.enums.CoupleStatus;
 import bit.user.domain.User;
-import bit.user.dto.UserResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
 @Builder
 @AllArgsConstructor
-public class CoupleResponDto {
+public class CoupleResponseDto {
 
     private Long id;
 
@@ -22,8 +20,8 @@ public class CoupleResponDto {
 
     private CoupleStatus status;
 
-    public static CoupleResponDto of(Couple couple) {
-        return CoupleResponDto.builder()
+    public static CoupleResponseDto of(Couple couple) {
+        return CoupleResponseDto.builder()
                 .initiatorUser(couple.getInitiatorUser().toDomain())
                 .partnerUser(couple.getPartnerUser().toDomain())
                 .status(couple.getStatus())

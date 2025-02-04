@@ -2,10 +2,8 @@ package bit.couple.domain;
 
 import bit.base.BaseEntity;
 import bit.couple.dto.CoupleRequestDto;
-import bit.couple.dto.CoupleResponDto;
 import bit.couple.enums.CoupleStatus;
 import bit.couple.exception.CoupleException;
-import bit.user.domain.User;
 import bit.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -25,7 +23,8 @@ public class Couple extends BaseEntity { // 클래스 이름을 CoupleConnection
     private Long id;
 
     //NOTE: 커플을 발급한 사용자 (User A)
-    @ManyToOne(fetch = FetchType.LAZY)     @JoinColumn(name = "initiator_user_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "initiator_user_id", nullable = false)
     private UserEntity initiatorUser;
 
     //NOTE: 커플 요청을 승인한 사용자 (User B)
