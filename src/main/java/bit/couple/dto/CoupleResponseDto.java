@@ -12,13 +12,13 @@ import lombok.Getter;
 @AllArgsConstructor
 public class CoupleResponseDto {
 
-    private Long id;
+    private final Long id;
 
-    private User initiatorUser;
+    private final User initiatorUser;
 
-    private User partnerUser;
+    private final User partnerUser;
 
-    private CoupleStatus status;
+    private final CoupleStatus status;
 
     public static CoupleResponseDto of(Couple couple) {
         return CoupleResponseDto.builder()

@@ -11,11 +11,11 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 public class CoupleDto {
 
-    private Long id;
+    private final Long id;
 
-    private Long initiatorUserId;
+    private final Long initiatorUserId;
 
-    private Long partnerUserId;
+    private final Long partnerUserId;
 
-    private CoupleStatus status;
+    private final CoupleStatus status;
 }

@@ -11,13 +11,13 @@ import lombok.NoArgsConstructor;
 @Getter
 @Builder
 public class CoupleRequestDto {
-    private Long id;
+    private final Long id;
 
-    private User initiatorUser;
+    private final User initiatorUser;
 
-    private User partnerUser;
+    private final User partnerUser;
 
-    private CoupleStatus status;
+    private final CoupleStatus status;
 
     public static CoupleRequestDto from(Couple couple) {
         return CoupleRequestDto.builder()
