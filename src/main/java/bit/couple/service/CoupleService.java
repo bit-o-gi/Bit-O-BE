@@ -129,7 +129,6 @@ public class CoupleService {
         couple.approve();
     }
 
-    @Transactional
     public void confirmCouple(Long userId, CoupleRcodeReqestDto coupleCreateRequest) {
         //NOTE: 요청한 사용자
         UserEntity partnerUser = userJpaRepository.findById(userId)
