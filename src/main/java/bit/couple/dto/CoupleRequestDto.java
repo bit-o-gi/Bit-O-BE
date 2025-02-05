@@ -19,12 +19,12 @@ public class CoupleRequestDto {
 
     private final CoupleStatus status;
 
-    public static CoupleRequestDto from(Couple couple) {
-        return CoupleRequestDto.builder()
-                .id(couple.getId())
-                .initiatorUser(couple.getInitiatorUser().toDomain())
-                .partnerUser(couple.getPartnerUser().toDomain())
-                .status(couple.getStatus())
+    // CoupleRequestDto -> Couple 변환
+    public Couple toCouple() {
+        return Couple.builder()
+                .initiatorUser(UserEntity.from(this.initiatorUser))
+                .partnerUser(UserEntity.from(this.partnerUser))
+                .status(this.status)
                 .build();
     }
 }
