@@ -1,7 +1,7 @@
 package bit.couple.swagger;
 
 import bit.auth.domain.UserPrincipal;
-import bit.couple.dto.CoupleCreateRequest;
+import bit.couple.dto.CoupleRcodeReqestDto;
 import bit.couple.dto.CoupleRcodeResponseDto;
 import bit.couple.dto.CoupleRequestDto;
 import bit.couple.dto.CoupleResponseDto;
@@ -30,7 +30,7 @@ public interface CoupleControllerDocs {
 
     @Operation(summary = "커플 연결", description = "커플 코드를 입력하여 커플을 확정합니다.",
             responses = {@ApiResponse(responseCode = "201", description = "커플 연결 성공")})
-    ResponseEntity<Void> confirmCouple(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody CoupleCreateRequest coupleCreateRequest);
+    ResponseEntity<Void> confirmCouple(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody CoupleRcodeReqestDto coupleCreateRequest);
 
     @Operation(summary = "커플 정보 수정", description = "커플 ID에 속한 유저 정보를 수정합니다.",
             responses = {@ApiResponse(responseCode = "200", description = "커플 정보 수정 성공")})

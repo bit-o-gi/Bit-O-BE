@@ -1,7 +1,7 @@
 package bit.couple.controller;
 
 import bit.auth.domain.UserPrincipal;
-import bit.couple.dto.CoupleCreateRequest;
+import bit.couple.dto.CoupleRcodeReqestDto;
 import bit.couple.dto.CoupleRcodeResponseDto;
 import bit.couple.dto.CoupleRequestDto;
 import bit.couple.dto.CoupleResponseDto;
@@ -22,14 +22,14 @@ public class CoupleController implements CoupleControllerDocs {
     // NOTE: 커플 인증코드 발급 완료
     @PostMapping("/code")
     public ResponseEntity<CoupleRcodeResponseDto> createCode(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        CoupleRcodeResponseDto response = coupleService.createCode(userPrincipal.getUser());
+        CoupleRcodeResponseDto response = coupleService.createCode(userPrincipal.getId());
         return ResponseEntity.status(201).body(response);
     }
 
     // NOTE: 커플 인증코드 조회
     @GetMapping("/code")
     public ResponseEntity<CoupleRcodeResponseDto> searchCode(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        CoupleRcodeResponseDto response = coupleService.getCodeByUser(userPrincipal.getUser());
+        CoupleRcodeResponseDto response = coupleService.getCodeByUser(userPrincipal.getId());
         return ResponseEntity.ok(response);
     }
 
@@ -43,22 +43,22 @@ public class CoupleController implements CoupleControllerDocs {
     // NOTE: 커플 연결
     @PostMapping("/confirm")
     public ResponseEntity<Void> confirmCouple(
-            @AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody CoupleCreateRequest coupleCreateRequest) {
-        coupleService.confirmCouple(userPrincipal.getUser(), coupleCreateRequest);
+            @AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody CoupleRcodeReqestDto coupleCreateRequest) {
+        coupleService.confirmCouple(userPrincipal.getId(), coupleCreateRequest);
         return ResponseEntity.status(201).build();
     }
 
     // NOTE: 커플에 속한 유저 수정
     @PutMapping("/")
     public ResponseEntity<Void> updateCouple(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody CoupleRequestDto coupleRequestDto) {
-        coupleService.updateCouple(userPrincipal.getUser(), coupleRequestDto);
+        coupleService.updateCouple(userPrincipal.getId(), coupleRequestDto);
         return ResponseEntity.ok().build();
     }
 
     // TODO: coupleId -> 커플에 속한 유저 수정
     @PutMapping("/{coupleId}")
     public ResponseEntity<Void> approveCouple(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable Long coupleId) {
-        coupleService.coupleApprove(userPrincipal.getUser(), coupleId);
+        coupleService.coupleApprove(userPrincipal.getId(), coupleId);
         return ResponseEntity.ok().build();
     }
 

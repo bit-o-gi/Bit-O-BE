@@ -1,15 +1,16 @@
 package bit.couple.vo;
 
-import bit.user.domain.User;
+import bit.user.entity.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Objects;
 
 @Getter
+
 @AllArgsConstructor
 public class CodeEntryVo {
-    private final User user;
+    private final long userId;
     private final long createdAt;
 
     public boolean isExpired() {
@@ -21,11 +22,12 @@ public class CodeEntryVo {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         CodeEntryVo that = (CodeEntryVo) obj;
-        return Objects.equals(user, that.user);
+        return userId == that.userId && Math.abs(createdAt - that.createdAt) < 1000; // 1초 내 오차 허용
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(user);
+        return Objects.hash(userId); // createdAt 제거
     }
+
 }
