@@ -23,12 +23,12 @@ public class Couple extends BaseEntity { // 클래스 이름을 CoupleConnection
     private Long id;
 
     //NOTE: 커플을 발급한 사용자 (User A)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "initiator_user_id", nullable = false)
     private UserEntity initiatorUser;
 
     //NOTE: 커플 요청을 승인한 사용자 (User B)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "partner_user_id", nullable = false)
     private UserEntity partnerUser;
 

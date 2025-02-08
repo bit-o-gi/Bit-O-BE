@@ -117,7 +117,6 @@ class CoupleServiceTest {
         assertThat(response.getCode()).isNotBlank();
     }
 
-    //    TODO: 안됨
     @Test
     @DisplayName("이미 존재하는 코드 예외 발생")
     void testCreateCode_AlreadyExists() {

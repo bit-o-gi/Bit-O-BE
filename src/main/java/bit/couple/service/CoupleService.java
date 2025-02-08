@@ -7,8 +7,11 @@ import bit.couple.exception.CoupleException;
 import bit.couple.exception.CoupleException.CoupleNotFoundException;
 import bit.couple.repository.CoupleRepository;
 import bit.couple.vo.CodeEntryVo;
+import bit.user.domain.User;
 import bit.user.entity.UserEntity;
 import bit.user.repository.UserJpaRepository;
+import bit.user.service.UserService;
+import bit.user.service.UserServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -26,7 +29,7 @@ public class CoupleService {
     private final ConcurrentHashMap<CodeEntryVo, String> reverseCodeStore = new ConcurrentHashMap<>();
 
     private final CoupleRepository coupleRepository;
-    private final UserJpaRepository userJpaRepository;  // 추가됨
+    private final UserService userService;  // 추가됨
 
     @Transactional
     public CoupleRcodeResponseDto createCode(Long userId) {
@@ -106,32 +109,33 @@ public class CoupleService {
 
     @Transactional
     public void updateCouple(Long userId, CoupleRequestDto coupleRequestDto) {
-        UserEntity user = userJpaRepository.findById(userId)
+        User user = userService.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException());
 
         Couple couple = coupleRepository.findById(coupleRequestDto.getId())
                 .orElseThrow(CoupleException.CoupleNotFoundException::new);
 
-        couple.validateUserIsInCouple(user);
+        couple.validateUserIsInCouple(UserEntity.from(user));
 
         couple.fromReq(coupleRequestDto);
     }
 
     @Transactional
     public void coupleApprove(Long userId, Long coupleId) {
-        UserEntity user = userJpaRepository.findById(userId)
+        User user = userService.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException());
 
         Couple couple = coupleRepository.findById(coupleId)
                 .orElseThrow(CoupleException.CoupleNotFoundException::new);
 
-        couple.validateUserIsInCouple(user);
+        couple.validateUserIsInCouple(UserEntity.from(user));
+
         couple.approve();
     }
 
     public void confirmCouple(Long userId, CoupleRcodeReqestDto coupleCreateRequest) {
         //NOTE: 요청한 사용자
-        UserEntity partnerUser = userJpaRepository.findById(userId)
+        User partnerUser = userService.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException());
 
         //NOTE: 1. codeStore에서 코드로 CodeEntryVo 조회
@@ -146,15 +150,16 @@ public class CoupleService {
         //NOTE: 3. 사용자 A와 사용자 B 가져오기
         //NOTE: 코드 발급한 사용자
         long initiatorUserId = CodeEntryVo.getUserId();
-        UserEntity initiatorUser = userJpaRepository.findById(initiatorUserId)
+        User initiatorUser = userService.findById(initiatorUserId)
                 .orElseThrow(() -> new EntityNotFoundException());
 
         //NOTE: 4. 커플 생성 로직
-        Couple couple = Couple.of(initiatorUser, partnerUser, CoupleStatus.APPROVED);
+        Couple couple = Couple.of(UserEntity.from(initiatorUser), UserEntity.from(partnerUser), CoupleStatus.APPROVED);
         coupleRepository.save(couple); // 커플 정보를 저장
 
         //NOTE: 5. codeStore에서 코드 삭제
         codeStore.remove(code);
+        reverseCodeStore.remove(CodeEntryVo);
     }
 
 
