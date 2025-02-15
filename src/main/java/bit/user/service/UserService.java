@@ -16,7 +16,4 @@ public interface UserService {
     Optional<User> findById(Long userId);
 
     boolean isRegisteredEmail(String email);
-
-    void updateCouple(String senderEmail, String receiverEmail, Couple couple);
-
 }
