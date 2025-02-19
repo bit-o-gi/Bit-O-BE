@@ -31,6 +31,14 @@ public class CoupleService {
     private final CoupleRepository coupleRepository;
     private final UserService userService;  // 추가됨
 
+    @Transactional(readOnly = true)
+    public CoupleResponseDto getCoupleByUserId(Long userId) {
+        Couple couple = coupleRepository.findByUserId(userId)
+                .orElseThrow(() -> new CoupleException.CoupleNotFoundException());
+        return CoupleResponseDto.of(couple);
+    }
+
+
     @Transactional
     public CoupleRcodeResponseDto createCode(Long userId) {
 
