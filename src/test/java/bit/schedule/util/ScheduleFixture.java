@@ -1,6 +1,7 @@
 package bit.schedule.util;
 
 import bit.schedule.domain.Schedule;
+import bit.user.entity.UserEntity;
 
 import java.time.LocalDateTime;
 
@@ -16,6 +17,17 @@ public class ScheduleFixture {
                 .location("location")
                 .startDateTime(start)
                 .endDateTime(end)
+                .build();
+    }
+
+    public static Schedule getNewSchedule(UserEntity user) {
+        return Schedule.builder()
+                .user(user)
+                .title("title")
+                .content("content")
+                .location("location")
+                .startDateTime(LocalDateTime.now())
+                .endDateTime(LocalDateTime.now().plusHours(1))
                 .build();
     }
 }
