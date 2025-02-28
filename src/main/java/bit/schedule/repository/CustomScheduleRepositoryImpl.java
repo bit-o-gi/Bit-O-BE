@@ -13,16 +13,21 @@ import java.util.Optional;
 public class CustomScheduleRepositoryImpl implements CustomScheduleRepository {
     private final JPAQueryFactory queryFactory;
 
-    public List<Schedule> findCoupleSchedule(Long userId) {
+    public List<Schedule> findAllCoupleSchedule(Long userId) {
         QSchedule schedule = QSchedule.schedule;
         QCouple couple = QCouple.couple;
 
         return queryFactory
-                .select(schedule)
+                .selectDistinct(schedule)
                 .from(schedule)
-                .leftJoin(schedule.user.couple, couple)
-                .where(couple.initiatorUser.id.eq(userId)
-                        .or(couple.partnerUser.id.eq(userId)))
+                .leftJoin(couple)
+                .on(couple.initiatorUser.id.eq(schedule.user.id)
+                        .or(couple.partnerUser.id.eq(schedule.user.id)))
+                .where(
+                        couple.initiatorUser.id.eq(userId)
+                                .or(couple.partnerUser.id.eq(userId))
+                                .or(schedule.user.id.eq(userId))
+                )
                 .fetch();
     }
 
@@ -34,14 +39,17 @@ public class CustomScheduleRepositoryImpl implements CustomScheduleRepository {
                 queryFactory
                         .select(schedule)
                         .from(schedule)
-                        .leftJoin(schedule.user.couple, couple)
-                        .where(couple.initiatorUser.id.eq(userId)
+                        .leftJoin(couple)
+                        .on(couple.initiatorUser.id.eq(schedule.user.id)
+                                .or(couple.partnerUser.id.eq(schedule.user.id)))
+                        .where((couple.initiatorUser.id.eq(userId)
                                 .or(couple.partnerUser.id.eq(userId))
+                                .or(schedule.user.id.eq(userId)))
                                 .and(schedule.id.eq(scheduleId)))
                         .fetchOne());
     }
 
-    public List<Schedule> findUserSchedule(Long userId) {
+    public List<Schedule> findAllUserSchedule(Long userId) {
         QSchedule schedule = QSchedule.schedule;
 
         return queryFactory

@@ -6,8 +6,9 @@ import bit.schedule.dto.ScheduleResponse;
 import bit.schedule.dto.ScheduleUpdateRequest;
 import bit.schedule.exception.ScheduleNotFoundException;
 import bit.schedule.repository.ScheduleRepository;
+import bit.user.domain.User;
 import bit.user.entity.UserEntity;
-import bit.user.repository.UserJpaRepository;
+import bit.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +21,7 @@ import java.util.List;
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
-    private final UserJpaRepository userJpaRepository;
+    private final UserService userService;
 
     public ScheduleResponse getSchedule(Long userId, Long scheduleId) {
         Schedule schedule = scheduleRepository.findSchedule(userId, scheduleId).orElseThrow(ScheduleNotFoundException::new);
@@ -28,14 +29,14 @@ public class ScheduleService {
     }
 
     public List<ScheduleResponse> getSchedulesByUserId(Long userId) {
-        List<Schedule> schedules = scheduleRepository.findUserSchedule(userId);
+        List<Schedule> schedules = scheduleRepository.findAllUserSchedule(userId);
         return schedules.stream()
                 .map(ScheduleResponse::new)
                 .toList();
     }
 
     public List<ScheduleResponse> getCoupleSchedulesByUserId(Long userId) {
-        List<Schedule> schedules = scheduleRepository.findCoupleSchedule(userId);
+        List<Schedule> schedules = scheduleRepository.findAllCoupleSchedule(userId);
         return schedules.stream()
                 .map(ScheduleResponse::new)
                 .toList();
@@ -43,8 +44,9 @@ public class ScheduleService {
 
     @Transactional
     public ScheduleResponse saveSchedule(Long userId, ScheduleCreateRequest scheduleCreateRequest) {
-        UserEntity user = userJpaRepository.getReferenceById(userId);
-        Schedule schedule = scheduleCreateRequest.toEntity(user);
+        User user = userService.getById(userId);
+        UserEntity userEntity = UserEntity.from(user);
+        Schedule schedule = scheduleCreateRequest.toEntity(userEntity);
         scheduleRepository.save(schedule);
         return new ScheduleResponse(schedule);
     }
