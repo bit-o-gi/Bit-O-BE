@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -25,7 +26,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     public static final String REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
     public static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(14);
     public static final Duration ACCESS_TOKEN_DURATION = Duration.ofDays(1);
-    public static final String REDIRECT_PATH = "http://localhost:3000/login";
+
+    @Value("${spring.app.redirect.path}")
+    private String redirectPath;
 
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -79,7 +82,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     // 액세스 토큰을 패스에 추가
     private String getTargetUrl(String token){
-        return UriComponentsBuilder.fromUriString(REDIRECT_PATH)
+        return UriComponentsBuilder.fromUriString(redirectPath)
                 .queryParam("token", token)
                 .build().toString();
     }
