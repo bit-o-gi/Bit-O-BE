@@ -41,15 +41,4 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(email).isPresent();
     }
 
-    public void updateCouple(String senderEmail, String receiverEmail, Couple couple) {
-        User sender = userRepository.findByEmail(senderEmail)
-                .orElseThrow(() -> new IllegalArgumentException("User not found By Email"));
-        User receiver = userRepository.findByEmail(receiverEmail)
-                .orElseThrow(() -> new IllegalArgumentException("User not found By Email"));
-
-        for (User user : List.of(sender, receiver)) {
-            User updateCoupleUser = user.updateCouple(couple);
-            userRepository.save(updateCoupleUser);
-        }
-    }
 }
