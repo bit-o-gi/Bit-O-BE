@@ -7,6 +7,7 @@ import bit.couple.dto.CoupleRequestDto;
 import bit.couple.dto.CoupleResponseDto;
 import bit.couple.service.CoupleService;
 import bit.couple.swagger.CoupleControllerDocs;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,6 +19,13 @@ import org.springframework.web.bind.annotation.*;
 public class CoupleController implements CoupleControllerDocs {
 
     private final CoupleService coupleService;
+
+    // TODO: 현재 로그인한 사용자의 커플 정보 조회
+    @GetMapping("")
+    public ResponseEntity<CoupleResponseDto> getCoupleInfo(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        CoupleResponseDto response = coupleService.getCoupleByUserId(userPrincipal.getId());
+        return ResponseEntity.ok(response);
+    }
 
     // NOTE: 커플 인증코드 발급 완료
     @PostMapping("/code")

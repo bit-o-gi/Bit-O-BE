@@ -47,10 +47,12 @@ class CoupleServiceTest {
     private UserJpaRepository userJpaRepository;  
 
 
+    @Mock
     private UserServiceImpl userService;
 
 
     private List<UserEntity> users;
+    private UserEntity userA;
     private Couple testCouple;
 
     @BeforeEach
@@ -84,7 +86,7 @@ class CoupleServiceTest {
         injectMockField(coupleService, "reverseCodeStore", reverseCodeStore);
 
         // 현재 시간 기준으로 CodeEntry 생성
-        UserEntity userA = users.get(0);
+        userA = users.get(0);
         CodeEntryVo codeEntry = new CodeEntryVo(userA.getId(), System.currentTimeMillis());
 
         // Mock 설정 추가
@@ -93,6 +95,8 @@ class CoupleServiceTest {
 
         when(reverseCodeStore.get(codeEntry)).thenReturn("some-code");
         when(reverseCodeStore.get(new CodeEntryVo(999L, System.currentTimeMillis()))).thenReturn(null);
+        testCouple = Couple.of(testCouple.getInitiatorUser(), testCouple.getPartnerUser(), CoupleStatus.APPROVED);
+
     }
 
     private void injectMockField(Object target, String fieldName, Object mockInstance) throws Exception {
@@ -100,6 +104,21 @@ class CoupleServiceTest {
         field.setAccessible(true);
         field.set(target, mockInstance);
     }
+    @Test
+    @DisplayName("사용자의 커플 정보 조회 테스트")
+    void testGetCoupleByUserId() {
+        // 여기서 testCouple을 강제 APPROVED로 설정
+        testCouple = Couple.of(testCouple.getInitiatorUser(), testCouple.getPartnerUser(), CoupleStatus.APPROVED);
+
+        // Mock 설정 시 APPROVED 상태의 testCouple을 반환하도록 수정
+        when(coupleRepository.findByUserId(userA.getId())).thenReturn(Optional.of(testCouple));
+
+        CoupleResponseDto response = coupleService.getCoupleByUserId(userA.getId());
+
+        assertThat(response).isNotNull();
+        assertThat(response.getStatus()).isEqualTo(CoupleStatus.APPROVED);
+    }
+
 
     @Test
     @DisplayName("커플 코드 생성 테스트")
@@ -107,7 +126,10 @@ class CoupleServiceTest {
         // given
         UserEntity user = users.get(0);
         when(userJpaRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        when(coupleRepository.findById(anyLong())).thenReturn(Optional.of(testCouple));
+
+        // 기존 불필요한 Mocking 제거
+        when(reverseCodeStore.get(any(CodeEntryVo.class))).thenReturn(null);
+        when(codeStore.putIfAbsent(anyString(), any())).thenReturn(null);
 
         // when
         CoupleRcodeResponseDto response = coupleService.createCode(user.getId());
@@ -115,7 +137,12 @@ class CoupleServiceTest {
         // then
         assertThat(response).isNotNull();
         assertThat(response.getCode()).isNotBlank();
+
+        //  코드 저장이 정상적으로 수행되었는지 검증
+        verify(codeStore, times(1)).putIfAbsent(anyString(), any(CodeEntryVo.class));
+        verify(reverseCodeStore, times(1)).put(any(CodeEntryVo.class), anyString());
     }
+
 
     @Test
     @DisplayName("이미 존재하는 코드 예외 발생")
@@ -151,15 +178,22 @@ class CoupleServiceTest {
         // given
         UserEntity user = users.get(0);
         when(userJpaRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        CoupleRcodeResponseDto createdCode = coupleService.createCode(user.getId());
+
+        // Mock 설정 추가: createCode() 실행 후 reverseCodeStore가 해당 값을 저장하도록 설정
+        String expectedCode = "generated-code";
+        CodeEntryVo codeEntryVo = new CodeEntryVo(user.getId(), System.currentTimeMillis());
+
+        when(reverseCodeStore.get(new CodeEntryVo(user.getId(), 0))).thenReturn(expectedCode);
+        when(codeStore.get(expectedCode)).thenReturn(codeEntryVo);
 
         // when
         CoupleRcodeResponseDto foundCode = coupleService.getCodeByUser(user.getId());
 
         // then
         assertThat(foundCode).isNotNull();
-        assertThat(foundCode.getCode()).isEqualTo(createdCode.getCode());
+        assertThat(foundCode.getCode()).isEqualTo(expectedCode);
     }
+
 
     @Test
     @DisplayName("존재하지 않는 코드 조회 시 예외 발생")
@@ -168,20 +202,32 @@ class CoupleServiceTest {
         UserEntity user = users.get(0);
         when(userJpaRepository.findById(user.getId())).thenReturn(Optional.of(user));
 
+        // Mock 설정 추가: reverseCodeStore가 null을 반환하도록 보장
+        when(reverseCodeStore.get(any(CodeEntryVo.class))).thenReturn(null);
+
         // when & then
         assertThatThrownBy(() -> coupleService.getCodeByUser(user.getId()))
                 .isInstanceOf(CoupleException.CodeNotFoundException.class);
     }
+
 
     @Test
     @DisplayName("커플 승인 테스트")
     void testConfirmCouple() {
         // given
         CoupleRcodeReqestDto request = new CoupleRcodeReqestDto("some-code");
-        UserEntity userA = users.get(0);
         UserEntity userB = users.get(1);
         Couple couple = Couple.of(userA, userB, CoupleStatus.APPROVED);
-        when(userJpaRepository.findById(userB.getId())).thenReturn(Optional.of(userB));
+
+        // Mock: 사용자 조회
+        when(userService.findById(userB.getId())).thenReturn(Optional.of(userB.toDomain()));
+        when(userService.findById(userA.getId())).thenReturn(Optional.of(userA.toDomain()));
+
+        // Mock: 코드 저장소에서 유효한 코드 반환하도록 설정
+        CodeEntryVo codeEntryVo = new CodeEntryVo(userA.getId(), System.currentTimeMillis());
+        when(codeStore.get(request.getCode())).thenReturn(codeEntryVo);
+
+        // Mock: 커플 저장 (테스트 중 실제로 DB에 저장되는 것은 아님)
         when(coupleRepository.save(any())).thenReturn(couple);
 
         // when
@@ -189,7 +235,10 @@ class CoupleServiceTest {
 
         // then
         verify(coupleRepository, times(1)).save(any());
+        verify(codeStore, times(1)).remove(request.getCode());
+        verify(reverseCodeStore, times(1)).remove(codeEntryVo);
     }
+
 
     @Test
     @DisplayName("존재하지 않는 코드 승인 시 예외 발생")
@@ -197,12 +246,18 @@ class CoupleServiceTest {
         // given
         CoupleRcodeReqestDto request = new CoupleRcodeReqestDto("invalid-code");
         UserEntity userB = users.get(1);
-        when(userJpaRepository.findById(userB.getId())).thenReturn(Optional.of(userB));
+
+        // Mock: userService.findById()가 정상적으로 유저를 반환하도록 설정
+        when(userService.findById(userB.getId())).thenReturn(Optional.of(userB.toDomain()));
+
+        // Mock: codeStore가 존재하지 않는 코드에 대해 null을 반환하도록 설정
+        when(codeStore.get(request.getCode())).thenReturn(null);
 
         // when & then
         assertThatThrownBy(() -> coupleService.confirmCouple(userB.getId(), request))
                 .isInstanceOf(CoupleException.CodeNotFoundException.class);
     }
+
 
     @Test
     @DisplayName("커플 삭제 테스트")
