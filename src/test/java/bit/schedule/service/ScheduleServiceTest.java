@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-class ScheduleServiceImplTest {
+class ScheduleServiceTest {
 
     @Mock
     private ScheduleRepository scheduleRepository;
@@ -36,7 +36,7 @@ class ScheduleServiceImplTest {
     private UserJpaRepository userJpaRepository;
 
     @InjectMocks
-    private ScheduleServiceImpl scheduleService;
+    private ScheduleService scheduleService;
 
     @DisplayName("스케줄 ID로 스케줄을 찾지 못한 경우 에러를 발생시킨다.")
     @Test
@@ -44,7 +44,7 @@ class ScheduleServiceImplTest {
         //Given
         Long userId = 1L;
         Long scheduleId = 1L;
-        given(scheduleRepository.findByUserIdAndId(scheduleId, userId)).willReturn(Optional.empty());
+        given(scheduleRepository.findSchedule(scheduleId, userId)).willReturn(Optional.empty());
         //When Then
         assertThatThrownBy(() -> scheduleService.getSchedule(userId, scheduleId))
                 .isInstanceOf(EntityNotFoundException.class)
@@ -58,7 +58,7 @@ class ScheduleServiceImplTest {
         Long userId = 1L;
         Long scheduleId = 1L;
         Schedule schedule = getNewSchedule(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
-        given(scheduleRepository.findByUserIdAndId(scheduleId, userId)).willReturn(Optional.ofNullable(schedule));
+        given(scheduleRepository.findSchedule(scheduleId, userId)).willReturn(Optional.ofNullable(schedule));
         //When
         ScheduleResponse result = scheduleService.getSchedule(userId, scheduleId);
         //Then
@@ -86,7 +86,7 @@ class ScheduleServiceImplTest {
         Long userId = 1L;
         Long scheduleId = 1L;
         ScheduleUpdateRequest scheduleUpdateRequest = getNewScheduleUpdateRequest(LocalDateTime.now(), LocalDateTime.now().minusHours(1));
-        given(scheduleRepository.findByUserIdAndId(userId, scheduleId)).willReturn(Optional.ofNullable(getNewSchedule(LocalDateTime.now(), LocalDateTime.now().plusHours(1))));
+        given(scheduleRepository.findSchedule(userId, scheduleId)).willReturn(Optional.ofNullable(getNewSchedule(LocalDateTime.now(), LocalDateTime.now().plusHours(1))));
         //When
         //Then
         assertThatThrownBy(() -> scheduleService.updateSchedule(userId, scheduleId, scheduleUpdateRequest))
@@ -101,7 +101,7 @@ class ScheduleServiceImplTest {
         Long userId = 1L;
         Long scheduleId = 1L;
         ScheduleUpdateRequest scheduleUpdateRequest = getNewScheduleUpdateRequest(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
-        given(scheduleRepository.findByUserIdAndId(userId, scheduleId)).willReturn(Optional.empty());
+        given(scheduleRepository.findSchedule(userId, scheduleId)).willReturn(Optional.empty());
         //When
         //Then
         assertThatThrownBy(() -> scheduleService.updateSchedule(userId, scheduleId, scheduleUpdateRequest))
@@ -116,7 +116,7 @@ class ScheduleServiceImplTest {
         Long userId = 1L;
         Long scheduleId = 1L;
         ScheduleUpdateRequest scheduleUpdateRequest = getNewScheduleUpdateRequest(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
-        given(scheduleRepository.findByUserIdAndId(userId, scheduleId)).willReturn(Optional.empty());
+        given(scheduleRepository.findSchedule(userId, scheduleId)).willReturn(Optional.empty());
         //When
         //Then
         assertThatThrownBy(() -> scheduleService.updateSchedule(userId, scheduleId, scheduleUpdateRequest))
@@ -129,7 +129,7 @@ class ScheduleServiceImplTest {
         //Given
         Long userId = 1L;
         Long scheduleId = 1L;
-        given(scheduleRepository.findByUserIdAndId(userId, scheduleId)).willReturn(Optional.empty());
+        given(scheduleRepository.findSchedule(userId, scheduleId)).willReturn(Optional.empty());
         //When
         //Then
         assertThatThrownBy(() -> scheduleService.deleteSchedule(userId, scheduleId))
@@ -143,12 +143,10 @@ class ScheduleServiceImplTest {
         //Given
         Long userId = 1L;
         Long scheduleId = 1L;
-        given(scheduleRepository.findByUserIdAndId(userId, scheduleId)).willReturn(Optional.empty());
+        given(scheduleRepository.findSchedule(userId, scheduleId)).willReturn(Optional.empty());
         //When
         //Then
         assertThatThrownBy(() -> scheduleService.deleteSchedule(userId, scheduleId))
                 .isInstanceOf(ScheduleNotFoundException.class);
     }
-
-    //TODO 커플의 스케줄을 조회하는 테스트 코드 작성
 }

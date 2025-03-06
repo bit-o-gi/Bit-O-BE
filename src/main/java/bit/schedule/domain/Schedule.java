@@ -5,6 +5,7 @@ import bit.schedule.dto.ScheduleUpdateRequest;
 import bit.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ import java.util.Objects;
 
 @Entity
 @Getter
+@EqualsAndHashCode(exclude = "user", callSuper = false)
 @NoArgsConstructor
 public class Schedule extends BaseEntity {
     @Id
