@@ -20,7 +20,7 @@ public class CoupleController implements CoupleControllerDocs {
 
     private final CoupleService coupleService;
 
-    // TODO: 현재 로그인한 사용자의 커플 정보 조회
+    // NOTE: 현재 로그인한 사용자의 커플 정보 조회
     @GetMapping("")
     public ResponseEntity<CoupleResponseDto> getCoupleInfo(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         CoupleResponseDto response = coupleService.getCoupleByUserId(userPrincipal.getId());

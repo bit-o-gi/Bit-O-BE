@@ -10,7 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface CoupleRepository extends JpaRepository<Couple, Long> {
-    @Query("SELECT c FROM Couple c WHERE c.initiatorUser.id = :userId OR c.partnerUser.id = :userId")
+    @Query("SELECT c FROM Couple c LEFT JOIN FETCH c.initiatorUser i LEFT JOIN FETCH c.partnerUser p WHERE i.id = :userId OR p.id = :userId")
     Optional<Couple> findByUserId(@Param("userId") Long userId);
-//    Optional<Couple> findById(String coupleId);
 }
