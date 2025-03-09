@@ -13,8 +13,7 @@ public class CoupleScheduled {
 
     private final CoupleService coupleService;
 
-    // 5분마다 코드 삭제 메서드 실행
-    @Scheduled(fixedRate = 300000) // 5분 (300,000ms)마다 실행
+    @Scheduled(fixedRate = 300000)
     public void scheduledRemoveExpiredCodes() {
         coupleService.removeExpiredCodes();
     }

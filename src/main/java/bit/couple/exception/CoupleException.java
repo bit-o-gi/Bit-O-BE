@@ -9,14 +9,12 @@ public class CoupleException extends RuntimeException {
         super(message, cause);
     }
 
-    // 커플을 찾을 수 없는 경우 예외
     public static class CoupleNotFoundException extends CoupleException {
         public CoupleNotFoundException() {
             super("커플을 찾지 못하였습니다.");
         }
     }
 
-    // 인증 코드를 찾을 수 없는 경우 예외
     public static class CodeNotFoundException extends CoupleException {
         public CodeNotFoundException() {
             super("알 수 없는 코드입니다.");

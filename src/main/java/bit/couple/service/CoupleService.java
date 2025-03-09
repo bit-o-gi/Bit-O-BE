@@ -29,7 +29,15 @@ public class CoupleService {
     private final ConcurrentHashMap<CodeEntryVo, String> reverseCodeStore = new ConcurrentHashMap<>();
 
     private final CoupleRepository coupleRepository;
-    private final UserService userService;  // 추가됨
+    private final UserService userService;
+
+    @Transactional(readOnly = true)
+    public CoupleResponseDto getCoupleByUserId(Long userId) {
+        Couple couple = coupleRepository.findByUserId(userId)
+                .orElseThrow(() -> new CoupleException.CoupleNotFoundException());
+        return CoupleResponseDto.of(couple);
+    }
+
 
     @Transactional
     public CoupleRcodeResponseDto createCode(Long userId) {
@@ -39,12 +47,10 @@ public class CoupleService {
         if (existingCode != null) {
             CodeEntryVo existingEntry = codeStore.get(existingCode);
 
-            // NOTE: 기존 코드가 5분 이내라면 예외 발생
             if (existingEntry != null && !existingEntry.isExpired()) {
                 throw new CoupleException.CoupleAlreadyExistsException();
             }
 
-            // NOTE: 5분이 지났다면 기존 코드 삭제
             removeCode(existingEntry);
         }
 
@@ -52,7 +58,6 @@ public class CoupleService {
 
         do {
             randomCode = RandomStringUtils.randomAlphanumeric(12);
-//            NOTE: 없으면 유일한 코드 만듬.
         } while (codeStore.putIfAbsent(randomCode, new CodeEntryVo(userId, System.currentTimeMillis())) != null);
 
         CodeEntryVo CodeEntryVo = new CodeEntryVo(userId, System.currentTimeMillis());
@@ -74,7 +79,7 @@ public class CoupleService {
     }
 
     private void removeCode(CodeEntryVo codeEntryVo) {
-        if (codeEntryVo == null) {  // ✅ null 체크 추가
+        if (codeEntryVo == null) {
             return;
         }
 
@@ -98,9 +103,7 @@ public class CoupleService {
             Map.Entry<String, CodeEntryVo> entry = iterator.next();
 
             if (entry.getValue().isExpired()) {
-                //NOTE codeStore에서 삭제
                 iterator.remove();
-                //NOTE reverseCodeStore에서도 삭제
                 reverseCodeStore.remove(entry.getValue());
             }
         }
@@ -134,30 +137,23 @@ public class CoupleService {
     }
 
     public void confirmCouple(Long userId, CoupleRcodeReqestDto coupleCreateRequest) {
-        //NOTE: 요청한 사용자
         User partnerUser = userService.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException());
 
-        //NOTE: 1. codeStore에서 코드로 CodeEntryVo 조회
         String code = coupleCreateRequest.getCode();
         CodeEntryVo CodeEntryVo = codeStore.get(code);
 
-        //NOTE: 2. 코드가 존재하지 않으면 예외 처리
         if (CodeEntryVo == null) {
             throw new CoupleException.CodeNotFoundException();
         }
 
-        //NOTE: 3. 사용자 A와 사용자 B 가져오기
-        //NOTE: 코드 발급한 사용자
         long initiatorUserId = CodeEntryVo.getUserId();
         User initiatorUser = userService.findById(initiatorUserId)
                 .orElseThrow(() -> new EntityNotFoundException());
 
-        //NOTE: 4. 커플 생성 로직
         Couple couple = Couple.of(UserEntity.from(initiatorUser), UserEntity.from(partnerUser), CoupleStatus.APPROVED);
         coupleRepository.save(couple); // 커플 정보를 저장
 
-        //NOTE: 5. codeStore에서 코드 삭제
         codeStore.remove(code);
         reverseCodeStore.remove(CodeEntryVo);
     }
