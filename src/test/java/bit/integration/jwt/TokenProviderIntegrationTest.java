@@ -6,6 +6,7 @@ import bit.config.jwt.TokenProvider;
 import bit.user.domain.User;
 import bit.user.repository.UserRepository;
 import io.jsonwebtoken.Jwts;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Transactional
 public class TokenProviderIntegrationTest {
     @Autowired
     private TokenProvider tokenProvider;
