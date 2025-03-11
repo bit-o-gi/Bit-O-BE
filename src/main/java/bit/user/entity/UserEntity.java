@@ -32,17 +32,12 @@ public class UserEntity extends BaseEntity {
 
     private LocalDateTime connectedDt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "couple_id")
-    private Couple couple;
-
     public static UserEntity from(User user) {
         UserEntity userEntity = new UserEntity();
         userEntity.id = user.getId();
         userEntity.email = user.getEmail();
         userEntity.nickName = user.getNickName();
         userEntity.platform = user.getPlatform();
-        userEntity.couple = user.getCouple();
         userEntity.providerId = user.getProviderId();
         userEntity.connectedDt = user.getConnectedDt();
         return userEntity;
@@ -56,7 +51,6 @@ public class UserEntity extends BaseEntity {
                 .platform(platform)
                 .providerId(providerId)
                 .connectedDt(connectedDt)
-                .couple(couple)
                 .build();
     }
 }

@@ -10,5 +10,4 @@ public interface UserJpaRepository extends JpaRepository<UserEntity, Long> {
 
     Optional<UserEntity> findByEmail(String email);
 
-    List<UserEntity> findByCoupleId(long coupleId);
 }

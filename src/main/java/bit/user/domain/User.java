@@ -22,7 +22,6 @@ public class User {
     private final String email;
     private final String nickName;
     private final OauthPlatformType platform;
-    private final Couple couple;
     private final Long providerId;
     private final LocalDateTime connectedDt;
 
@@ -35,15 +34,4 @@ public class User {
                 .platform(userCreateRequest.getPlatform())
                 .build();
     }
-
-    public User updateCouple(Couple couple) {
-        return User.builder()
-                .id(this.id)
-                .email(this.getEmail())
-                .nickName(this.getNickName())
-                .platform(this.getPlatform())
-                .couple(couple)
-                .build();
-    }
-
 }
