@@ -2,14 +2,14 @@ package bit.schedule.dto;
 
 import bit.schedule.domain.Schedule;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.LocalDateTime;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-
-import java.time.LocalDateTime;
 
 @EqualsAndHashCode
 @Getter
 public class ScheduleResponse {
+
     @Schema(description = "스케줄 ID", example = "1")
     private final Long id;
 
@@ -31,6 +31,9 @@ public class ScheduleResponse {
     @Schema(description = "종료 일시", example = "2024-12-02T00:00:00")
     private final LocalDateTime endDateTime;
 
+    @Schema(description = "색상", example = "RED")
+    private final String color;
+
     public ScheduleResponse(Schedule schedule) {
         this.id = schedule.getId();
         this.nickName = schedule.getUser().getNickName();
@@ -39,5 +42,6 @@ public class ScheduleResponse {
         this.location = schedule.getLocation();
         this.startDateTime = schedule.getStartDateTime();
         this.endDateTime = schedule.getEndDateTime();
+        this.color = schedule.getColor().getHexCode();
     }
 }
