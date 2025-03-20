@@ -64,15 +64,18 @@ public class Schedule extends BaseEntity {
 
     public void update(ScheduleUpdateRequest scheduleUpdateRequest) {
         Objects.requireNonNull(scheduleUpdateRequest);
-        checkStartEndDateTime(scheduleUpdateRequest.getStartDateTime(),
-            scheduleUpdateRequest.getEndDateTime());
-        this.title = Objects.requireNonNull(scheduleUpdateRequest.getTitle());
-        this.content = Objects.requireNonNull(scheduleUpdateRequest.getContent());
-        this.location = Objects.requireNonNull(scheduleUpdateRequest.getLocation());
-        this.startDateTime = Objects.requireNonNull(scheduleUpdateRequest.getStartDateTime());
-        this.endDateTime = Objects.requireNonNull(scheduleUpdateRequest.getEndDateTime());
-        this.color = Objects.requireNonNull(
-            ScheduleColor.fromHexCode(scheduleUpdateRequest.getColor()));
+        this.title = Objects.requireNonNullElse(scheduleUpdateRequest.getTitle(), this.title);
+        this.content = Objects.requireNonNullElse(scheduleUpdateRequest.getContent(), this.content);
+        this.location = Objects.requireNonNullElse(scheduleUpdateRequest.getLocation(),
+            this.location);
+        this.startDateTime = Objects.requireNonNullElse(scheduleUpdateRequest.getStartDateTime(),
+            this.startDateTime);
+        this.endDateTime = Objects.requireNonNullElse(scheduleUpdateRequest.getEndDateTime(),
+            this.endDateTime);
+        if (scheduleUpdateRequest.getColor() != null) {
+            this.color = ScheduleColor.fromHexCode(scheduleUpdateRequest.getColor());
+        }
+        checkStartEndDateTime(this.startDateTime, this.endDateTime);
     }
 
     private void checkStartEndDateTime(LocalDateTime startDateTime, LocalDateTime endDateTime) {

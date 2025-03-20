@@ -30,7 +30,7 @@ public class ScheduleCreateRequest {
 
     @NotBlank(message = "색상 코드가 필요합니다.")
     @Pattern(regexp = "^#([A-Fa-f0-9]{6})$", message = "색상 코드는 #RRGGBB 형식이어야 합니다")
-    private String colorCode;
+    private String color;
 
     @Builder
     public ScheduleCreateRequest(String title, String content, String location,
@@ -40,7 +40,7 @@ public class ScheduleCreateRequest {
         this.location = location;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
-        this.colorCode = color;
+        this.color = color;
     }
 
     public Schedule toEntity(UserEntity user) {
@@ -51,7 +51,7 @@ public class ScheduleCreateRequest {
             .location(location)
             .startDateTime(startDateTime)
             .endDateTime(endDateTime)
-            .color(ScheduleColor.fromHexCode(colorCode))
+            .color(ScheduleColor.fromHexCode(color))
             .build();
     }
 }
