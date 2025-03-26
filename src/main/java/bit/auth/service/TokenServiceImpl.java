@@ -1,5 +1,7 @@
 package bit.auth.service;
 
+import static bit.config.oauth.OAuth2SuccessHandler.ACCESS_TOKEN_DURATION;
+
 import bit.config.jwt.TokenProvider;
 import bit.user.domain.User;
 import bit.user.service.UserService;
@@ -25,7 +27,7 @@ public class TokenServiceImpl implements TokenService {
 
         Long userId = refreshTokenService.getByRefreshToken(refreshToken).getUserId();
         User user = userService.getById(userId);
-        return tokenProvider.generateToken(user, Duration.ofHours(2));
+        return tokenProvider.generateToken(user, ACCESS_TOKEN_DURATION);
     }
 
     @Override

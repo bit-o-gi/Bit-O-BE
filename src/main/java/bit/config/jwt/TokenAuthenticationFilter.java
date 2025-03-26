@@ -47,4 +47,11 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         }
         return null;
     }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return path.equals("/api/v1/auth/token") || path.equals("/api/v1/auth/fake/token");
+    }
+
 }

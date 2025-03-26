@@ -74,7 +74,7 @@ public class TokenProvider {
     public Authentication getAuthentication(String token) {
         Claims claims = getClaims(token);
         Set<SimpleGrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
-        UserPrincipal userDetails = (UserPrincipal) userDetailService.loadUserByUsername(getClaims(token).getSubject());
+        UserPrincipal userDetails = (UserPrincipal) userDetailService.loadUserByUsername(claims.getSubject());
 
         return new UsernamePasswordAuthenticationToken(
                 userDetails, token, authorities);
