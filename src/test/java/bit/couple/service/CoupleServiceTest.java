@@ -126,6 +126,35 @@ class CoupleServiceTest {
         verify(reverseCodeStore, times(1)).put(any(CodeEntryVo.class), anyString());
     }
 
+    @Test
+    @DisplayName("하루 이상 지난 커플 코드 만료 테스트")
+    void testCreateCode_Expired() {
+        UserEntity user = users.get(0);
+        when(userJpaRepository.findById(user.getId())).thenReturn(Optional.of(user));
+
+        long expiredTime = System.currentTimeMillis() - 24 * 60 * 60 * 1000; 
+        CodeEntryVo expiredCodeEntry = new CodeEntryVo(user.getId(), expiredTime);
+
+        when(codeStore.get(anyString())).thenReturn(expiredCodeEntry);
+
+        CoupleRcodeResponseDto response = coupleService.createCode(user.getId());
+        String generatedCode = response.getCode();
+
+        assertThat(generatedCode).isNotBlank();
+        assertThat(generatedCode).isNotEqualTo(expiredCodeEntry);
+
+        reverseCodeStore.put(expiredCodeEntry, generatedCode);
+
+        CoupleRcodeResponseDto newResponse = coupleService.createCode(user.getId());
+        String newGeneratedCode = newResponse.getCode();
+
+        assertThat(newGeneratedCode).isNotBlank();
+        assertThat(newGeneratedCode).isNotEqualTo(generatedCode);
+    }
+
+
+
+
 
     @Test
     @DisplayName("이미 존재하는 코드 예외 발생")
