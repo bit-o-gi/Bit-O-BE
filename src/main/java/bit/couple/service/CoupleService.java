@@ -140,6 +140,10 @@ public class CoupleService {
         User partnerUser = userService.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException());
 
+        if (userId.equals(partnerUser.getId())) {
+            throw new CoupleException.CannotPairWithYourselfException();
+        }
+
         String code = coupleCreateRequest.getCode();
         CodeEntryVo CodeEntryVo = codeStore.get(code);
 
