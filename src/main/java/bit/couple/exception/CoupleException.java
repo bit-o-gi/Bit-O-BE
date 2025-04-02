@@ -32,4 +32,10 @@ public class CoupleException extends RuntimeException {
             super("해당 커플에 대한 수정 권한이 없습니다.");
         }
     }
+
+    public static class CannotPairWithYourselfException extends CoupleException {
+        public CannotPairWithYourselfException() {
+            super("나자신을 커플로 만들수 없습니다.");
+        }
+    }
 }
