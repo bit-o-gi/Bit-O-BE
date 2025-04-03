@@ -1,7 +1,7 @@
-name: Build
-
 on:
   pull_request:
+    branches:
+      - main
     types: [opened, synchronize, reopened]
 
 jobs:
@@ -37,17 +37,10 @@ jobs:
       - name: Grant execute permission to gradlew
         run: chmod +x gradlew
 
-      - name: Debug SonarQube URL
-        run: echo "SonarQube URL is $SONAR_HOST_URL"
-        env:
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
-          ./gradlew --stop
-          ./gradlew clean
           ./gradlew build -x test sonar -Dsonar.qualitygate.wait=false --info
