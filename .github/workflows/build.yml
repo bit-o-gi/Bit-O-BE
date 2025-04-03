@@ -42,4 +42,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: ./gradlew build -x test sonar --info
+        run: |
+          ./gradlew --stop
+          ./gradlew clean
+          ./gradlew build -x test sonar --info
