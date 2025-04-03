@@ -37,6 +37,11 @@ jobs:
       - name: Grant execute permission to gradlew
         run: chmod +x gradlew
 
+      - name: Debug SonarQube URL
+        run: echo "SonarQube URL is $SONAR_HOST_URL"
+        env:
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
