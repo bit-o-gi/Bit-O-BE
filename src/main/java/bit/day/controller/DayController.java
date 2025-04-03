@@ -28,6 +28,8 @@ public class DayController implements DayControllerDoc{
     @ResponseStatus(HttpStatus.OK)
     public DayResponse getDay(@PathVariable Long id) {
         Day day = dayService.getDay(id);
+        int a = 2;
+        System.out.println(a);
         return DayResponse.from(day);
     }
 
