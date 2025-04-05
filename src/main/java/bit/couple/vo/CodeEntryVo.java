@@ -13,6 +13,6 @@ public class CodeEntryVo {
     private final long createdAt;
 
     public boolean isExpired() {
-        return System.currentTimeMillis() - createdAt > 5 * 60 * 1000; // 5분 초과 여부 확인
+        return System.currentTimeMillis() - createdAt > 24 * 60 * 60 * 1000; // 24시간 초과 여부 확인
     }
 }

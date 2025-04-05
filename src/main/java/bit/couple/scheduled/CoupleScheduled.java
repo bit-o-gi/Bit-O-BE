@@ -13,7 +13,7 @@ public class CoupleScheduled {
 
     private final CoupleService coupleService;
 
-    @Scheduled(fixedRate = 300000)
+    @Scheduled(fixedRate = 24 * 60 * 60 * 1000)
     public void scheduledRemoveExpiredCodes() {
         coupleService.removeExpiredCodes();
     }

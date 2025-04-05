@@ -53,6 +53,7 @@ class CoupleServiceTest {
 
     private List<UserEntity> users;
     private UserEntity userA;
+    private UserEntity userB;
     private Couple testCouple;
 
     @BeforeEach
@@ -81,6 +82,7 @@ class CoupleServiceTest {
         injectMockField(coupleService, "reverseCodeStore", reverseCodeStore);
 
         userA = users.get(0);
+        userB = users.get(1);
         CodeEntryVo codeEntry = new CodeEntryVo(userA.getId(), System.currentTimeMillis());
 
         when(codeStore.get("some-code")).thenReturn(codeEntry);
@@ -125,6 +127,35 @@ class CoupleServiceTest {
         verify(codeStore, times(1)).putIfAbsent(anyString(), any(CodeEntryVo.class));
         verify(reverseCodeStore, times(1)).put(any(CodeEntryVo.class), anyString());
     }
+
+    @Test
+    @DisplayName("하루 이상 지난 커플 코드 만료 테스트")
+    void testCreateCode_Expired() {
+        UserEntity user = users.get(0);
+        when(userJpaRepository.findById(user.getId())).thenReturn(Optional.of(user));
+
+        long expiredTime = System.currentTimeMillis() - 24 * 60 * 60 * 1000; 
+        CodeEntryVo expiredCodeEntry = new CodeEntryVo(user.getId(), expiredTime);
+
+        when(codeStore.get(anyString())).thenReturn(expiredCodeEntry);
+
+        CoupleRcodeResponseDto response = coupleService.createCode(user.getId());
+        String generatedCode = response.getCode();
+
+        assertThat(generatedCode).isNotBlank();
+        assertThat(generatedCode).isNotEqualTo(expiredCodeEntry);
+
+        reverseCodeStore.put(expiredCodeEntry, generatedCode);
+
+        CoupleRcodeResponseDto newResponse = coupleService.createCode(user.getId());
+        String newGeneratedCode = newResponse.getCode();
+
+        assertThat(newGeneratedCode).isNotBlank();
+        assertThat(newGeneratedCode).isNotEqualTo(generatedCode);
+    }
+
+
+
 
 
     @Test
@@ -182,7 +213,7 @@ class CoupleServiceTest {
     @DisplayName("커플 승인 테스트")
     void testConfirmCouple() {
         CoupleRcodeReqestDto request = new CoupleRcodeReqestDto("some-code");
-        UserEntity userB = users.get(1);
+//        UserEntity userB = users.get(1);
         Couple couple = Couple.of(userA, userB, CoupleStatus.APPROVED);
 
         when(userService.findById(userB.getId())).thenReturn(Optional.of(userB.toDomain()));
@@ -235,5 +266,20 @@ class CoupleServiceTest {
 
         assertThatThrownBy(() -> coupleService.deleteCouple(coupleId))
                 .isInstanceOf(CoupleException.CoupleNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("자기 자신과 커플을 만들 수 없는 경우 예외 발생")
+    void testConfirmCouple_SelfPairingNotAllowed() {
+        CoupleRcodeReqestDto request = new CoupleRcodeReqestDto("some-code");
+
+        when(userService.findById(userA.getId())).thenReturn(Optional.of(userA.toDomain()));
+
+        CodeEntryVo codeEntryVo = new CodeEntryVo(userA.getId(), System.currentTimeMillis());
+        when(codeStore.get(request.getCode())).thenReturn(codeEntryVo);
+
+        assertThatThrownBy(() -> coupleService.confirmCouple(userA.getId(), request))
+                .isInstanceOf(CoupleException.CannotPairWithYourselfException.class)
+                .hasMessage("나자신을 커플로 만들수 없습니다.");
     }
 }
