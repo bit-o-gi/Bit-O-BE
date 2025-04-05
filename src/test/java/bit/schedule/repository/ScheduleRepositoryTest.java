@@ -1,12 +1,18 @@
 package bit.schedule.repository;
 
 
+import static bit.schedule.util.ScheduleFixture.getNewSchedule;
+import static bit.schedule.util.UserEntityFixture.getNewUserEntity;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import bit.couple.domain.Couple;
 import bit.couple.enums.CoupleStatus;
 import bit.schedule.config.TestConfig;
 import bit.schedule.domain.Schedule;
 import bit.user.entity.UserEntity;
 import jakarta.persistence.EntityManager;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,13 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
-
-import java.util.List;
-import java.util.Optional;
-
-import static bit.schedule.util.ScheduleFixture.getNewSchedule;
-import static bit.schedule.util.UserEntityFixture.getNewUserEntity;
-import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -43,8 +42,8 @@ public class ScheduleRepositoryTest {
     @DisplayName("커플의 모든 일정을 조회한다")
     void findAllCoupleSchedule() {
         // given
-        UserEntity user1 = getNewUserEntity();
-        UserEntity user2 = getNewUserEntity();
+        UserEntity user1 = getNewUserEntity("test@test.com");
+        UserEntity user2 = getNewUserEntity("test2@test.com");
         Schedule schedule1 = getNewSchedule(user1);
         Schedule schedule2 = getNewSchedule(user2);
 
@@ -100,7 +99,8 @@ public class ScheduleRepositoryTest {
         entityManager.persist(schedule1);
 
         // when
-        Optional<Schedule> schedule = scheduleRepository.findSchedule(user1.getId(), schedule1.getId());
+        Optional<Schedule> schedule = scheduleRepository.findSchedule(user1.getId(),
+            schedule1.getId());
 
         assertThat(schedule).isPresent();
         assertThat(schedule.get()).isEqualTo(schedule1);
