@@ -53,6 +53,7 @@ class CoupleServiceTest {
 
     private List<UserEntity> users;
     private UserEntity userA;
+    private UserEntity userB;
     private Couple testCouple;
 
     @BeforeEach
@@ -81,6 +82,7 @@ class CoupleServiceTest {
         injectMockField(coupleService, "reverseCodeStore", reverseCodeStore);
 
         userA = users.get(0);
+        userB = users.get(1);
         CodeEntryVo codeEntry = new CodeEntryVo(userA.getId(), System.currentTimeMillis());
 
         when(codeStore.get("some-code")).thenReturn(codeEntry);
@@ -211,7 +213,7 @@ class CoupleServiceTest {
     @DisplayName("커플 승인 테스트")
     void testConfirmCouple() {
         CoupleRcodeReqestDto request = new CoupleRcodeReqestDto("some-code");
-        UserEntity userB = users.get(1);
+//        UserEntity userB = users.get(1);
         Couple couple = Couple.of(userA, userB, CoupleStatus.APPROVED);
 
         when(userService.findById(userB.getId())).thenReturn(Optional.of(userB.toDomain()));
@@ -270,17 +272,13 @@ class CoupleServiceTest {
     @DisplayName("자기 자신과 커플을 만들 수 없는 경우 예외 발생")
     void testConfirmCouple_SelfPairingNotAllowed() {
         CoupleRcodeReqestDto request = new CoupleRcodeReqestDto("some-code");
-        UserEntity userB = users.get(0); // 동일한 사용자로 설정
 
-        // 동일한 userId와 partnerId일 경우 예외가 발생해야 한다
-        when(userService.findById(userB.getId())).thenReturn(Optional.of(userB.toDomain()));
         when(userService.findById(userA.getId())).thenReturn(Optional.of(userA.toDomain()));
 
         CodeEntryVo codeEntryVo = new CodeEntryVo(userA.getId(), System.currentTimeMillis());
         when(codeStore.get(request.getCode())).thenReturn(codeEntryVo);
 
-        // 자기 자신과 커플을 만들 수 없도록 설정
-        assertThatThrownBy(() -> coupleService.confirmCouple(userB.getId(), request))
+        assertThatThrownBy(() -> coupleService.confirmCouple(userA.getId(), request))
                 .isInstanceOf(CoupleException.CannotPairWithYourselfException.class)
                 .hasMessage("나자신을 커플로 만들수 없습니다.");
     }
