@@ -1,17 +1,35 @@
 package bit.couple.service;
 
+import static bit.user.enums.OauthPlatformType.KAKAO;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import bit.couple.domain.Couple;
-import bit.couple.dto.*;
+import bit.couple.dto.CoupleRcodeReqestDto;
+import bit.couple.dto.CoupleRcodeResponseDto;
+import bit.couple.dto.CoupleResponseDto;
+import bit.couple.dto.CoupleStartDayRequest;
 import bit.couple.enums.CoupleStatus;
 import bit.couple.exception.CoupleException;
 import bit.couple.fixture.CoupleFixtures;
 import bit.couple.repository.CoupleRepository;
 import bit.couple.vo.CodeEntryVo;
+import bit.day.service.DayService;
 import bit.user.domain.User;
 import bit.user.entity.UserEntity;
-import bit.user.mock.FakeUserRepository;
 import bit.user.repository.UserJpaRepository;
 import bit.user.service.UserServiceImpl;
+import java.lang.reflect.Field;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,37 +37,26 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-
-import static bit.user.enums.OauthPlatformType.KAKAO;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.*;
-
 class CoupleServiceTest {
 
+    CoupleStartDayRequest dayRequest = new CoupleStartDayRequest(LocalDate.now(), "커플 애칭");
     @InjectMocks
     private CoupleService coupleService;
-
     @Mock
     private ConcurrentHashMap<String, CodeEntryVo> codeStore;
-
     @Mock
     private ConcurrentHashMap<CodeEntryVo, String> reverseCodeStore;
-
     @Mock
     private CoupleRepository coupleRepository;
 
     @Mock
-    private UserJpaRepository userJpaRepository;  
-
+    private UserJpaRepository userJpaRepository;
 
     @Mock
     private UserServiceImpl userService;
 
+    @Mock
+    private DayService dayService;
 
     private List<UserEntity> users;
     private UserEntity userA;
@@ -83,7 +90,7 @@ class CoupleServiceTest {
 
         userA = users.get(0);
         userB = users.get(1);
-        CodeEntryVo codeEntry = new CodeEntryVo(userA.getId(), System.currentTimeMillis());
+        CodeEntryVo codeEntry = new CodeEntryVo(userA.getId(), dayRequest, System.currentTimeMillis());
 
         when(codeStore.get("some-code")).thenReturn(codeEntry);
         when(reverseCodeStore.get(codeEntry)).thenReturn("some-code");
@@ -96,6 +103,7 @@ class CoupleServiceTest {
         field.setAccessible(true);
         field.set(target, mockInstance);
     }
+
     @Test
     @DisplayName("사용자의 커플 정보 조회 테스트")
     void testGetCoupleByUserId() {
@@ -114,12 +122,12 @@ class CoupleServiceTest {
     @DisplayName("커플 코드 생성 테스트")
     void testCreateCode() {
         UserEntity user = users.get(0);
-        when(userJpaRepository.findById(user.getId())).thenReturn(Optional.of(user));
 
+        when(userJpaRepository.findById(user.getId())).thenReturn(Optional.of(user));
         when(reverseCodeStore.get(any(CodeEntryVo.class))).thenReturn(null);
         when(codeStore.putIfAbsent(anyString(), any())).thenReturn(null);
 
-        CoupleRcodeResponseDto response = coupleService.createCode(user.getId());
+        CoupleRcodeResponseDto response = coupleService.createCode(user.getId(), dayRequest);
 
         assertThat(response).isNotNull();
         assertThat(response.getCode()).isNotBlank();
@@ -134,12 +142,12 @@ class CoupleServiceTest {
         UserEntity user = users.get(0);
         when(userJpaRepository.findById(user.getId())).thenReturn(Optional.of(user));
 
-        long expiredTime = System.currentTimeMillis() - 24 * 60 * 60 * 1000; 
-        CodeEntryVo expiredCodeEntry = new CodeEntryVo(user.getId(), expiredTime);
+        long expiredTime = System.currentTimeMillis() - 24 * 60 * 60 * 1050;
+        CodeEntryVo expiredCodeEntry = new CodeEntryVo(user.getId(), dayRequest, expiredTime);
 
         when(codeStore.get(anyString())).thenReturn(expiredCodeEntry);
 
-        CoupleRcodeResponseDto response = coupleService.createCode(user.getId());
+        CoupleRcodeResponseDto response = coupleService.createCode(user.getId(), dayRequest);
         String generatedCode = response.getCode();
 
         assertThat(generatedCode).isNotBlank();
@@ -147,15 +155,12 @@ class CoupleServiceTest {
 
         reverseCodeStore.put(expiredCodeEntry, generatedCode);
 
-        CoupleRcodeResponseDto newResponse = coupleService.createCode(user.getId());
+        CoupleRcodeResponseDto newResponse = coupleService.createCode(user.getId(), dayRequest);
         String newGeneratedCode = newResponse.getCode();
 
         assertThat(newGeneratedCode).isNotBlank();
         assertThat(newGeneratedCode).isNotEqualTo(generatedCode);
     }
-
-
-
 
 
     @Test
@@ -166,15 +171,14 @@ class CoupleServiceTest {
         assertThat(user).isNotNull();
 
         String existingCode = "some-code";
-        CodeEntryVo existingEntry = new CodeEntryVo(userId, System.currentTimeMillis());
+        CodeEntryVo existingEntry = new CodeEntryVo(userId, dayRequest, System.currentTimeMillis());
 
         when(reverseCodeStore.get(any(CodeEntryVo.class))).thenReturn(existingCode);
         when(codeStore.get(existingCode)).thenReturn(existingEntry);
 
-        assertThatThrownBy(() -> coupleService.createCode(user.getId()))
+        assertThatThrownBy(() -> coupleService.createCode(user.getId(), dayRequest))
                 .isInstanceOf(CoupleException.CoupleAlreadyExistsException.class);
     }
-
 
 
     @Test
@@ -184,9 +188,9 @@ class CoupleServiceTest {
         when(userJpaRepository.findById(user.getId())).thenReturn(Optional.of(user));
 
         String expectedCode = "generated-code";
-        CodeEntryVo codeEntryVo = new CodeEntryVo(user.getId(), System.currentTimeMillis());
+        CodeEntryVo codeEntryVo = new CodeEntryVo(user.getId(), dayRequest, System.currentTimeMillis());
 
-        when(reverseCodeStore.get(new CodeEntryVo(user.getId(), 0))).thenReturn(expectedCode);
+        when(reverseCodeStore.get(new CodeEntryVo(user.getId(), dayRequest, 0))).thenReturn(expectedCode);
         when(codeStore.get(expectedCode)).thenReturn(codeEntryVo);
 
         CoupleRcodeResponseDto foundCode = coupleService.getCodeByUser(user.getId());
@@ -219,7 +223,7 @@ class CoupleServiceTest {
         when(userService.findById(userB.getId())).thenReturn(Optional.of(userB.toDomain()));
         when(userService.findById(userA.getId())).thenReturn(Optional.of(userA.toDomain()));
 
-        CodeEntryVo codeEntryVo = new CodeEntryVo(userA.getId(), System.currentTimeMillis());
+        CodeEntryVo codeEntryVo = new CodeEntryVo(userA.getId(), dayRequest, System.currentTimeMillis());
         when(codeStore.get(request.getCode())).thenReturn(codeEntryVo);
 
         when(coupleRepository.save(any())).thenReturn(couple);
@@ -275,7 +279,7 @@ class CoupleServiceTest {
 
         when(userService.findById(userA.getId())).thenReturn(Optional.of(userA.toDomain()));
 
-        CodeEntryVo codeEntryVo = new CodeEntryVo(userA.getId(), System.currentTimeMillis());
+        CodeEntryVo codeEntryVo = new CodeEntryVo(userA.getId(), dayRequest, System.currentTimeMillis());
         when(codeStore.get(request.getCode())).thenReturn(codeEntryVo);
 
         assertThatThrownBy(() -> coupleService.confirmCouple(userA.getId(), request))

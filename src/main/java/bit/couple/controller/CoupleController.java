@@ -5,13 +5,21 @@ import bit.couple.dto.CoupleRcodeReqestDto;
 import bit.couple.dto.CoupleRcodeResponseDto;
 import bit.couple.dto.CoupleRequestDto;
 import bit.couple.dto.CoupleResponseDto;
+import bit.couple.dto.CoupleStartDayRequest;
 import bit.couple.service.CoupleService;
 import bit.couple.swagger.CoupleControllerDocs;
-import lombok.Getter;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,8 +37,9 @@ public class CoupleController implements CoupleControllerDocs {
 
     // NOTE: 커플 인증코드 발급 완료
     @PostMapping("/code")
-    public ResponseEntity<CoupleRcodeResponseDto> createCode(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        CoupleRcodeResponseDto response = coupleService.createCode(userPrincipal.getId());
+    public ResponseEntity<CoupleRcodeResponseDto> createCode(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                                             @RequestBody @Valid CoupleStartDayRequest request) {
+        CoupleRcodeResponseDto response = coupleService.createCode(userPrincipal.getId(), request);
         return ResponseEntity.status(201).body(response);
     }
 
@@ -51,21 +60,24 @@ public class CoupleController implements CoupleControllerDocs {
     // NOTE: 커플 연결
     @PostMapping("/confirm")
     public ResponseEntity<Void> confirmCouple(
-            @AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody CoupleRcodeReqestDto coupleCreateRequest) {
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @RequestBody CoupleRcodeReqestDto coupleCreateRequest) {
         coupleService.confirmCouple(userPrincipal.getId(), coupleCreateRequest);
         return ResponseEntity.status(201).build();
     }
 
     // NOTE: 커플에 속한 유저 수정
     @PutMapping("/")
-    public ResponseEntity<Void> updateCouple(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody CoupleRequestDto coupleRequestDto) {
+    public ResponseEntity<Void> updateCouple(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                             @RequestBody CoupleRequestDto coupleRequestDto) {
         coupleService.updateCouple(userPrincipal.getId(), coupleRequestDto);
         return ResponseEntity.ok().build();
     }
 
     // TODO: coupleId -> 커플에 속한 유저 수정
     @PutMapping("/{coupleId}")
-    public ResponseEntity<Void> approveCouple(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable Long coupleId) {
+    public ResponseEntity<Void> approveCouple(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                              @PathVariable Long coupleId) {
         coupleService.coupleApprove(userPrincipal.getId(), coupleId);
         return ResponseEntity.ok().build();
     }
