@@ -5,9 +5,11 @@ import bit.couple.dto.CoupleRcodeReqestDto;
 import bit.couple.dto.CoupleRcodeResponseDto;
 import bit.couple.dto.CoupleRequestDto;
 import bit.couple.dto.CoupleResponseDto;
+import bit.couple.dto.CoupleStartDayRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,7 +29,8 @@ public interface CoupleControllerDocs {
                     @ApiResponse(responseCode = "201", description = "커플 인증 코드 생성 완료"),
                     @ApiResponse(responseCode = "500", description = "서버 에러")
             })
-    ResponseEntity<CoupleRcodeResponseDto> createCode(@AuthenticationPrincipal UserPrincipal userPrincipal);
+    ResponseEntity<CoupleRcodeResponseDto> createCode(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                                      @Valid CoupleStartDayRequest request);
 
     @Operation(summary = "커플 인증 코드 조회", description = "유저가 발급받은 커플 인증 코드를 조회합니다.",
             responses = {
@@ -48,21 +51,24 @@ public interface CoupleControllerDocs {
                     @ApiResponse(responseCode = "201", description = "커플 연결 성공"),
                     @ApiResponse(responseCode = "500", description = "서버 에러")
             })
-    ResponseEntity<Void> confirmCouple(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody CoupleRcodeReqestDto coupleCreateRequest);
+    ResponseEntity<Void> confirmCouple(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                       @RequestBody CoupleRcodeReqestDto coupleCreateRequest);
 
     @Operation(summary = "커플 정보 수정", description = "커플 ID에 속한 유저 정보를 수정합니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "커플 정보 수정 성공"),
                     @ApiResponse(responseCode = "500", description = "서버 에러")
             })
-    ResponseEntity<Void> updateCouple(@AuthenticationPrincipal UserPrincipal userPrincipal, @RequestBody CoupleRequestDto coupleRequestDto);
+    ResponseEntity<Void> updateCouple(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                      @RequestBody CoupleRequestDto coupleRequestDto);
 
     @Operation(summary = "커플 정보 수정", description = "커플 ID에 속한 유저 정보를 수정합니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "커플 정보 수정 성공"),
                     @ApiResponse(responseCode = "500", description = "서버 에러")
             })
-    ResponseEntity<Void> approveCouple(@AuthenticationPrincipal UserPrincipal userPrincipal, @PathVariable Long coupleId);
+    ResponseEntity<Void> approveCouple(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                       @PathVariable Long coupleId);
 
     @Operation(summary = "커플 삭제", description = "커플 정보를 삭제합니다.",
             responses = {

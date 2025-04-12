@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class DayService {
-
     private final DayRepository dayRepository;
     private final CoupleRepository coupleRepository;
 
