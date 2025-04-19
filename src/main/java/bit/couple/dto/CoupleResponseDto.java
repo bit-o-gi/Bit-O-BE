@@ -22,6 +22,7 @@ public class CoupleResponseDto {
 
     public static CoupleResponseDto of(Couple couple) {
         return CoupleResponseDto.builder()
+                .id(couple.getId())
                 .initiatorUser(couple.getInitiatorUser().toDomain())
                 .partnerUser(couple.getPartnerUser().toDomain())
                 .status(couple.getStatus())
