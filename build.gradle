@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.0'
     id 'io.spring.dependency-management' version '1.1.5'
+    id "org.sonarqube" version "4.4.1.3373"
 }
 
 group = 'BitO'
@@ -20,6 +21,12 @@ java {
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
+    }
+}
+
+sonar {
+    properties {
+        property "sonar.projectKey", "bit-o-gi_Bit-O-BE_AZX6MuHXqu0_jIigfq6k"
     }
 }
 

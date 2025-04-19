@@ -1,26 +1,29 @@
 package bit.couple.service;
 
 import bit.couple.domain.Couple;
-import bit.couple.dto.*;
+import bit.couple.dto.CoupleRcodeReqestDto;
+import bit.couple.dto.CoupleRcodeResponseDto;
+import bit.couple.dto.CoupleRequestDto;
+import bit.couple.dto.CoupleResponseDto;
+import bit.couple.dto.CoupleStartDayRequest;
 import bit.couple.enums.CoupleStatus;
 import bit.couple.exception.CoupleException;
 import bit.couple.exception.CoupleException.CoupleNotFoundException;
 import bit.couple.repository.CoupleRepository;
 import bit.couple.vo.CodeEntryVo;
+import bit.day.dto.DayCommand;
+import bit.day.service.DayService;
 import bit.user.domain.User;
 import bit.user.entity.UserEntity;
-import bit.user.repository.UserJpaRepository;
 import bit.user.service.UserService;
-import bit.user.service.UserServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Iterator;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -30,19 +33,17 @@ public class CoupleService {
 
     private final CoupleRepository coupleRepository;
     private final UserService userService;
+    private final DayService dayService;
 
-    @Transactional(readOnly = true)
     public CoupleResponseDto getCoupleByUserId(Long userId) {
         Couple couple = coupleRepository.findByUserId(userId)
                 .orElseThrow(() -> new CoupleException.CoupleNotFoundException());
         return CoupleResponseDto.of(couple);
     }
 
-
     @Transactional
-    public CoupleRcodeResponseDto createCode(Long userId) {
-
-        String existingCode = reverseCodeStore.get(new CodeEntryVo(userId, 0));
+    public CoupleRcodeResponseDto createCode(Long userId, CoupleStartDayRequest dayRequest) {
+        String existingCode = reverseCodeStore.get(new CodeEntryVo(userId, dayRequest, 0));
 
         if (existingCode != null) {
             CodeEntryVo existingEntry = codeStore.get(existingCode);
@@ -58,9 +59,10 @@ public class CoupleService {
 
         do {
             randomCode = RandomStringUtils.randomAlphanumeric(12);
-        } while (codeStore.putIfAbsent(randomCode, new CodeEntryVo(userId, System.currentTimeMillis())) != null);
+        } while (codeStore.putIfAbsent(randomCode, new CodeEntryVo(userId, dayRequest, System.currentTimeMillis()))
+                != null);
 
-        CodeEntryVo CodeEntryVo = new CodeEntryVo(userId, System.currentTimeMillis());
+        CodeEntryVo CodeEntryVo = new CodeEntryVo(userId, dayRequest, System.currentTimeMillis());
 
         codeStore.put(randomCode, CodeEntryVo);
         reverseCodeStore.put(CodeEntryVo, randomCode);
@@ -70,7 +72,7 @@ public class CoupleService {
 
     public CoupleRcodeResponseDto getCodeByUser(Long userId) {
 
-        String code = reverseCodeStore.get(new CodeEntryVo(userId, 0));
+        String code = reverseCodeStore.get(new CodeEntryVo(userId, null, 0));
         if (code == null) {
             throw new CoupleException.CodeNotFoundException();
         }
@@ -142,14 +144,15 @@ public class CoupleService {
 
 
         String code = coupleCreateRequest.getCode();
-        CodeEntryVo CodeEntryVo = codeStore.get(code);
+        CodeEntryVo codeEntryVo = codeStore.get(code);
 
-        if (CodeEntryVo == null) {
+        if (codeEntryVo == null) {
             throw new CoupleException.CodeNotFoundException();
         }
 
-        long initiatorUserId = CodeEntryVo.getUserId();
-        if (CodeEntryVo.getUserId() == partnerUser.getId()) {
+
+        long initiatorUserId = codeEntryVo.getUserId();
+        if (codeEntryVo.getUserId() == partnerUser.getId()) {
             throw new CoupleException.CannotPairWithYourselfException();
         }
         User initiatorUser = userService.findById(initiatorUserId)
@@ -157,9 +160,11 @@ public class CoupleService {
 
         Couple couple = Couple.of(UserEntity.from(initiatorUser), UserEntity.from(partnerUser), CoupleStatus.APPROVED);
         coupleRepository.save(couple); // 커플 정보를 저장
+        CoupleStartDayRequest dayRequest = codeEntryVo.getDayRequest();
+        dayService.createDay(new DayCommand(couple.getId(), dayRequest.getCoupleTitle(), dayRequest.getStartDate()));
 
         codeStore.remove(code);
-        reverseCodeStore.remove(CodeEntryVo);
+        reverseCodeStore.remove(codeEntryVo);
     }
 
 

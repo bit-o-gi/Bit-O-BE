@@ -5,7 +5,15 @@ import bit.couple.dto.CoupleRequestDto;
 import bit.couple.enums.CoupleStatus;
 import bit.couple.exception.CoupleException;
 import bit.user.entity.UserEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,7 +31,7 @@ public class Couple extends BaseEntity { // 클래스 이름을 CoupleConnection
     private Long id;
 
     //NOTE: 커플을 발급한 사용자 (User A)
-    @OneToOne (fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "initiator_user_id", nullable = false)
     private UserEntity initiatorUser;
 
@@ -43,17 +51,18 @@ public class Couple extends BaseEntity { // 클래스 이름을 CoupleConnection
                 .status(status)
                 .build();
     }
+
     public void fromReq(CoupleRequestDto coupleRequestDto) {
         this.status = coupleRequestDto.getStatus();
         this.initiatorUser = UserEntity.from(coupleRequestDto.getInitiatorUser());
         this.partnerUser = UserEntity.from(coupleRequestDto.getPartnerUser());
     }
 
-
     //NOTE: 상태를 APPROVED로 변경
     public void approve() {
         this.status = CoupleStatus.APPROVED;
     }
+
     public void validateUserIsInCouple(UserEntity user) {
         if (!this.initiatorUser.equals(user) && !this.partnerUser.equals(user)) {
             throw new CoupleException.CouplePermissionException(); // 유효성 검사 실패 시 예외 발생

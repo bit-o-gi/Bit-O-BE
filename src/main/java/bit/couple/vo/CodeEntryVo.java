@@ -1,5 +1,6 @@
 package bit.couple.vo;
 
+import bit.couple.dto.CoupleStartDayRequest;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 public class CodeEntryVo {
     @EqualsAndHashCode.Include
     private final long userId;
+    private final CoupleStartDayRequest dayRequest;
     private final long createdAt;
 
     public boolean isExpired() {
