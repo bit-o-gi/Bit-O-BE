@@ -142,12 +142,14 @@ public class CoupleService {
         User partnerUser = userService.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException());
 
+
         String code = coupleCreateRequest.getCode();
         CodeEntryVo codeEntryVo = codeStore.get(code);
 
         if (codeEntryVo == null) {
             throw new CoupleException.CodeNotFoundException();
         }
+
 
         long initiatorUserId = codeEntryVo.getUserId();
         if (codeEntryVo.getUserId() == partnerUser.getId()) {

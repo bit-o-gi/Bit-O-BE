@@ -90,6 +90,7 @@ class CoupleServiceTest {
 
         userA = users.get(0);
         userB = users.get(1);
+
         CodeEntryVo codeEntry = new CodeEntryVo(userA.getId(), dayRequest, System.currentTimeMillis());
 
         when(codeStore.get("some-code")).thenReturn(codeEntry);
@@ -142,6 +143,7 @@ class CoupleServiceTest {
         UserEntity user = users.get(0);
         when(userJpaRepository.findById(user.getId())).thenReturn(Optional.of(user));
 
+
         long expiredTime = System.currentTimeMillis() - 24 * 60 * 60 * 1050;
         CodeEntryVo expiredCodeEntry = new CodeEntryVo(user.getId(), dayRequest, expiredTime);
 
@@ -155,12 +157,17 @@ class CoupleServiceTest {
 
         reverseCodeStore.put(expiredCodeEntry, generatedCode);
 
+
         CoupleRcodeResponseDto newResponse = coupleService.createCode(user.getId(), dayRequest);
         String newGeneratedCode = newResponse.getCode();
 
         assertThat(newGeneratedCode).isNotBlank();
         assertThat(newGeneratedCode).isNotEqualTo(generatedCode);
     }
+
+
+
+
 
 
     @Test
@@ -278,6 +285,7 @@ class CoupleServiceTest {
         CoupleRcodeReqestDto request = new CoupleRcodeReqestDto("some-code");
 
         when(userService.findById(userA.getId())).thenReturn(Optional.of(userA.toDomain()));
+
 
         CodeEntryVo codeEntryVo = new CodeEntryVo(userA.getId(), dayRequest, System.currentTimeMillis());
         when(codeStore.get(request.getCode())).thenReturn(codeEntryVo);
