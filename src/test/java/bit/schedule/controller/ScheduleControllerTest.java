@@ -1,5 +1,22 @@
 package bit.schedule.controller;
 
+import static bit.schedule.util.ScheduleFixture.getNewSchedule;
+import static bit.schedule.util.ScheduleRequestFixture.getNewScheduleCreateRequest;
+import static bit.schedule.util.ScheduleRequestFixture.getNewScheduleRequests;
+import static bit.schedule.util.ScheduleRequestFixture.getNewScheduleUpdateRequest;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import bit.auth.domain.UserPrincipal;
 import bit.exception.GlobalExceptionHandler;
 import bit.schedule.domain.Schedule;
@@ -9,6 +26,9 @@ import bit.schedule.dto.ScheduleUpdateRequest;
 import bit.schedule.exception.ScheduleNotFoundException;
 import bit.schedule.service.ScheduleService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,22 +40,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.IntStream;
-
-import static bit.schedule.util.ScheduleFixture.getNewSchedule;
-import static bit.schedule.util.ScheduleRequestFixture.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = ScheduleController.class)
 @Import(GlobalExceptionHandler.class)
@@ -69,12 +73,12 @@ class ScheduleControllerTest {
         //When
         //Then
         mockMvc.perform(
-                        get("/api/v1/schedule/0")
-                                .contentType("application/json")
-                                .with(SecurityMockMvcRequestPostProcessors.user(userPrincipal)))
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andExpect(content().json(objectMapper.writeValueAsString(response)));
+                get("/api/v1/schedule/0")
+                    .contentType("application/json")
+                    .with(SecurityMockMvcRequestPostProcessors.user(userPrincipal)))
+            .andExpect(status().isOk())
+            .andDo(print())
+            .andExpect(content().json(objectMapper.writeValueAsString(response)));
     }
 
     @DisplayName("스케줄 유저 ID로 조회 테스트")
@@ -83,18 +87,18 @@ class ScheduleControllerTest {
         //Given
         Schedule schedule = getNewSchedule(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
         List<ScheduleResponse> response = IntStream.range(0, 10)
-                .mapToObj(i -> new ScheduleResponse(schedule))
-                .toList();
+            .mapToObj(i -> new ScheduleResponse(schedule))
+            .toList();
         when(scheduleService.getSchedulesByUserId(0L)).thenReturn(response);
         //When
         //Then
         mockMvc.perform(
-                        get("/api/v1/schedule/user")
-                                .contentType("application/json")
-                                .with(SecurityMockMvcRequestPostProcessors.user(userPrincipal)))
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andExpect(content().json(objectMapper.writeValueAsString(response)));
+                get("/api/v1/schedule/user")
+                    .contentType("application/json")
+                    .with(SecurityMockMvcRequestPostProcessors.user(userPrincipal)))
+            .andExpect(status().isOk())
+            .andDo(print())
+            .andExpect(content().json(objectMapper.writeValueAsString(response)));
     }
 
     @DisplayName("스케줄 저장 테스트")
@@ -102,20 +106,22 @@ class ScheduleControllerTest {
     void saveTest() throws Exception {
         //Given
         Schedule schedule = getNewSchedule(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
-        ScheduleCreateRequest request = getNewScheduleCreateRequest(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
+        ScheduleCreateRequest request = getNewScheduleCreateRequest(LocalDateTime.now(),
+            LocalDateTime.now().plusHours(1));
         ScheduleResponse response = new ScheduleResponse(schedule);
-        when(scheduleService.saveSchedule(any(Long.class), any(ScheduleCreateRequest.class))).thenReturn(response);
+        when(scheduleService.saveSchedule(any(Long.class),
+            any(ScheduleCreateRequest.class))).thenReturn(response);
         //When
         //Then
         mockMvc.perform(
-                        post("/api/v1/schedule")
-                                .contentType("application/json")
-                                .content(objectMapper.writeValueAsString(request))
-                                .with(csrf())
-                                .with(SecurityMockMvcRequestPostProcessors.user(userPrincipal)))
-                .andExpect(status().isCreated())
-                .andDo(print())
-                .andExpect(content().json(objectMapper.writeValueAsString(response)));
+                post("/api/v1/schedule")
+                    .contentType("application/json")
+                    .content(objectMapper.writeValueAsString(request))
+                    .with(csrf())
+                    .with(SecurityMockMvcRequestPostProcessors.user(userPrincipal)))
+            .andExpect(status().isCreated())
+            .andDo(print())
+            .andExpect(content().json(objectMapper.writeValueAsString(response)));
     }
 
 
@@ -125,13 +131,16 @@ class ScheduleControllerTest {
         //Given
         Schedule schedule = getNewSchedule(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
         ScheduleResponse response = new ScheduleResponse(schedule);
-        when(scheduleService.saveSchedule(any(Long.class), any(ScheduleCreateRequest.class))).thenReturn(response);
+        when(scheduleService.saveSchedule(any(Long.class),
+            any(ScheduleCreateRequest.class))).thenReturn(response);
         List<ScheduleCreateRequest> scheduleCreateRequests = getNewScheduleRequests();
         List<String> errorMessages = List.of(
-                "{\"title\":\"제목이 필요합니다.\"}",
-                "{\"content\":\"내용이 필요합니다.\"}",
-                "{\"startDateTime\":\"시작 일시가 필요합니다.\"}",
-                "{\"endDateTime\":\"종료 일시가 필요합니다.\"}"
+            "{\"title\":\"제목이 필요합니다.\"}",
+            "{\"content\":\"내용이 필요합니다.\"}",
+            "{\"startDateTime\":\"시작 일시가 필요합니다.\"}",
+            "{\"endDateTime\":\"종료 일시가 필요합니다.\"}",
+            "{\"color\":\"색상 코드가 필요합니다.\"}",
+            "{\"location\":\"위치가 필요합니다.\"}"
         );
         //When
         //Then
@@ -142,14 +151,14 @@ class ScheduleControllerTest {
             try {
                 System.out.println("request = " + request);
                 mockMvc.perform(
-                                post("/api/v1/schedule")
-                                        .contentType("application/json")
-                                        .content(objectMapper.writeValueAsString(request))
-                                        .with(csrf())
-                                        .with(SecurityMockMvcRequestPostProcessors.user(userPrincipal)))
-                        .andExpect(status().isBadRequest())
-                        .andExpect(content().json(expectedErrorMessage))
-                        .andDo(print());
+                        post("/api/v1/schedule")
+                            .contentType("application/json")
+                            .content(objectMapper.writeValueAsString(request))
+                            .with(csrf())
+                            .with(SecurityMockMvcRequestPostProcessors.user(userPrincipal)))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().json(expectedErrorMessage))
+                    .andDo(print());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -164,12 +173,12 @@ class ScheduleControllerTest {
         //When
         //Then
         mockMvc.perform(
-                        get("/api/v1/schedule/0")
-                                .contentType("application/json")
-                                .with(SecurityMockMvcRequestPostProcessors.user(userPrincipal)))
-                .andExpect(status().isNotFound())
-                .andDo(print())
-                .andExpect(content().string("해당 스케줄이 존재하지 않습니다."));
+                get("/api/v1/schedule/0")
+                    .contentType("application/json")
+                    .with(SecurityMockMvcRequestPostProcessors.user(userPrincipal)))
+            .andExpect(status().isNotFound())
+            .andDo(print())
+            .andExpect(content().string("해당 스케줄이 존재하지 않습니다."));
     }
 
 
@@ -178,20 +187,22 @@ class ScheduleControllerTest {
     void patchTest() throws Exception {
         //Given
         Schedule schedule = getNewSchedule(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
-        ScheduleUpdateRequest request = getNewScheduleUpdateRequest(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
+        ScheduleUpdateRequest request = getNewScheduleUpdateRequest(LocalDateTime.now(),
+            LocalDateTime.now().plusHours(1));
         ScheduleResponse response = new ScheduleResponse(schedule);
-        when(scheduleService.updateSchedule(any(Long.class), eq(0L), any(ScheduleUpdateRequest.class))).thenReturn(response);
+        when(scheduleService.updateSchedule(any(Long.class), eq(0L),
+            any(ScheduleUpdateRequest.class))).thenReturn(response);
         //When
         //Then
         mockMvc.perform(
-                        put("/api/v1/schedule/0")
-                                .contentType("application/json")
-                                .content(objectMapper.writeValueAsString(request))
-                                .with(csrf())
-                                .with(SecurityMockMvcRequestPostProcessors.user(userPrincipal)))
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andExpect(content().json(objectMapper.writeValueAsString(response)));
+                put("/api/v1/schedule/0")
+                    .contentType("application/json")
+                    .content(objectMapper.writeValueAsString(request))
+                    .with(csrf())
+                    .with(SecurityMockMvcRequestPostProcessors.user(userPrincipal)))
+            .andExpect(status().isOk())
+            .andDo(print())
+            .andExpect(content().json(objectMapper.writeValueAsString(response)));
     }
 
     @DisplayName("스케줄 수정시 필수 요소가 모두 없으면 에러가 발생한다.")
@@ -201,17 +212,18 @@ class ScheduleControllerTest {
         Schedule schedule = getNewSchedule(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
         ScheduleUpdateRequest request = ScheduleUpdateRequest.builder().build();
         ScheduleResponse response = new ScheduleResponse(schedule);
-        when(scheduleService.updateSchedule(any(Long.class), eq(0L), any(ScheduleUpdateRequest.class))).thenReturn(response);
+        when(scheduleService.updateSchedule(any(Long.class), eq(0L),
+            any(ScheduleUpdateRequest.class))).thenReturn(response);
         //When
         //Then
         mockMvc.perform(
-                        put("/api/v1/schedule/0")
-                                .contentType("application/json")
-                                .content(objectMapper.writeValueAsString(request))
-                                .with(csrf())
-                                .with(SecurityMockMvcRequestPostProcessors.user(userPrincipal)))
-                .andExpect(status().isBadRequest())
-                .andDo(print());
+                put("/api/v1/schedule/0")
+                    .contentType("application/json")
+                    .content(objectMapper.writeValueAsString(request))
+                    .with(csrf())
+                    .with(SecurityMockMvcRequestPostProcessors.user(userPrincipal)))
+            .andExpect(status().isBadRequest())
+            .andDo(print());
     }
 
     @DisplayName("스케줄 삭제 테스트")
@@ -224,12 +236,12 @@ class ScheduleControllerTest {
         //When
         //Then
         mockMvc.perform(
-                        delete("/api/v1/schedule/0")
-                                .contentType("application/json")
-                                .with(csrf())
-                                .with(SecurityMockMvcRequestPostProcessors.user(userPrincipal)))
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andExpect(content().json(objectMapper.writeValueAsString(response)));
+                delete("/api/v1/schedule/0")
+                    .contentType("application/json")
+                    .with(csrf())
+                    .with(SecurityMockMvcRequestPostProcessors.user(userPrincipal)))
+            .andExpect(status().isOk())
+            .andDo(print())
+            .andExpect(content().json(objectMapper.writeValueAsString(response)));
     }
 }
