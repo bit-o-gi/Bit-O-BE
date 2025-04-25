@@ -1,6 +1,7 @@
 package bit.schedule.dto;
 
 import bit.schedule.domain.Schedule;
+import bit.schedule.enums.ScheduleColor;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import lombok.EqualsAndHashCode;
@@ -32,7 +33,7 @@ public class ScheduleResponse {
     private final LocalDateTime endDateTime;
 
     @Schema(description = "색상", example = "RED")
-    private final String color;
+    private final ScheduleColor color;
 
     public ScheduleResponse(Schedule schedule) {
         this.id = schedule.getId();
@@ -42,6 +43,6 @@ public class ScheduleResponse {
         this.location = schedule.getLocation();
         this.startDateTime = schedule.getStartDateTime();
         this.endDateTime = schedule.getEndDateTime();
-        this.color = schedule.getColor().getHexCode();
+        this.color = schedule.getColor();
     }
 }

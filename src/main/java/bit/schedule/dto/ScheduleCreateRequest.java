@@ -3,9 +3,7 @@ package bit.schedule.dto;
 import bit.schedule.domain.Schedule;
 import bit.schedule.enums.ScheduleColor;
 import bit.user.entity.UserEntity;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,13 +26,12 @@ public class ScheduleCreateRequest {
     @NotNull(message = "종료 일시가 필요합니다.")
     private LocalDateTime endDateTime;
 
-    @NotBlank(message = "색상 코드가 필요합니다.")
-    @Pattern(regexp = "^#([A-Fa-f0-9]{6})$", message = "색상 코드는 #RRGGBB 형식이어야 합니다")
-    private String color;
+    @NotNull(message = "색상 코드가 필요합니다.")
+    private ScheduleColor color;
 
     @Builder
     public ScheduleCreateRequest(String title, String content, String location,
-        LocalDateTime startDateTime, LocalDateTime endDateTime, String color) {
+        LocalDateTime startDateTime, LocalDateTime endDateTime, ScheduleColor color) {
         this.title = title;
         this.content = content;
         this.location = location;
@@ -51,7 +48,7 @@ public class ScheduleCreateRequest {
             .location(location)
             .startDateTime(startDateTime)
             .endDateTime(endDateTime)
-            .color(ScheduleColor.fromHexCode(color))
+            .color(color)
             .build();
     }
 }

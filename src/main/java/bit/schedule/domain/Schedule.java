@@ -73,7 +73,7 @@ public class Schedule extends BaseEntity {
         this.endDateTime = Objects.requireNonNullElse(scheduleUpdateRequest.getEndDateTime(),
             this.endDateTime);
         if (scheduleUpdateRequest.getColor() != null) {
-            this.color = ScheduleColor.fromHexCode(scheduleUpdateRequest.getColor());
+            this.color = scheduleUpdateRequest.getColor();
         }
         checkStartEndDateTime(this.startDateTime, this.endDateTime);
     }
