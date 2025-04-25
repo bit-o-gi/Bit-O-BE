@@ -9,8 +9,7 @@ public enum ScheduleColor {
     TEAL("#47d6dc"),
     MINT("#7ae7be"),
     GREEN("#51b749"),
-    LIGHT_ORANGE("#ffb878"),
-    ORANGE("#ffb878"),  // Duplicate value with LIGHT_ORANGE
+    ORANGE("#ffb878"),
     LIGHT_GRAY("#e1e1e1");
 
     private final String hexCode;
