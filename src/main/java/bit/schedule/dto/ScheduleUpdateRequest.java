@@ -1,11 +1,11 @@
 package bit.schedule.dto;
 
 
+import bit.schedule.enums.ScheduleColor;
 import bit.schedule.validate.annotation.ScheduleUpdateValidate;
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.time.LocalDateTime;
 
 @Getter
 @ScheduleUpdateValidate
@@ -21,12 +21,16 @@ public class ScheduleUpdateRequest {
 
     private final LocalDateTime endDateTime;
 
+    private final ScheduleColor color;
+
     @Builder
-    public ScheduleUpdateRequest(String title, String content, String location, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+    public ScheduleUpdateRequest(String title, String content, String location,
+        LocalDateTime startDateTime, LocalDateTime endDateTime, ScheduleColor color) {
         this.title = title;
         this.content = content;
         this.location = location;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
+        this.color = color;
     }
 }
