@@ -49,7 +49,7 @@ create table if not exists couple
         foreign key (partner_user_id) references bit_o_user (id)
 );
 
-create table if not exists day
+create table if not exists "day"
 (
     id         bigint auto_increment
         primary key,
