@@ -85,15 +85,18 @@ class ScheduleControllerTest {
     @Test
     void getByUserIdTest() throws Exception {
         //Given
-        Schedule schedule = getNewSchedule(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
+        LocalDateTime now = LocalDateTime.now();
+        Schedule schedule = getNewSchedule(now, now.plusHours(1));
         List<ScheduleResponse> response = IntStream.range(0, 10)
             .mapToObj(i -> new ScheduleResponse(schedule))
             .toList();
-        when(scheduleService.getSchedulesByUserId(0L)).thenReturn(response);
+        when(scheduleService.getSchedulesByUserId(0L, now.getYear(), now.getMonthValue())).thenReturn(response);
         //When
         //Then
         mockMvc.perform(
                 get("/api/v1/schedule/user")
+                    .param("year", String.valueOf(now.getYear()))
+                    .param("month", String.valueOf(now.getMonthValue()))
                     .contentType("application/json")
                     .with(SecurityMockMvcRequestPostProcessors.user(userPrincipal)))
             .andExpect(status().isOk())
