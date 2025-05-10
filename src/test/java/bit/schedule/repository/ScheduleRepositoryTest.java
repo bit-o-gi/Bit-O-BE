@@ -11,6 +11,7 @@ import bit.schedule.config.TestConfig;
 import bit.schedule.domain.Schedule;
 import bit.user.entity.UserEntity;
 import jakarta.persistence.EntityManager;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,13 +40,15 @@ public class ScheduleRepositoryTest {
     }
 
     @Test
-    @DisplayName("커플의 모든 일정을 조회한다")
+    @DisplayName("커플의 일정을 조회한다")
     void findAllCoupleSchedule() {
         // given
         UserEntity user1 = getNewUserEntity("test@test.com");
         UserEntity user2 = getNewUserEntity("test2@test.com");
         Schedule schedule1 = getNewSchedule(user1);
         Schedule schedule2 = getNewSchedule(user2);
+
+        LocalDate now = LocalDate.now();
 
         Couple couple = Couple.of(user1, user2, CoupleStatus.APPROVED);
 
@@ -56,20 +59,20 @@ public class ScheduleRepositoryTest {
         entityManager.persist(couple);
 
         // when
-        List<Schedule> result = scheduleRepository.findAllCoupleSchedule(user1.getId());
+        List<Schedule> result = scheduleRepository.findAllCoupleScheduleByYearAndMonth(user1.getId(), now.getYear(),
+            now.getMonthValue());
 
         // then
-        assertThat(result).hasSize(2);
-        assertThat(result).containsOnly(schedule1, schedule2);
+        assertThat(result).hasSize(2).containsOnly(schedule1, schedule2);
 
         // user2로도 동일한 결과를 가져오는지 확인
-        List<Schedule> result2 = scheduleRepository.findAllCoupleSchedule(user2.getId());
-        assertThat(result2).hasSize(2);
-        assertThat(result2).containsOnly(schedule1, schedule2);
+        List<Schedule> result2 = scheduleRepository.findAllCoupleScheduleByYearAndMonth(user2.getId(), now.getYear(),
+            now.getMonthValue());
+        assertThat(result2).hasSize(2).containsOnly(schedule1, schedule2);
     }
 
     @Test
-    @DisplayName("소속된 커플이 없으면, 자신의 모든 일정을 조회한다")
+    @DisplayName("소속된 커플이 없으면, 자신의 일정을 조회한다")
     void findAllCoupleScheduleWhenUserIsNotCouple() {
         // given
         UserEntity user1 = getNewUserEntity();
@@ -80,12 +83,14 @@ public class ScheduleRepositoryTest {
         entityManager.persist(schedule1);
         entityManager.persist(schedule2);
 
+        LocalDate now = LocalDate.now();
+
         // when
-        List<Schedule> result3 = scheduleRepository.findAllCoupleSchedule(user1.getId());
+        List<Schedule> result3 = scheduleRepository.findAllCoupleScheduleByYearAndMonth(user1.getId(), now.getYear(),
+            now.getMonthValue());
 
         // then
-        assertThat(result3).hasSize(2);
-        assertThat(result3).containsOnly(schedule1, schedule2);
+        assertThat(result3).hasSize(2).containsOnly(schedule1, schedule2);
     }
 
 
@@ -107,8 +112,8 @@ public class ScheduleRepositoryTest {
     }
 
     @Test
-    @DisplayName("사용자의 모든 일정을 조회한다")
-    void findAllUserSchedule() {
+    @DisplayName("사용자의 일정을 조회한다")
+    void findAllUserScheduleByYearAndMonth() {
         // given
         UserEntity user1 = getNewUserEntity();
         Schedule schedule1 = getNewSchedule(user1);
@@ -118,12 +123,14 @@ public class ScheduleRepositoryTest {
         entityManager.persist(schedule1);
         entityManager.persist(schedule2);
         entityManager.persist(schedule3);
+        LocalDate now = LocalDate.now();
+
         // when
-        List<Schedule> result = scheduleRepository.findAllUserSchedule(user1.getId());
+        List<Schedule> result = scheduleRepository.findAllUserScheduleByYearAndMonth(user1.getId(), now.getYear(),
+            now.getMonthValue());
 
         // then
-        assertThat(result).hasSize(3);
-        assertThat(result).containsOnly(schedule1, schedule2, schedule3);
+        assertThat(result).hasSize(3).containsOnly(schedule1, schedule2, schedule3);
     }
 
 }

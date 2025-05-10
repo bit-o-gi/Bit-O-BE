@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import bit.schedule.dto.ScheduleUpdateRequest;
+import bit.schedule.enums.ScheduleColor;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,7 +52,7 @@ class ScheduleTest {
             .content("content update test")
             .startDateTime(LocalDateTime.of(2024, 9, 1, 1, 1))
             .endDateTime(LocalDateTime.of(2024, 8, 1, 1, 1))
-            .color("#dc2227")
+            .color(ScheduleColor.RED)
             .build();
         //When
         //Then
@@ -70,20 +71,4 @@ class ScheduleTest {
         assertThatThrownBy(() -> schedule.update(null))
             .isInstanceOf(NullPointerException.class);
     }
-
-    @DisplayName("스케줄 객체를 수정 시 색상 코드가 존재하지 않으면 에러를 발생시킨다.")
-    @Test
-    void updateValidColorCode() {
-        //Given
-        Schedule schedule = getNewSchedule(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
-        ScheduleUpdateRequest scheduleUpdateRequest = ScheduleUpdateRequest.builder()
-            .color("NO_COLOR")
-            .build();
-        //When
-        //Then
-        assertThatThrownBy(() -> schedule.update(scheduleUpdateRequest))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("유효하지 않은 색상 코드: NO_COLOR");
-    }
-
 }
