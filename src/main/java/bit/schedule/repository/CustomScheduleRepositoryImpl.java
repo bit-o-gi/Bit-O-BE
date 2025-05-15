@@ -35,8 +35,8 @@ public class CustomScheduleRepositoryImpl implements CustomScheduleRepository {
                 couple.initiatorUser.id.eq(userId)
                     .or(couple.partnerUser.id.eq(userId))
                     .or(schedule.user.id.eq(userId))
-                    .and((schedule.startDateTime.between(startDate.atStartOfDay(), endDate.atTime(LocalTime.MAX)))
-                        .or(schedule.endDateTime.between(startDate.atStartOfDay(), endDate.atTime(LocalTime.MAX))))
+                    .and((schedule.startDateTime.goe(startDate.atStartOfDay()))
+                        .and(schedule.endDateTime.loe(endDate.atTime(LocalTime.MAX))))
             )
             .fetch();
     }
@@ -69,8 +69,8 @@ public class CustomScheduleRepositoryImpl implements CustomScheduleRepository {
             .select(schedule)
             .from(schedule)
             .where(schedule.user.id.eq(userId)
-                .and((schedule.startDateTime.between(startDate.atStartOfDay(), endDate.atTime(LocalTime.MAX)))
-                    .or(schedule.endDateTime.between(startDate.atStartOfDay(), endDate.atTime(LocalTime.MAX))))
+                .and((schedule.startDateTime.goe(startDate.atStartOfDay()))
+                    .and(schedule.endDateTime.loe(endDate.atTime(LocalTime.MAX))))
             )
             .fetch();
     }
