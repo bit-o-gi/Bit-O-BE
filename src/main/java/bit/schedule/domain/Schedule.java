@@ -16,13 +16,11 @@ import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@EqualsAndHashCode(exclude = "user", callSuper = false)
 @NoArgsConstructor
 public class Schedule extends BaseEntity {
 

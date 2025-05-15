@@ -1,7 +1,7 @@
 ALTER TABLE schedule
     ADD color VARCHAR(255) NULL;
 
-ALTER TABLE day
+ALTER TABLE `day`
     DROP COLUMN test;
 
 ALTER TABLE bit_o_user

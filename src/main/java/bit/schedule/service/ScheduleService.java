@@ -9,11 +9,10 @@ import bit.schedule.repository.ScheduleRepository;
 import bit.user.domain.User;
 import bit.user.entity.UserEntity;
 import bit.user.service.UserService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -24,22 +23,23 @@ public class ScheduleService {
     private final UserService userService;
 
     public ScheduleResponse getSchedule(Long userId, Long scheduleId) {
-        Schedule schedule = scheduleRepository.findSchedule(userId, scheduleId).orElseThrow(ScheduleNotFoundException::new);
+        Schedule schedule = scheduleRepository.findSchedule(userId, scheduleId)
+            .orElseThrow(ScheduleNotFoundException::new);
         return new ScheduleResponse(schedule);
     }
 
-    public List<ScheduleResponse> getSchedulesByUserId(Long userId) {
-        List<Schedule> schedules = scheduleRepository.findAllUserSchedule(userId);
+    public List<ScheduleResponse> getSchedulesByUserId(Long userId, Integer year, Integer month) {
+        List<Schedule> schedules = scheduleRepository.findAllUserScheduleByYearAndMonth(userId, year, month);
         return schedules.stream()
-                .map(ScheduleResponse::new)
-                .toList();
+            .map(ScheduleResponse::new)
+            .toList();
     }
 
-    public List<ScheduleResponse> getCoupleSchedulesByUserId(Long userId) {
-        List<Schedule> schedules = scheduleRepository.findAllCoupleSchedule(userId);
+    public List<ScheduleResponse> getCoupleSchedulesByUserId(Long userId, Integer year, Integer month) {
+        List<Schedule> schedules = scheduleRepository.findAllCoupleScheduleByYearAndMonth(userId, year, month);
         return schedules.stream()
-                .map(ScheduleResponse::new)
-                .toList();
+            .map(ScheduleResponse::new)
+            .toList();
     }
 
     @Transactional
@@ -53,14 +53,16 @@ public class ScheduleService {
 
     @Transactional
     public ScheduleResponse updateSchedule(Long userId, Long scheduleId, ScheduleUpdateRequest scheduleUpdateRequest) {
-        Schedule schedule = scheduleRepository.findSchedule(userId, scheduleId).orElseThrow(ScheduleNotFoundException::new);
+        Schedule schedule = scheduleRepository.findSchedule(userId, scheduleId)
+            .orElseThrow(ScheduleNotFoundException::new);
         schedule.update(scheduleUpdateRequest);
         return new ScheduleResponse(schedule);
     }
 
     @Transactional
     public ScheduleResponse deleteSchedule(Long userId, Long scheduleId) {
-        Schedule schedule = scheduleRepository.findSchedule(userId, scheduleId).orElseThrow(ScheduleNotFoundException::new);
+        Schedule schedule = scheduleRepository.findSchedule(userId, scheduleId)
+            .orElseThrow(ScheduleNotFoundException::new);
         scheduleRepository.deleteById(scheduleId);
         return new ScheduleResponse(schedule);
     }
