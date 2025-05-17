@@ -4,18 +4,20 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
-
+@Slf4j
 @RequiredArgsConstructor
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
-    private final TokenProvider tokenProvider;
     private static final String HEADER_AUTHORIZATION = "Authorization";
     private static final String TOKEN_PREFIX = "Bearer ";
+    private final TokenProvider tokenProvider;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -25,19 +27,32 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         // 가져온 값에서 접두사 제거
         String token = getAccessToken(authorizationHeader);
         if (token != null && tokenProvider.expiredToken(token)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 Unauthorized
-            response.setContentType("application/json");
-            response.getWriter()
-                    .write("{\"error\": \"Token has expired\", \"message\": \"" + "Access Token is Expired" + "\"}");
+            sendErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "expired Token",
+                    "Access Token is Expired");
             return; // 필터 체인 중단
         }
 
         // 가져온 토큰이 유효한지 확인하고, 유효한 때는 인증 정보 설정
         if (tokenProvider.validToken(token)) {
-            Authentication authentication = tokenProvider.getAuthentication(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            try {
+                Authentication authentication = tokenProvider.getAuthentication(token);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } catch (UsernameNotFoundException e) {
+                sendErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "Invalid Token",
+                        "Access Token is Invalid");
+                return;
+            }
         }
         filterChain.doFilter(request, response);
+    }
+
+    private void sendErrorResponse(HttpServletResponse response, int status, String error, String message)
+            throws IOException {
+        log.info("Authentication failed - error: {}, message: {}", error, message);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(String.format("{\"error\": \"%s\", \"message\": \"%s\"}", error, message));
     }
 
     private String getAccessToken(String authorizationHeader) {
