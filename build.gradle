@@ -26,7 +26,7 @@ configurations {
 
 sonar {
     properties {
-        property "sonar.projectKey", "bit-o-gi_Bit-O-BE_AZX6MuHXqu0_jIigfq6k"
+        property "sonar.projectKey", "bit-o-gi_Bit-O-BE_AZb1pW95UJeT8Av_8zhy"
     }
 }
 
