@@ -1,6 +1,7 @@
 package bit.day.exception;
 
-public class DayException {
-    public static class DayNotFoundException extends IllegalArgumentException {
-    }
+public class DayException extends RuntimeException {
+  public DayException(String message) {
+    super(message);
+  }
 }

@@ -1,6 +1,5 @@
 package bit.day.controller;
 
-import bit.day.domain.Day;
 import bit.day.dto.DayRequest;
 import bit.day.dto.DayResponse;
 import bit.day.service.DayService;
@@ -15,40 +14,39 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/day")
 @RequiredArgsConstructor
-public class DayController implements DayControllerDoc{
+public class DayController implements DayControllerDoc {
     private final DayService dayService;
 
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public DayResponse getDay(@PathVariable Long id) {
-        Day day = dayService.getDay(id);
-        return DayResponse.from(day);
+    public ResponseEntity<DayResponse> getDay(@PathVariable Long id) {
+        return ResponseEntity.ok().body(dayService.getDay(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<DayResponse> getDayByCouple(@RequestParam Long coupleId) {
+        return ResponseEntity.ok().body(dayService.getDayByCouple(coupleId));
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public DayResponse createDay(@Valid @RequestBody DayRequest dayRequest) {
-        Day day = dayService.createDay(dayRequest.toCommand());
-        return DayResponse.from(day);
+    public ResponseEntity<Long> createDay(@Valid @RequestBody DayRequest dayRequest) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(dayService.createDay(dayRequest.toCommand()));
     }
 
     @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public DayResponse updateDay(@PathVariable Long id,
-                                 @Valid @RequestBody DayRequest dayRequest) {
-        Day day = dayService.updateDay(id, dayRequest.toCommand());
-        return DayResponse.from(day);
+    public ResponseEntity<DayResponse> updateDay(@PathVariable Long id,
+                                                 @Valid @RequestBody DayRequest dayRequest) {
+        return ResponseEntity.ok().body(dayService.updateDay(id, dayRequest.toCommand()));
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteDay(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteDay(@PathVariable Long id) {
         dayService.deleteDay(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

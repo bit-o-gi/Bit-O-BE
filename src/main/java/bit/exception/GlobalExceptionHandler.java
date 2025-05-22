@@ -17,19 +17,19 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(value = EntityNotFoundException.class)
+    @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<String> entityNotFoundException(EntityNotFoundException e, HttpServletRequest request) {
         log.error("Error Code : {}, Url : {}, message : {}", HttpStatus.NOT_FOUND, request.getRequestURI(), e.getMessage(), e);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
-    @ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<String> badRequestMethodException(HttpRequestMethodNotSupportedException e, HttpServletRequest request) {
         log.error("Error Code : {}, Url : {}, message : {}", HttpStatus.BAD_REQUEST, request.getRequestURI(), e.getMessage(), e);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
     }
 
-    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> methodArgumentNotValidException(MethodArgumentNotValidException e, HttpServletRequest request) {
         Map<String, String> errorMessages = new HashMap<>();
         e.getBindingResult().getFieldErrors().forEach(error ->
