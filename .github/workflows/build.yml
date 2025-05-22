@@ -1,8 +1,11 @@
+# 워크플로의 이름 지정
+name: pr-sonarqube
+
 on:
   pull_request:
     branches:
       - main
-    types: [opened, synchronize, reopened]
+    types: [ opened, synchronize, reopened ]
 
 jobs:
   build:
@@ -44,4 +47,3 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: ./gradlew clean build sonar -Dsonar.qualitygate.wait=false --info
-
