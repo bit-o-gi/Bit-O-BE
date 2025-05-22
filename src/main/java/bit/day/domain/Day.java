@@ -42,7 +42,7 @@ public class Day extends BaseEntity {
     private LocalDate startDate;
 
     public void update(DayCommand dayCommand) {
-        this.title = dayCommand.title;
-        this.startDate = dayCommand.startDate;
+        this.title = dayCommand.title();
+        this.startDate = dayCommand.startDate();
     }
 }

@@ -3,6 +3,7 @@ package bit.day.dto;
 import bit.day.domain.Day;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 
