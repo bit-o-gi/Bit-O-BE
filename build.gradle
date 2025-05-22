@@ -91,7 +91,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     // log
-    implementation 'ch.qos.logback:logback-classic:1.5.13'
+    implementation 'org.springframework.boot:spring-boot-starter-logging'
 
     // Lombok
     compileOnly 'org.projectlombok:lombok'
