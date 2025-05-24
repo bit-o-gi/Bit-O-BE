@@ -37,8 +37,8 @@ type Mutation {
 
 # 기념일 생성 및 업데이트용 입력 타입
 input AnReqDto {
-    writerEmail: String!
-    withPeopleEmail: String!
+    writerEmail: String
+    withPeopleEmail: String
     writeTime: String
     title: String!
     updateTime: String
