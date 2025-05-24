@@ -90,9 +90,6 @@ dependencies {
     // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-    // log
-    implementation 'ch.qos.logback:logback-classic:1.5.13'
-
     // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
