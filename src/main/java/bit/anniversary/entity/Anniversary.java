@@ -34,8 +34,17 @@ public class Anniversary {
 	@JoinColumn(name = "with_people_id")
 	private UserEntity withPeople;
 
-	public AnDto toDto(ModelMapper modelMapper) {
-		return modelMapper.map(this, AnDto.class);
+	public AnDto toDto() {
+		return AnDto.builder()
+				.id(this.id)
+				.writerEmail(this.writer != null ? this.writer.getEmail() : null)
+				.withPeopleEmail(this.withPeople != null ? this.withPeople.getEmail() : null)
+				.writeTime(this.writeTime)
+				.updateTime(this.updateTime)
+				.title(this.title)
+				.content(this.content)
+				.anniversaryDate(this.anniversaryDate != null ? this.anniversaryDate.toString() : null)
+				.build();
 	}
 
 	public void updateAnniversary(AnDto anDto, UserEntity writer, UserEntity withPeople) {
