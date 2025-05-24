@@ -5,6 +5,9 @@ import bit.anniversary.dto.AnReqDto;
 import bit.anniversary.dto.AnResDto;
 import bit.anniversary.entity.Anniversary;
 import bit.anniversary.repository.AnRepository;
+import bit.auth.domain.UserPrincipal;
+import bit.couple.dto.CoupleResponseDto;
+import bit.couple.service.CoupleService;
 import bit.user.dto.UserResponse;
 import bit.user.entity.UserEntity;
 import bit.user.repository.UserJpaRepository;
@@ -27,12 +30,15 @@ public class AnService {
     private final AnRepository anRepository;
     private final UserJpaRepository userRepository;
     private final ModelMapper modelMapper;
+    private final CoupleService coupleService;
 
-    public AnResDto createAnniversary(AnReqDto anReqDto) {
-        UserEntity writer = userRepository.findByEmail(anReqDto.getWriterEmail())
-                .orElseThrow(() -> new EntityNotFoundException("Writer not found"));
-        UserEntity withPeople = userRepository.findByEmail(anReqDto.getWithPeopleEmail())
-                .orElseThrow(() -> new EntityNotFoundException("WithPeople not found"));
+    @Transactional
+    public AnResDto createAnniversary(UserPrincipal userPrincipal,AnReqDto anReqDto) {
+
+        CoupleResponseDto coupleByUserId = coupleService.getCoupleByUserId(userPrincipal.getUser().getId());
+        UserEntity writer = UserEntity.from(coupleByUserId.getInitiatorUser());
+
+        UserEntity withPeople = UserEntity.from(coupleByUserId.getPartnerUser());
 
         AnDto anDto = modelMapper.map(anReqDto, AnDto.class);
         Anniversary anniversary = anDto.toEntity(modelMapper);
@@ -42,19 +48,17 @@ public class AnService {
         UserResponse writerRes = UserResponse.from(writer.toDomain());
         UserResponse withPeopleRes = UserResponse.from(withPeople.toDomain());
 
-        return AnResDto.from(anDto, writerRes, withPeopleRes, anniversary.calculateDaysToAnniversary());
+ return AnResDto.from(anDto, writerRes, withPeopleRes, anniversary.calculateDaysToAnniversary());
     }
 
     @Transactional
-    public AnResDto updateAnniversary(Long id, AnReqDto anReqDto) {
+    public AnResDto updateAnniversary(UserPrincipal userPrincipal,Long id, AnReqDto anReqDto) {
+        CoupleResponseDto coupleByUserId = coupleService.getCoupleByUserId(userPrincipal.getUser().getId());
+        UserEntity writer = UserEntity.from(coupleByUserId.getInitiatorUser());
+        UserEntity withPeople = UserEntity.from(coupleByUserId.getPartnerUser());
+
         // 기존 Anniversary 엔티티 조회
         Anniversary anniversary = anRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-
-        // 작성자와 관련된 사용자를 찾기
-        UserEntity writer = userRepository.findByEmail(anReqDto.getWriterEmail())
-                .orElseThrow(() -> new EntityNotFoundException("Writer not found"));
-        UserEntity withPeople = userRepository.findByEmail(anReqDto.getWithPeopleEmail())
-                .orElseThrow(() -> new EntityNotFoundException("WithPeople not found"));
 
         // AnReqDto -> AnDto 변환 및 업데이트
         AnDto anDto = anReqDto.toAnDto();

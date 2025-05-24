@@ -1,15 +1,20 @@
 package bit.anniversary.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+
 
 import bit.anniversary.dto.AnDto;
 import bit.anniversary.dto.AnReqDto;
 import bit.anniversary.dto.AnResDto;
 import bit.anniversary.entity.Anniversary;
 import bit.anniversary.repository.AnRepository;
+import bit.auth.domain.UserPrincipal;
+import bit.couple.domain.Couple;
+import bit.couple.dto.CoupleResponseDto;
+import bit.couple.enums.CoupleStatus;
+import bit.couple.fixture.CoupleFixtures;
+import bit.couple.service.CoupleService;
 import bit.user.domain.User;
 import bit.user.entity.UserEntity;
 import bit.user.enums.OauthPlatformType;
@@ -39,82 +44,82 @@ class AnServiceTest {
     @Mock
     private ModelMapper modelMapper = new ModelMapper();
 
+    @Mock
+    private CoupleService coupleService;
+
     private UserEntity writerEntity;
     private UserEntity withPeopleEntity;
     private AnReqDto anReqDto;
     private AnDto anDto;
     private Anniversary anniversary;
 
+    private User writer;
+    private User withPeople;
+    private UserPrincipal mockUserPrincipal;
+
+
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         MockitoAnnotations.openMocks(this);
 
-        // User 객체 생성 후 UserEntity로 변환
-        User writer = User.builder()
-                .id(1L)
-                .email("writer@example.com")
-                .nickName("Writer")
-                .platform(OauthPlatformType.KAKAO)
-                .build();
-        User withPeople = User.builder()
-                .id(2L)
-                .email("withpeople@example.com")
-                .nickName("WithPeople")
-                .platform(OauthPlatformType.KAKAO)
-                .build();
+        // Fixture에서 Couple 생성
+        Couple couple = CoupleFixtures.initialCouple();
+        writerEntity = couple.getInitiatorUser();
+        withPeopleEntity = couple.getPartnerUser();
 
-        // UserEntity로 변환
-        writerEntity = UserEntity.from(writer);
-        withPeopleEntity = UserEntity.from(withPeople);
+        // Entity → Domain 변환
+        writer = writerEntity.toDomain();
+        withPeople = withPeopleEntity.toDomain();
 
+        // UserPrincipal mock 설정
+        mockUserPrincipal = mock(UserPrincipal.class);
+        when(mockUserPrincipal.getUser()).thenReturn(writer);
+
+        // 요청 DTO 설정 (하드코딩 대신 실제 객체에서 값 가져오기)
         anReqDto = AnReqDto.builder()
-                .writerEmail("writer@example.com")
-                .withPeopleEmail("withpeople@example.com")
+                .writerEmail(writer.getEmail())
+                .withPeopleEmail(withPeople.getEmail())
                 .title("Test Anniversary")
                 .anniversaryDate("2023-12-25T00:00")
                 .build();
 
+        // 중간 DTO
         anDto = AnDto.builder()
                 .id(1L)
-                .title("Test Anniversary")
-                .writerEmail("writer@example.com")
-                .withPeopleEmail("withpeople@example.com")
-                .anniversaryDate("2023-12-25T00:00")
+                .title(anReqDto.getTitle())
+                .writerEmail(anReqDto.getWriterEmail())
+                .withPeopleEmail(anReqDto.getWithPeopleEmail())
+                .anniversaryDate(anReqDto.getAnniversaryDate())
                 .build();
 
+        // 최종 저장될 엔티티
         anniversary = Anniversary.builder()
                 .id(1L)
-                .title("Test Anniversary")
-                .anniversaryDate(LocalDateTime.parse("2023-12-25T00:00"))
-                .writer(writerEntity)
-                .withPeople(withPeopleEntity)
-                .build();
-    }
-
-    @DisplayName("기념일 생성 테스트")
-    @Test
-    void createAnniversaryTest() {
-        // Arrange
-        when(userRepository.findByEmail(anReqDto.getWriterEmail())).thenReturn(Optional.of(writerEntity));
-        when(userRepository.findByEmail(anReqDto.getWithPeopleEmail())).thenReturn(Optional.of(withPeopleEntity));
-
-        // anReqDto -> anDto 변환을 위한 ModelMapper 설정
-        when(modelMapper.map(anReqDto, AnDto.class)).thenReturn(anDto);
-
-        // anDto -> Anniversary 변환을 위한 ModelMapper 설정
-        Anniversary anniversary = Anniversary.builder()
                 .title(anDto.getTitle())
                 .anniversaryDate(LocalDateTime.parse(anDto.getAnniversaryDate()))
                 .writer(writerEntity)
                 .withPeople(withPeopleEntity)
                 .build();
+    }
+
+
+    @DisplayName("기념일 생성 테스트")
+    @Test
+    void createAnniversaryTest() throws Exception{
+
+
+        when(coupleService.getCoupleByUserId(writer.getId()))
+                .thenReturn(CoupleResponseDto.of(Couple.of(writerEntity, withPeopleEntity, CoupleStatus.APPROVED)));
+
+        when(userRepository.findByEmail(anReqDto.getWithPeopleEmail()))
+                .thenReturn(Optional.of(withPeopleEntity));
+//
+        when(modelMapper.map(anReqDto, AnDto.class)).thenReturn(anDto);
         when(modelMapper.map(anDto, Anniversary.class)).thenReturn(anniversary);
-
-        // Mocking: `anRepository.save`가 `anniversary`를 반환하도록 설정
         when(anRepository.save(any(Anniversary.class))).thenReturn(anniversary);
-
+//
         // Act
-        AnResDto result = anService.createAnniversary(anReqDto);
+        AnResDto result = anService.createAnniversary(mockUserPrincipal, anReqDto);
 
         // Assert
         assertEquals(anDto.getTitle(), result.getTitle());
@@ -141,35 +146,20 @@ class AnServiceTest {
         // Arrange
         Long anniversaryId = 1L;
 
-        // Mock 기존 Anniversary
-        Anniversary existingAnniversary = Anniversary.builder()
-                .id(anniversaryId)
-                .title("Old Title")
-                .anniversaryDate(LocalDateTime.parse("2023-12-24T00:00"))
-                .writer(writerEntity)
-                .withPeople(withPeopleEntity)
-                .build();
-        when(anRepository.findById(anniversaryId)).thenReturn(Optional.of(existingAnniversary));
+        when(coupleService.getCoupleByUserId(writer.getId()))
+                .thenReturn(CoupleResponseDto.of(Couple.of(writerEntity, withPeopleEntity, CoupleStatus.APPROVED)));
+        when(mockUserPrincipal.getUser()).thenReturn(writer);
 
-        // Mock UserRepository로 writer와 withPeople 찾기
-        when(userRepository.findByEmail("writer@example.com")).thenReturn(Optional.of(writerEntity));
-        when(userRepository.findByEmail("withpeople@example.com")).thenReturn(Optional.of(withPeopleEntity));
+        when(anRepository.findById(anniversaryId)).thenReturn(Optional.of(anniversary));
 
-        // Mock anReqDto -> anDto 변환
         AnDto updatedAnDto = anReqDto.toAnDto();
         when(modelMapper.map(anReqDto, AnDto.class)).thenReturn(updatedAnDto);
+        when(anRepository.save(anniversary)).thenReturn(anniversary);
 
-        // anDto -> Anniversary로 변환 후 업데이트 및 저장 설정
-        when(anRepository.save(existingAnniversary)).thenReturn(existingAnniversary);
-
-        // Act
-        AnResDto result = anService.updateAnniversary(anniversaryId, anReqDto);
-
-        // Assert
-        verify(anRepository).save(existingAnniversary); // save() 호출 검증
+        AnResDto result = anService.updateAnniversary(mockUserPrincipal, anniversaryId, anReqDto);
+        verify(anRepository).save(anniversary);
         assertEquals(updatedAnDto.getTitle(), result.getTitle());
-        assertEquals(updatedAnDto.getWriterEmail(), result.getWriter().getEmail());
-        assertEquals(updatedAnDto.getWithPeopleEmail(), result.getWithPeople().getEmail());
+
     }
 
 

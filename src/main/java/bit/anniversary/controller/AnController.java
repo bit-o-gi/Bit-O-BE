@@ -3,9 +3,11 @@ package bit.anniversary.controller;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import bit.auth.domain.UserPrincipal;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 
 import bit.anniversary.dto.AnReqDto;
@@ -23,15 +25,16 @@ public class AnController {
 
 	// 기념일 생성
 	@MutationMapping
-	public AnResDto createAnniversary(@Argument("anDto") AnReqDto anReqDto) {
+	public AnResDto createAnniversary(@AuthenticationPrincipal UserPrincipal userPrincipal,@Argument("anDto") AnReqDto anReqDto) {
+		System.out.println(userPrincipal);
 		log.info("anReqDto ==> {}",anReqDto);
-		return anniversaryService.createAnniversary(anReqDto);
+		return anniversaryService.createAnniversary(userPrincipal,anReqDto);
 	}
 
 	// 기념일 업데이트
 	@MutationMapping
-	public AnResDto updateAnniversary(@Argument("id") Long id, @Argument("anDto") AnReqDto anReqDto) {
-		return anniversaryService.updateAnniversary(id, anReqDto);
+	public AnResDto updateAnniversary(@AuthenticationPrincipal UserPrincipal userPrincipal,@Argument("id") Long id, @Argument("anDto") AnReqDto anReqDto) {
+		return anniversaryService.updateAnniversary(userPrincipal,id, anReqDto);
 	}
 
 	// 기념일 삭제
