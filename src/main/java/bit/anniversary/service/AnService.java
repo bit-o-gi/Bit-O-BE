@@ -80,7 +80,7 @@ public class AnService {
     public AnResDto getAnniversary(Long id) {
         Anniversary anniversary = anRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         return AnResDto.from(
-                anniversary.toDto(modelMapper),
+                anniversary.toDto(),
                 UserResponse.from(anniversary.getWriter().toDomain()),
                 UserResponse.from(anniversary.getWithPeople().toDomain()),
                 anniversary.calculateDaysToAnniversary()
@@ -92,7 +92,7 @@ public class AnService {
         return anRepository.findAllByAnniversaryDateBetween(startDate, endDate)
                 .stream()
                 .map(anniversary -> AnResDto.from(
-                        anniversary.toDto(modelMapper),
+                        anniversary.toDto(),
                         UserResponse.from(anniversary.getWriter().toDomain()),
                         UserResponse.from(anniversary.getWithPeople().toDomain()),
                         anniversary.calculateDaysToAnniversary()
