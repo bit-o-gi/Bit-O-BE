@@ -1,8 +1,10 @@
 package bit.anniversary.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
-
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import bit.anniversary.dto.AnDto;
 import bit.anniversary.dto.AnReqDto;
@@ -13,11 +15,10 @@ import bit.auth.domain.UserPrincipal;
 import bit.couple.domain.Couple;
 import bit.couple.dto.CoupleResponseDto;
 import bit.couple.enums.CoupleStatus;
-import bit.couple.fixture.CoupleFixtures;
+import bit.couple.fixture.CoupleTestFixture;
 import bit.couple.service.CoupleService;
 import bit.user.domain.User;
 import bit.user.entity.UserEntity;
-import bit.user.enums.OauthPlatformType;
 import bit.user.repository.UserJpaRepository;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -54,7 +55,6 @@ class AnServiceTest {
     private Anniversary anniversary;
 
     private User writer;
-    private User withPeople;
     private UserPrincipal mockUserPrincipal;
 
 
@@ -63,17 +63,17 @@ class AnServiceTest {
         MockitoAnnotations.openMocks(this);
 
         // Fixture에서 Couple 생성
-        Couple couple = CoupleFixtures.initialCouple();
+        Couple couple = CoupleTestFixture.initialCouple();
         writerEntity = couple.getInitiatorUser();
         withPeopleEntity = couple.getPartnerUser();
 
         // Entity → Domain 변환
         writer = writerEntity.toDomain();
-        withPeople = withPeopleEntity.toDomain();
+        User withPeople = withPeopleEntity.toDomain();
 
         // UserPrincipal mock 설정
         mockUserPrincipal = mock(UserPrincipal.class);
-        when(mockUserPrincipal.getUser()).thenReturn(writer);
+        when(mockUserPrincipal.getId()).thenReturn(writer.getId());
 
         // 요청 DTO 설정 (하드코딩 대신 실제 객체에서 값 가져오기)
         anReqDto = AnReqDto.builder()
@@ -105,8 +105,7 @@ class AnServiceTest {
 
     @DisplayName("기념일 생성 테스트")
     @Test
-    void createAnniversaryTest() throws Exception{
-
+    void createAnniversaryTest() {
 
         when(coupleService.getCoupleByUserId(writer.getId()))
                 .thenReturn(CoupleResponseDto.of(Couple.of(writerEntity, withPeopleEntity, CoupleStatus.APPROVED)));
@@ -148,7 +147,7 @@ class AnServiceTest {
 
         when(coupleService.getCoupleByUserId(writer.getId()))
                 .thenReturn(CoupleResponseDto.of(Couple.of(writerEntity, withPeopleEntity, CoupleStatus.APPROVED)));
-        when(mockUserPrincipal.getUser()).thenReturn(writer);
+        when(mockUserPrincipal.getId()).thenReturn(writer.getId());
 
         when(anRepository.findById(anniversaryId)).thenReturn(Optional.of(anniversary));
 

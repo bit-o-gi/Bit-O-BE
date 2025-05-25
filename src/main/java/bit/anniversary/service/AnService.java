@@ -33,9 +33,9 @@ public class AnService {
     private final CoupleService coupleService;
 
     @Transactional
-    public AnResDto createAnniversary(UserPrincipal userPrincipal,AnReqDto anReqDto) {
+    public AnResDto createAnniversary(UserPrincipal userPrincipal, AnReqDto anReqDto) {
 
-        CoupleResponseDto coupleByUserId = coupleService.getCoupleByUserId(userPrincipal.getUser().getId());
+        CoupleResponseDto coupleByUserId = coupleService.getCoupleByUserId(userPrincipal.getId());
         UserEntity writer = UserEntity.from(coupleByUserId.getInitiatorUser());
 
         UserEntity withPeople = UserEntity.from(coupleByUserId.getPartnerUser());
@@ -48,12 +48,12 @@ public class AnService {
         UserResponse writerRes = UserResponse.from(writer.toDomain());
         UserResponse withPeopleRes = UserResponse.from(withPeople.toDomain());
 
- return AnResDto.from(anDto, writerRes, withPeopleRes, anniversary.calculateDaysToAnniversary());
+        return AnResDto.from(anDto, writerRes, withPeopleRes, anniversary.calculateDaysToAnniversary());
     }
 
     @Transactional
-    public AnResDto updateAnniversary(UserPrincipal userPrincipal,Long id, AnReqDto anReqDto) {
-        CoupleResponseDto coupleByUserId = coupleService.getCoupleByUserId(userPrincipal.getUser().getId());
+    public AnResDto updateAnniversary(UserPrincipal userPrincipal, Long id, AnReqDto anReqDto) {
+        CoupleResponseDto coupleByUserId = coupleService.getCoupleByUserId(userPrincipal.getId());
         UserEntity writer = UserEntity.from(coupleByUserId.getInitiatorUser());
         UserEntity withPeople = UserEntity.from(coupleByUserId.getPartnerUser());
 
