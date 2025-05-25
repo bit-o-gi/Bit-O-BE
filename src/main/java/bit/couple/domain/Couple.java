@@ -14,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -67,5 +68,19 @@ public class Couple extends BaseEntity { // 클래스 이름을 CoupleConnection
         if (!this.initiatorUser.equals(user) && !this.partnerUser.equals(user)) {
             throw new CoupleException.CouplePermissionException(); // 유효성 검사 실패 시 예외 발생
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Couple couple = (Couple) o;
+        return Objects.equals(id, couple.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

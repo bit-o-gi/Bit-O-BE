@@ -53,7 +53,7 @@ public class CoupleController implements CoupleControllerDocs {
     // NOTE: 커플 찾기
     @GetMapping("/{coupleId}")
     public ResponseEntity<CoupleResponseDto> getCouple(@PathVariable Long coupleId) {
-        CoupleResponseDto response = coupleService.getCouple(coupleId);
+        CoupleResponseDto response = coupleService.getCoupleById(coupleId);
         return ResponseEntity.ok(response);
     }
 
@@ -67,7 +67,7 @@ public class CoupleController implements CoupleControllerDocs {
     }
 
     // NOTE: 커플에 속한 유저 수정
-    @PutMapping("/")
+    @PutMapping
     public ResponseEntity<Void> updateCouple(@AuthenticationPrincipal UserPrincipal userPrincipal,
                                              @RequestBody CoupleRequestDto coupleRequestDto) {
         coupleService.updateCouple(userPrincipal.getId(), coupleRequestDto);

@@ -11,7 +11,7 @@ import bit.couple.exception.CoupleException;
 import bit.couple.exception.CoupleException.CoupleNotFoundException;
 import bit.couple.repository.CoupleRepository;
 import bit.couple.vo.CodeEntryVo;
-import bit.day.dto.DayCommand;
+import bit.day.dto.DayRegisterCommand;
 import bit.day.service.DayService;
 import bit.user.domain.User;
 import bit.user.entity.UserEntity;
@@ -36,11 +36,26 @@ public class CoupleService {
     private final UserService userService;
     private final DayService dayService;
 
+    public CoupleResponseDto getCoupleById(Long id) {
+        return CoupleResponseDto.of(coupleRepository.findById(id)
+                .orElseThrow(CoupleNotFoundException::new));
+    }
+
+    public Couple getCoupleEntityById(Long id) {
+        return coupleRepository.findById(id).orElseThrow(CoupleNotFoundException::new);
+    }
+
     public CoupleResponseDto getCoupleByUserId(Long userId) {
         Couple couple = coupleRepository.findByUserId(userId)
-                .orElseThrow(() -> new CoupleException.CoupleNotFoundException());
+                .orElseThrow(CoupleNotFoundException::new);
         return CoupleResponseDto.of(couple);
     }
+
+    public Couple getCoupleEntityByUserId(Long userId) {
+        return coupleRepository.findByUserId(userId)
+                .orElseThrow(CoupleNotFoundException::new);
+    }
+
 
     @Transactional
     public CoupleRcodeResponseDto createCode(Long userId, CoupleStartDayRequest dayRequest) {
@@ -93,17 +108,6 @@ public class CoupleService {
         }
     }
 
-    @Transactional(readOnly = true)
-    public CoupleResponseDto getCouple(Long id) {
-        return CoupleResponseDto.of(coupleRepository.findById(id)
-                .orElseThrow(CoupleNotFoundException::new));
-    }
-
-    public Couple getCoupleById(Long id) {
-        return coupleRepository.findById(id)
-                .orElseThrow(CoupleNotFoundException::new);
-    }
-
     @Transactional
     public void removeExpiredCodes() {
         Iterator<Map.Entry<String, CodeEntryVo>> iterator = codeStore.entrySet().iterator();
@@ -122,7 +126,7 @@ public class CoupleService {
     @Transactional
     public void updateCouple(Long userId, CoupleRequestDto coupleRequestDto) {
         User user = userService.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException());
+                .orElseThrow(EntityNotFoundException::new);
 
         Couple couple = coupleRepository.findById(coupleRequestDto.getId())
                 .orElseThrow(CoupleException.CoupleNotFoundException::new);
@@ -135,7 +139,7 @@ public class CoupleService {
     @Transactional
     public void coupleApprove(Long userId, Long coupleId) {
         User user = userService.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException());
+                .orElseThrow(EntityNotFoundException::new);
 
         Couple couple = coupleRepository.findById(coupleId)
                 .orElseThrow(CoupleException.CoupleNotFoundException::new);
@@ -165,11 +169,11 @@ public class CoupleService {
 
         Couple couple = Couple.of(UserEntity.from(initiatorUser), UserEntity.from(partnerUser),
                 CoupleStatus.APPROVED);
-        coupleRepository.save(couple); // 커플 정보를 저장
-        CoupleStartDayRequest dayRequest = codeEntryVo.getDayRequest();
+        coupleRepository.save(couple);
 
-        dayService.createDay(
-                new DayCommand(couple.getId(), dayRequest.getCoupleTitle(), dayRequest.getStartDate()));
+        CoupleStartDayRequest dayRequest = codeEntryVo.getDayRequest();
+        dayService.createDay(couple,
+                new DayRegisterCommand(null, dayRequest.getCoupleTitle(), dayRequest.getStartDate()));
 
         codeStore.remove(code);
         reverseCodeStore.remove(codeEntryVo);

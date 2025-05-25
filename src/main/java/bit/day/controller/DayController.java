@@ -1,12 +1,16 @@
 package bit.day.controller;
 
-import bit.day.dto.DayRequest;
+import bit.auth.domain.UserPrincipal;
+import bit.day.dto.DayDeleteCommand;
+import bit.day.dto.DayRegisterRequest;
 import bit.day.dto.DayResponse;
-import bit.day.service.DayService;
+import bit.day.dto.DayUpdateRequest;
+import bit.day.facade.DayFacade;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,39 +18,42 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/day")
 @RequiredArgsConstructor
 public class DayController implements DayControllerDoc {
-    private final DayService dayService;
+    private final DayFacade dayFacade;
 
     @GetMapping("/{id}")
-    public ResponseEntity<DayResponse> getDay(@PathVariable Long id) {
-        return ResponseEntity.ok().body(dayService.getDay(id));
+    public ResponseEntity<DayResponse> getDay(
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @PathVariable Long id) {
+        return ResponseEntity.ok().body(dayFacade.getDay(id));
     }
 
-    @GetMapping
-    public ResponseEntity<DayResponse> getDayByCouple(@RequestParam Long coupleId) {
-        return ResponseEntity.ok().body(dayService.getDayByCouple(coupleId));
+    @GetMapping("/user")
+    public ResponseEntity<DayResponse> getDayByCouple(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        return ResponseEntity.ok().body(dayFacade.getDayByCouple(userPrincipal.getId()));
     }
 
     @PostMapping
-    public ResponseEntity<Long> createDay(@Valid @RequestBody DayRequest dayRequest) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(dayService.createDay(dayRequest.toCommand()));
+    public ResponseEntity<Long> createDay(@RequestBody @Valid DayRegisterRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(dayFacade.createDay(request.toCommand()));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<DayResponse> updateDay(@PathVariable Long id,
-                                                 @Valid @RequestBody DayRequest dayRequest) {
-        return ResponseEntity.ok().body(dayService.updateDay(id, dayRequest.toCommand()));
+    @PutMapping
+    public ResponseEntity<Long> updateDay(
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @RequestBody @Valid DayUpdateRequest dayUpdateRequest) {
+        return ResponseEntity.ok().body(dayFacade.updateDay(dayUpdateRequest.toCommand(userPrincipal.getId())));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDay(@PathVariable Long id) {
-        dayService.deleteDay(id);
+    public ResponseEntity<Void> deleteDay(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                          @PathVariable Long id) {
+        dayFacade.deleteDay(new DayDeleteCommand(userPrincipal.getId(), id));
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

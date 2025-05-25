@@ -8,7 +8,7 @@ import bit.user.enums.OauthPlatformType;
 import java.lang.reflect.Field;
 import java.util.List;
 
-public class CoupleFixtures {
+public class CoupleTestFixture {
 
     public static Couple initialCouple() throws Exception {
         List<User> users = initialUsers();
@@ -20,6 +20,7 @@ public class CoupleFixtures {
         Field idField = clazz.getDeclaredField("id");
         idField.setAccessible(true);
         idField.set(couple, 0L);
+
         return couple;
     }
 
@@ -37,6 +38,7 @@ public class CoupleFixtures {
                 .nickName("nickname2")
                 .platform(OauthPlatformType.KAKAO)
                 .build();
+
         return List.of(user1, user2);
     }
 }
