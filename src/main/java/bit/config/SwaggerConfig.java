@@ -16,7 +16,7 @@ public class SwaggerConfig {
     @Bean
     public GroupedOpenApi publicApi() {
         return GroupedOpenApi.builder()
-                .group("Bit-o-api")
+                .group("bit-o-api")
                 .pathsToMatch("/api/**")
                 .build();
     }
@@ -32,8 +32,6 @@ public class SwaggerConfig {
                         .version("v1")
                         .description("API 명세서 입니다.")
                 )
-//                .addServersItem(new Server().url("http://www.localhost:8080"))
-//                .addServersItem(new Server().url("https://www.bit-o.shop"))
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                 .components(new Components().addSecuritySchemes(securitySchemeName,
                         new SecurityScheme().name(securitySchemeName).type(SecurityScheme.Type.HTTP).scheme("bearer")

@@ -1,11 +1,10 @@
 package bit.day.service;
 
 import bit.couple.domain.Couple;
-import bit.couple.exception.CoupleException.CoupleNotFoundException;
-import bit.couple.repository.CoupleRepository;
 import bit.day.domain.Day;
-import bit.day.dto.DayCommand;
-import bit.day.exception.DayException.DayNotFoundException;
+import bit.day.dto.DayRegisterCommand;
+import bit.day.dto.DayUpdateCommand;
+import bit.day.exception.DayException;
 import bit.day.repository.DayRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,32 +13,36 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class DayService {
     private final DayRepository dayRepository;
-    private final CoupleRepository coupleRepository;
 
-    public Day getDay(Long id) {
-        return dayRepository.findById(id).orElseThrow(DayNotFoundException::new);
+    public Day getDayById(Long id) {
+        return dayRepository.findById(id)
+                .orElseThrow(() -> new DayException("시작일을 찾을 수 없습니다."));
     }
 
-    public Day createDay(DayCommand command) {
-        Couple couple = coupleRepository.findById(command.coupleId).orElseThrow(CoupleNotFoundException::new);
-        Day dday = Day.builder()
+    public Day getDayByCouple(Couple couple) {
+        return dayRepository.findByCouple(couple)
+                .orElseThrow(() -> new DayException("커플로 시작일을 찾을 수 없습니다."));
+    }
+
+    public Long createDay(Couple couple, DayRegisterCommand command) {
+        Day day = Day.builder()
                 .couple(couple)
-                .title(command.title)
-                .startDate(command.startDate)
+                .title(command.title())
+                .startDate(command.startDate())
                 .build();
-        return dayRepository.save(dday);
+
+        return dayRepository.save(day).getId();
     }
 
-    public Day updateDay(Long id, DayCommand dayCommand) {
-        Day day = dayRepository.findById(id).orElseThrow(DayNotFoundException::new);
-        day.update(dayCommand);
-        return dayRepository.save(day);
+    public Long updateDay(Day day, DayUpdateCommand command) {
+        day.update(command);
+        return day.getId();
     }
 
-    public void deleteDay(Long id) {
-        if (!dayRepository.existsById(id)) {
-            throw new DayNotFoundException();
-        }
-        dayRepository.deleteById(id);
+    public void deleteDay(Long id, Couple couple) {
+        Day deleteDay = getDayById(id);
+        deleteDay.checkCouple(couple);
+
+        dayRepository.delete(deleteDay);
     }
 }
