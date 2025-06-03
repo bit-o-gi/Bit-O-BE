@@ -39,9 +39,9 @@ public class AnController {
 
 	// 기념일 삭제
 	@MutationMapping
-	public Boolean deleteAnniversary(@Argument("id") Long id) {
+	public Long deleteAnniversary(@Argument("id") Long id) {
 		anniversaryService.deleteAnniversary(id);
-		return true;
+		return id;
 	}
 
 	// 특정 기념일 조회

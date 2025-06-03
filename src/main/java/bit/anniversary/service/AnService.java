@@ -40,15 +40,15 @@ public class AnService {
 
         UserEntity withPeople = UserEntity.from(coupleByUserId.getPartnerUser());
 
-        AnDto anDto = modelMapper.map(anReqDto, AnDto.class);
-        Anniversary anniversary = anDto.toEntity(modelMapper);
-        anniversary.updateAnniversary(anDto, writer, withPeople);
-        anRepository.save(anniversary);
+        AnDto anDto = anReqDto.toAnDto();
+        Anniversary anniversary = anDto.toEntity();
+        anniversary.createAnniversary(anDto, writer, withPeople);
+        Anniversary saveAnniversary = anRepository.save(anniversary);
 
         UserResponse writerRes = UserResponse.from(writer.toDomain());
         UserResponse withPeopleRes = UserResponse.from(withPeople.toDomain());
 
- return AnResDto.from(anDto, writerRes, withPeopleRes, anniversary.calculateDaysToAnniversary());
+        return AnResDto.from(saveAnniversary.toDto(), writerRes, withPeopleRes, anniversary.calculateDaysToAnniversary());
     }
 
     @Transactional
@@ -71,7 +71,7 @@ public class AnService {
         UserResponse writerRes = UserResponse.from(writer.toDomain());
         UserResponse withPeopleRes = UserResponse.from(withPeople.toDomain());
 
-        return AnResDto.from(anDto, writerRes, withPeopleRes, updatedAnniversary.calculateDaysToAnniversary());
+        return AnResDto.from(updatedAnniversary.toDto(), writerRes, withPeopleRes, updatedAnniversary.calculateDaysToAnniversary());
     }
 
 
