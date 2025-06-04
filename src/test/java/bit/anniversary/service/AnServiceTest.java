@@ -80,7 +80,7 @@ class AnServiceTest {
                 .writerEmail(writer.getEmail())
                 .withPeopleEmail(withPeople.getEmail())
                 .title("Test Anniversary")
-                .anniversaryDate("2023-12-25T00:00")
+                .anniversaryDate("2023-12-25T00:00:00")
                 .build();
 
         // 중간 DTO
@@ -106,24 +106,19 @@ class AnServiceTest {
     @DisplayName("기념일 생성 테스트")
     @Test
     void createAnniversaryTest() {
-
         when(coupleService.getCoupleByUserId(writer.getId()))
                 .thenReturn(CoupleResponseDto.of(Couple.of(writerEntity, withPeopleEntity, CoupleStatus.APPROVED)));
+        when(mockUserPrincipal.getId()).thenReturn(writer.getId());
 
-        when(userRepository.findByEmail(anReqDto.getWithPeopleEmail()))
-                .thenReturn(Optional.of(withPeopleEntity));
-//
         when(modelMapper.map(anReqDto, AnDto.class)).thenReturn(anDto);
         when(modelMapper.map(anDto, Anniversary.class)).thenReturn(anniversary);
         when(anRepository.save(any(Anniversary.class))).thenReturn(anniversary);
-//
-        // Act
+
         AnResDto result = anService.createAnniversary(mockUserPrincipal, anReqDto);
 
-        // Assert
-        assertEquals(anDto.getTitle(), result.getTitle());
-        assertEquals(anDto.getWriterEmail(), result.getWriter().getEmail());
-        assertEquals(anDto.getWithPeopleEmail(), result.getWithPeople().getEmail());
+        assertEquals(anReqDto.getTitle(), result.getTitle());
+        assertEquals(writer.getEmail(), result.getWriter().getEmail());
+        assertEquals(withPeopleEntity.getEmail(), result.getWithPeople().getEmail());
     }
 
 
@@ -178,9 +173,10 @@ class AnServiceTest {
         LocalDateTime startDate = LocalDateTime.now().minusDays(1);
         LocalDateTime endDate = LocalDateTime.now().plusDays(10);
 
-        when(anRepository.findAllByAnniversaryDateBetween(startDate, endDate)).thenReturn(List.of(anniversary));
+        when(anRepository.findByDateRangeAndUserInvolvedById(startDate, endDate, mockUserPrincipal.getId()))
+                .thenReturn(List.of(anniversary));
 
-        List<AnResDto> results = anService.findAnniversariesInRange(mockUserPrincipal,startDate, endDate);
+        List<AnResDto> results = anService.findAnniversariesInRange(mockUserPrincipal, startDate, endDate);
 
         assertEquals(1, results.size());
         assertEquals("Test Anniversary", results.get(0).getTitle());
