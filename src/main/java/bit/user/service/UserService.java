@@ -1,6 +1,5 @@
 package bit.user.service;
 
-import bit.couple.domain.Couple;
 import bit.user.domain.User;
 import bit.user.dto.UserCreateRequest;
 import java.util.Optional;

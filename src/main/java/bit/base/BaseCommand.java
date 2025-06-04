@@ -1,4 +1,4 @@
 package bit.base;
 
-public interface BaseCommand<T> {
+public interface BaseCommand {
 }

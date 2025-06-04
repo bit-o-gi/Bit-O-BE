@@ -3,17 +3,12 @@ package bit.auth.domain;
 import bit.user.domain.User;
 import java.util.Collection;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-@Getter
-@Builder
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserPrincipal implements UserDetails {
     private final User user;
 

@@ -20,12 +20,12 @@ public interface AnRepository extends JpaRepository<Anniversary,Long> {
 	@Query("""
     SELECT a FROM Anniversary a
     WHERE a.anniversaryDate BETWEEN :startDate AND :endDate
-      AND (a.writer = :user OR a.withPeople = :user)
+      AND (a.writer.id = :userId OR a.withPeople.id = :userId)
 """)
-	List<Anniversary> findByDateRangeAndUserInvolved(
+	List<Anniversary> findByDateRangeAndUserInvolvedById(
 			@Param("startDate") LocalDateTime startDate,
 			@Param("endDate") LocalDateTime endDate,
-			@Param("user") UserEntity user
+			@Param("userId") Long userId
 	);
 
 

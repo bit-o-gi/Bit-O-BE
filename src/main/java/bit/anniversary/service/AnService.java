@@ -33,9 +33,9 @@ public class AnService {
     private final CoupleService coupleService;
 
     @Transactional
-    public AnResDto createAnniversary(UserPrincipal userPrincipal,AnReqDto anReqDto) {
+    public AnResDto createAnniversary(UserPrincipal userPrincipal, AnReqDto anReqDto) {
 
-        CoupleResponseDto coupleByUserId = coupleService.getCoupleByUserId(userPrincipal.getUser().getId());
+        CoupleResponseDto coupleByUserId = coupleService.getCoupleByUserId(userPrincipal.getId());
         UserEntity writer = UserEntity.from(coupleByUserId.getInitiatorUser());
 
         UserEntity withPeople = UserEntity.from(coupleByUserId.getPartnerUser());
@@ -52,8 +52,8 @@ public class AnService {
     }
 
     @Transactional
-    public AnResDto updateAnniversary(UserPrincipal userPrincipal,Long id, AnReqDto anReqDto) {
-        CoupleResponseDto coupleByUserId = coupleService.getCoupleByUserId(userPrincipal.getUser().getId());
+    public AnResDto updateAnniversary(UserPrincipal userPrincipal, Long id, AnReqDto anReqDto) {
+        CoupleResponseDto coupleByUserId = coupleService.getCoupleByUserId(userPrincipal.getId());
         UserEntity writer = UserEntity.from(coupleByUserId.getInitiatorUser());
         UserEntity withPeople = UserEntity.from(coupleByUserId.getPartnerUser());
 
@@ -94,7 +94,7 @@ public class AnService {
     @Transactional(readOnly = true)
     public List<AnResDto> findAnniversariesInRange(UserPrincipal userPrincipal,LocalDateTime startDate, LocalDateTime endDate) {
 
-        return anRepository.findByDateRangeAndUserInvolved(startDate, endDate,UserEntity.from(userPrincipal.getUser()))
+        return anRepository.findByDateRangeAndUserInvolvedById(startDate, endDate,userPrincipal.getId())
                 .stream()
                 .map(anniversary -> AnResDto.from(
                         anniversary.toDto(),

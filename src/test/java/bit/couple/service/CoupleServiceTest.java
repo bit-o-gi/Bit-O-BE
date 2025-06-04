@@ -17,7 +17,7 @@ import bit.couple.dto.CoupleResponseDto;
 import bit.couple.dto.CoupleStartDayRequest;
 import bit.couple.enums.CoupleStatus;
 import bit.couple.exception.CoupleException;
-import bit.couple.fixture.CoupleFixtures;
+import bit.couple.fixture.CoupleTestFixture;
 import bit.couple.repository.CoupleRepository;
 import bit.couple.vo.CodeEntryVo;
 import bit.day.service.DayService;
@@ -77,12 +77,12 @@ class CoupleServiceTest {
 
         when(userService.getById(1L)).thenReturn(mrJo);
 
-        users = CoupleFixtures.initialUsers()
+        users = CoupleTestFixture.initialUsers()
                 .stream()
                 .map(UserEntity::from)
                 .toList();
 
-        testCouple = CoupleFixtures.initialCouple();
+        testCouple = CoupleTestFixture.initialCouple();
 
         injectMockField(coupleService, "userService", userService);
         injectMockField(coupleService, "codeStore", codeStore);
@@ -107,7 +107,7 @@ class CoupleServiceTest {
 
     @Test
     @DisplayName("사용자의 커플 정보 조회 테스트")
-    void testGetCoupleByUserId() {
+    void testGetCoupleByIdByUserId() {
         testCouple = Couple.of(testCouple.getInitiatorUser(), testCouple.getPartnerUser(), CoupleStatus.APPROVED);
 
         when(coupleRepository.findByUserId(userA.getId())).thenReturn(Optional.of(testCouple));
@@ -143,7 +143,6 @@ class CoupleServiceTest {
         UserEntity user = users.get(0);
         when(userJpaRepository.findById(user.getId())).thenReturn(Optional.of(user));
 
-
         long expiredTime = System.currentTimeMillis() - 24 * 60 * 60 * 1050;
         CodeEntryVo expiredCodeEntry = new CodeEntryVo(user.getId(), dayRequest, expiredTime);
 
@@ -157,17 +156,12 @@ class CoupleServiceTest {
 
         reverseCodeStore.put(expiredCodeEntry, generatedCode);
 
-
         CoupleRcodeResponseDto newResponse = coupleService.createCode(user.getId(), dayRequest);
         String newGeneratedCode = newResponse.getCode();
 
         assertThat(newGeneratedCode).isNotBlank();
         assertThat(newGeneratedCode).isNotEqualTo(generatedCode);
     }
-
-
-
-
 
 
     @Test
@@ -285,7 +279,6 @@ class CoupleServiceTest {
         CoupleRcodeReqestDto request = new CoupleRcodeReqestDto("some-code");
 
         when(userService.findById(userA.getId())).thenReturn(Optional.of(userA.toDomain()));
-
 
         CodeEntryVo codeEntryVo = new CodeEntryVo(userA.getId(), dayRequest, System.currentTimeMillis());
         when(codeStore.get(request.getCode())).thenReturn(codeEntryVo);
