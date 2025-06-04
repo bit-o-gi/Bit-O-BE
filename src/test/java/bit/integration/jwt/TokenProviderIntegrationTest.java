@@ -1,5 +1,7 @@
 package bit.integration.jwt;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import bit.config.jwt.JwtFactory;
 import bit.config.jwt.JwtProperties;
 import bit.config.jwt.TokenProvider;
@@ -7,6 +9,9 @@ import bit.user.domain.User;
 import bit.user.repository.UserRepository;
 import io.jsonwebtoken.Jwts;
 import jakarta.transaction.Transactional;
+import java.time.Duration;
+import java.util.Date;
+import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,16 +20,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.time.Duration;
-import java.util.Date;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
-public class TokenProviderIntegrationTest {
+class TokenProviderIntegrationTest {
     @Autowired
     private TokenProvider tokenProvider;
 
@@ -44,7 +43,8 @@ public class TokenProviderIntegrationTest {
         String token = tokenProvider.generateToken(testUser, Duration.ofDays(14));
 
         // then
-        Long userId = Jwts.parser().setSigningKey(jwtProperties.getSecretKey()).parseClaimsJws(token).getBody().get("id", Long.class);
+        Long userId = Jwts.parser().setSigningKey(jwtProperties.getSecretKey()).parseClaimsJws(token).getBody()
+                .get("id", Long.class);
 
         assertThat(userId).isEqualTo(testUser.getId());
     }
@@ -53,7 +53,8 @@ public class TokenProviderIntegrationTest {
     @Test
     void throwExceptionInvalidToken() {
         // given
-        String token = JwtFactory.builder().expiration(new Date(new Date().getTime() - Duration.ofDays(7).toMillis())).build().createToken(jwtProperties);
+        String token = JwtFactory.builder().expiration(new Date(new Date().getTime() - Duration.ofDays(7).toMillis()))
+                .build().createToken(jwtProperties);
         // when
         boolean result = tokenProvider.validToken(token);
         // then
@@ -103,4 +104,3 @@ public class TokenProviderIntegrationTest {
     }
 
 }
-

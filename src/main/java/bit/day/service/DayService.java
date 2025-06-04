@@ -25,11 +25,7 @@ public class DayService {
     }
 
     public Long createDay(Couple couple, DayRegisterCommand command) {
-        Day day = Day.builder()
-                .couple(couple)
-                .title(command.title())
-                .startDate(command.startDate())
-                .build();
+        Day day = Day.create(command, couple);
 
         return dayRepository.save(day).getId();
     }
