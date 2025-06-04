@@ -53,8 +53,17 @@ public class Anniversary {
 		this.updateTime = anDto.getUpdateTime();
 		this.writer = writer;
 		this.withPeople = withPeople;
+		this.updateTime = LocalDateTime.now().toString();
 	}
-
+	public void createAnniversary(AnDto anDto, UserEntity writer, UserEntity withPeople) {
+		this.title = anDto.getTitle();
+		this.content = anDto.getContent();
+		this.updateTime = anDto.getUpdateTime();
+		this.writer = writer;
+		this.withPeople = withPeople;
+		this.writeTime = LocalDateTime.now().toString();
+		this.updateTime = LocalDateTime.now().toString();
+	}
 	public long calculateDaysToAnniversary() {
 		return ChronoUnit.DAYS.between(LocalDateTime.now(), this.anniversaryDate);
 	}

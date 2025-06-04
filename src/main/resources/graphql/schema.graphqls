@@ -32,7 +32,7 @@ type Mutation {
     updateAnniversary(id: ID!, anDto: AnReqDto): AnResDto
 
     # 기념일 삭제
-    deleteAnniversary(id: ID!): Boolean
+    deleteAnniversary(id: ID!): Int
 }
 
 # 기념일 생성 및 업데이트용 입력 타입
