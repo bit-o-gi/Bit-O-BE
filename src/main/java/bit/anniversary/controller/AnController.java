@@ -52,19 +52,8 @@ public class AnController {
 
 	// 날짜 범위로 기념일 목록 조회
 	@QueryMapping
-	public List<AnResDto> getAnniversariesInRange(@Argument LocalDateTime startDate, @Argument LocalDateTime endDate) {
-		return anniversaryService.findAnniversariesInRange(startDate, endDate);
+	public List<AnResDto> getAnniversariesInRange(@AuthenticationPrincipal UserPrincipal userPrincipal,@Argument LocalDateTime startDate, @Argument LocalDateTime endDate) {
+		return anniversaryService.findAnniversariesInRange(userPrincipal,startDate, endDate);
 	}
 
-	// 한 달 기념일 목록 조회
-	@QueryMapping
-	public List<AnResDto> getMonthlyAnniversaries() {
-		return anniversaryService.findAnniversariesInRange(LocalDateTime.now(), LocalDateTime.now().plusMonths(1));
-	}
-
-	// 1년 기념일 목록 조회
-	@QueryMapping
-	public List<AnResDto> getYearlyAnniversaries() {
-		return anniversaryService.findAnniversariesInRange(LocalDateTime.now(), LocalDateTime.now().plusYears(1));
-	}
 }

@@ -181,7 +181,7 @@ class AnServiceTest {
 
         when(anRepository.findAllByAnniversaryDateBetween(startDate, endDate)).thenReturn(List.of(anniversary));
 
-        List<AnResDto> results = anService.findAnniversariesInRange(startDate, endDate);
+        List<AnResDto> results = anService.findAnniversariesInRange(mockUserPrincipal,startDate, endDate);
 
         assertEquals(1, results.size());
         assertEquals("Test Anniversary", results.get(0).getTitle());
