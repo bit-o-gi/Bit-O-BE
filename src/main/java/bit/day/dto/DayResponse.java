@@ -19,11 +19,15 @@ public class DayResponse {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate startDate;
 
-    public static DayResponse from(Day day) {
+    @Schema(description = "썸네일 URL")
+    private String thumbnailUrl;
+
+    public static DayResponse of(Day day, String fileUrl) {
         return DayResponse.builder()
                 .id(day.getId())
                 .title(day.getTitle())
                 .startDate(day.getStartDate())
+                .thumbnailUrl(fileUrl)
                 .build();
     }
 }

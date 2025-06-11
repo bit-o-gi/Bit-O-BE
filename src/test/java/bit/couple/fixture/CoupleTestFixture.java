@@ -5,23 +5,21 @@ import bit.couple.enums.CoupleStatus;
 import bit.user.domain.User;
 import bit.user.entity.UserEntity;
 import bit.user.enums.OauthPlatformType;
-import java.lang.reflect.Field;
 import java.util.List;
 
 public class CoupleTestFixture {
 
-    public static Couple initialCouple() throws Exception {
+    public static Couple initialCouple() {
         List<User> users = initialUsers();
         UserEntity initiatorUser = UserEntity.from(users.get(0));
         UserEntity partnerUser = UserEntity.from(users.get(1));
 
-        Couple couple = Couple.of(initiatorUser, partnerUser, CoupleStatus.CREATING);
-        Class<?> clazz = Couple.class;
-        Field idField = clazz.getDeclaredField("id");
-        idField.setAccessible(true);
-        idField.set(couple, 0L);
-
-        return couple;
+        return Couple.builder()
+                .id(1L)
+                .initiatorUser(initiatorUser)
+                .partnerUser(partnerUser)
+                .status(CoupleStatus.APPROVED)
+                .build();
     }
 
     public static List<User> initialUsers() {
