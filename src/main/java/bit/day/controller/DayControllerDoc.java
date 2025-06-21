@@ -1,6 +1,8 @@
 package bit.day.controller;
 
 import bit.auth.domain.UserPrincipal;
+import bit.day.dto.DayFileRequest;
+import bit.day.dto.DayFileResponse;
 import bit.day.dto.DayRegisterRequest;
 import bit.day.dto.DayResponse;
 import bit.day.dto.DayUpdateRequest;
@@ -26,6 +28,12 @@ public interface DayControllerDoc {
             @ApiResponse(responseCode = "201", description = "생성 성공")
     })
     ResponseEntity<Long> createDay(DayRegisterRequest dayRegisterRequest);
+
+    @Operation(summary = "썸네일 생성 API", description = "시작일 썸네일 등록하는 API"
+            , responses = {
+            @ApiResponse(responseCode = "201", description = "등록 성공")
+    })
+    ResponseEntity<DayFileResponse> uploadDayFile(UserPrincipal userPrincipal, DayFileRequest dayFileRequest);
 
     @Operation(summary = "시작일 수정 API", description = "시작일 수정하는 API"
             , responses = {

@@ -5,6 +5,7 @@ import bit.couple.domain.Couple;
 import bit.day.dto.DayRegisterCommand;
 import bit.day.dto.DayUpdateCommand;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -39,12 +40,25 @@ public class Day extends BaseEntity {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate startDate;
 
+    @OneToOne(mappedBy = "day", cascade = CascadeType.ALL, orphanRemoval = true)
+    private DayFile dayFile;
+
+    private String thumbnailUrl;
+
     public static Day create(DayRegisterCommand command, Couple couple) {
         return Day.builder()
                 .title(command.title())
                 .startDate(command.startDate())
                 .couple(couple)
                 .build();
+    }
+
+    public void registerDayFile(DayFile dayFile) {
+        this.dayFile = dayFile;
+    }
+
+    public void changeThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
     }
 
     public void update(DayUpdateCommand command) {
