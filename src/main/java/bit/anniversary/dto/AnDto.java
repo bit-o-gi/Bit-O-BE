@@ -14,14 +14,14 @@ import java.time.format.DateTimeFormatter;
 @Builder
 public class AnDto {
 
-	private  Long id;
-	private  String writerEmail;
-	private  String withPeopleEmail;
-	private  String writeTime;
-	private  String title;
-	private  String updateTime;
-	private  String content;
-	private  String anniversaryDate;
+	private Long id;
+	private String writerEmail;
+	private String withPeopleEmail;
+	private String writeTime;
+	private String title;
+	private String updateTime;
+	private String content;
+	private String anniversaryDate;
 
 	public Anniversary toEntity() {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");

@@ -94,7 +94,7 @@ public class AnService {
     @Transactional(readOnly = true)
     public List<AnResDto> findAnniversariesInRange(UserPrincipal userPrincipal,LocalDateTime startDate, LocalDateTime endDate) {
 
-        return anRepository.findByDateRangeAndUserInvolvedById(startDate, endDate,userPrincipal.getId())
+        return anRepository.findAllByDateRangeAndUserInvolvedById(startDate, endDate,userPrincipal.getId())
                 .stream()
                 .map(anniversary -> AnResDto.from(
                         anniversary.toDto(),

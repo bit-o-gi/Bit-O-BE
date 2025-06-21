@@ -173,7 +173,7 @@ class AnServiceTest {
         LocalDateTime startDate = LocalDateTime.now().minusDays(1);
         LocalDateTime endDate = LocalDateTime.now().plusDays(10);
 
-        when(anRepository.findByDateRangeAndUserInvolvedById(startDate, endDate, mockUserPrincipal.getId()))
+        when(anRepository.findAllByDateRangeAndUserInvolvedById(startDate, endDate, mockUserPrincipal.getId()))
                 .thenReturn(List.of(anniversary));
 
         List<AnResDto> results = anService.findAnniversariesInRange(mockUserPrincipal, startDate, endDate);
