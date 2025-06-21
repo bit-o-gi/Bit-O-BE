@@ -30,7 +30,7 @@ jacoco {
 }
 
 // SonarQube 속성 설정 확장
-sonar {
+sonarqube {
     properties {
         property "sonar.projectKey", "bit-o-gi_Bit-O-BE_AZb1pW95UJeT8Av_8zhy"
         property "sonar.coverage.jacoco.xmlReportPaths", layout.buildDirectory.file("reports/jacoco/test/jacocoTestReport.xml").get().asFile.path
