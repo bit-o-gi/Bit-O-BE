@@ -2,8 +2,11 @@ package bit.anniversary.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import bit.auth.domain.UserPrincipal;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
@@ -52,8 +55,10 @@ public class AnController {
 
 	// 날짜 범위로 기념일 목록 조회
 	@QueryMapping
-	public List<AnResDto> getAnniversariesInRange(@AuthenticationPrincipal UserPrincipal userPrincipal,@Argument LocalDateTime startDate, @Argument LocalDateTime endDate) {
-		return anniversaryService.findAnniversariesInRange(userPrincipal,startDate, endDate);
+	public List<AnResDto> getAnniversariesInRange(@AuthenticationPrincipal UserPrincipal userPrincipal, @Argument LocalDateTime startDate, @Argument LocalDateTime endDate,@Argument int page,
+												  @Argument int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		return anniversaryService.findAnniversariesInRange(userPrincipal,startDate, endDate,pageable);
 	}
 
 }
