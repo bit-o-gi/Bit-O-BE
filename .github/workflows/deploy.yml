@@ -31,7 +31,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/bito:${{ github.sha }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/bit0:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -47,8 +47,8 @@ jobs:
           key: ${{ secrets.SERVER_KEY }}
           port: 22
           script: |
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/bito:${{ github.sha }}
-            docker stop bito-spring || true
-            docker rm bito-spring || true
-            docker run -d --name bito-spring -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/bito:${{ github.sha }}
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/bit0:${{ github.sha }}
+            docker stop bit0-spring || true
+            docker rm bit0-spring || true
+            docker run -d --network="host" --name bit0-spring -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/bit0:${{ github.sha }}
             echo "Deployment completed successfully."
