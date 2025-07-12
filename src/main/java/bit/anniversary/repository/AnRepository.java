@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import bit.user.entity.UserEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,15 +21,16 @@ public interface AnRepository extends JpaRepository<Anniversary,Long> {
 
 	@Query("""
     SELECT a FROM Anniversary a
-    WHERE a.anniversaryDate BETWEEN :startDate AND :endDate
+    WHERE (:startDate IS NULL OR a.anniversaryDate >= :startDate)
+      AND (:endDate IS NULL OR a.anniversaryDate <= :endDate)
       AND (a.writer.id = :userId OR a.withPeople.id = :userId)
 """)
-	List<Anniversary> findAllByDateRangeAndUserInvolvedById(
+	Page<Anniversary> findAllByDateRangeAndUserInvolvedById(
 			@Param("startDate") LocalDateTime startDate,
 			@Param("endDate") LocalDateTime endDate,
-			@Param("userId") Long userId
+			@Param("userId") Long userId,
+			Pageable pageable
 	);
-
 
 	// NOTE: 특정 날짜 이후의 기념일 조회
 	List<Anniversary> findAllByAnniversaryDateAfter(LocalDateTime date);

@@ -30,6 +30,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 class AnServiceTest {
 
@@ -173,10 +176,14 @@ class AnServiceTest {
         LocalDateTime startDate = LocalDateTime.now().minusDays(1);
         LocalDateTime endDate = LocalDateTime.now().plusDays(10);
 
-        when(anRepository.findAllByDateRangeAndUserInvolvedById(startDate, endDate, mockUserPrincipal.getId()))
-                .thenReturn(List.of(anniversary));
+        Pageable pageable = Pageable.unpaged();
 
-        List<AnResDto> results = anService.findAnniversariesInRange(mockUserPrincipal, startDate, endDate);
+        Page<Anniversary> mockPage = new PageImpl<>(List.of(anniversary));
+
+        when(anRepository.findAllByDateRangeAndUserInvolvedById(startDate, endDate, mockUserPrincipal.getId(), pageable))
+                .thenReturn(mockPage);
+
+        List<AnResDto> results = anService.findAnniversariesInRange(mockUserPrincipal, startDate, endDate, pageable);
 
         assertEquals(1, results.size());
         assertEquals("Test Anniversary", results.get(0).getTitle());

@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -92,9 +93,11 @@ public class AnService {
     }
 
     @Transactional(readOnly = true)
-    public List<AnResDto> findAnniversariesInRange(UserPrincipal userPrincipal,LocalDateTime startDate, LocalDateTime endDate) {
+    public List<AnResDto> findAnniversariesInRange(UserPrincipal userPrincipal,LocalDateTime startDate, LocalDateTime endDate,
+                                                   Pageable pageable
+    ) {
 
-        return anRepository.findAllByDateRangeAndUserInvolvedById(startDate, endDate,userPrincipal.getId())
+        return anRepository.findAllByDateRangeAndUserInvolvedById(startDate, endDate,userPrincipal.getId(),pageable)
                 .stream()
                 .map(anniversary -> AnResDto.from(
                         anniversary.toDto(),
