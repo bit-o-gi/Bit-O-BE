@@ -47,7 +47,7 @@ jobs:
           port: 22
           script: |
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/bito:${{ github.sha }}
-            docker stop bito || true
-            docker rm bito || true
-            docker run -d --name bito -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/bito:${{ github.sha }}
+            docker stop bito-spring || true
+            docker rm bito-spring || true
+            docker run -d --name bito-spring -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/bito:${{ github.sha }}
             echo "Deployment completed successfully."
