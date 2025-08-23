@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -83,7 +84,11 @@ public class S3FileStorageService implements FileStorageService {
     }
 
     @Override
-    public String getFileUrl(String dir, String fileKey) {
-        return serverAddress + dir + "/" + fileKey;
+    public Optional<String> getFileUrl(String dir, String fileKey) {
+        if (fileKey == null || fileKey.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(serverAddress + dir + "/" + fileKey);
     }
 }

@@ -12,6 +12,7 @@ import bit.day.dto.DayUpdateCommand;
 import bit.day.service.DayFileService;
 import bit.day.service.DayService;
 import bit.file.FileStorageService;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +29,8 @@ public class DayFacade {
 
     public DayResponse getDay(Long id) {
         Day day = dayService.getDayById(id);
-        String fileUrl = fileStorageService.getFileUrl(DAY_DIRECTORY_PATH, day.getThumbnailUrl());
+        Optional<String> fileUrlOptional = fileStorageService.getFileUrl(DAY_DIRECTORY_PATH, day.getThumbnailUrl());
+        String fileUrl = fileUrlOptional.orElse(null);
 
         return DayResponse.of(day, fileUrl);
     }
@@ -37,7 +39,8 @@ public class DayFacade {
     public DayResponse getDayByCouple(Long userId) {
         Couple couple = coupleService.getCoupleEntityByUserId(userId);
         Day day = dayService.getDayByCouple(couple);
-        String fileUrl = fileStorageService.getFileUrl(DAY_DIRECTORY_PATH, day.getThumbnailUrl());
+        Optional<String> fileUrlOptional = fileStorageService.getFileUrl(DAY_DIRECTORY_PATH, day.getThumbnailUrl());
+        String fileUrl = fileUrlOptional.orElse(null);
 
         return DayResponse.of(day, fileUrl);
     }

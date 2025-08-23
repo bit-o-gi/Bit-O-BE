@@ -2,6 +2,7 @@ package bit.day.dto;
 
 import bit.day.domain.Day;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import lombok.Builder;
@@ -9,6 +10,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DayResponse {
     @Schema(description = "시작일 ID")
     private Long id;

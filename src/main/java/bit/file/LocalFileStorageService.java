@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
@@ -82,7 +83,10 @@ public class LocalFileStorageService implements FileStorageService {
     }
 
     @Override
-    public String getFileUrl(String dir, String fileKey) {
-        return serverAddress + UPLOADS + dir + "/" + fileKey;
+    public Optional<String> getFileUrl(String dir, String fileKey) {
+        if (fileKey == null || fileKey.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(serverAddress + UPLOADS + dir + "/" + fileKey);
     }
 }

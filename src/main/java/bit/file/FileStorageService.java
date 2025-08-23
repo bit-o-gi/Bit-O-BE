@@ -1,5 +1,6 @@
 package bit.file;
 
+import java.util.Optional;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface FileStorageService {
@@ -7,5 +8,5 @@ public interface FileStorageService {
 
     boolean deleteFile(String fileKey);
 
-    String getFileUrl(String dir, String fileKey);
+    Optional<String> getFileUrl(String dir, String fileKey);
 }
