@@ -87,7 +87,9 @@ public class AnService {
         return AnResDto.from(
                 anniversary.toDto(),
                 UserResponse.from(anniversary.getWriter().toDomain()),
-                UserResponse.from(anniversary.getWithPeople().toDomain()),
+                anniversary.getWithPeople() != null ?
+                        UserResponse.from(anniversary.getWithPeople().toDomain())
+                        : null,
                 anniversary.calculateDaysToAnniversary()
         );
     }
@@ -102,7 +104,9 @@ public class AnService {
                 .map(anniversary -> AnResDto.from(
                         anniversary.toDto(),
                         UserResponse.from(anniversary.getWriter().toDomain()),
-                        UserResponse.from(anniversary.getWithPeople().toDomain()),
+                        anniversary.getWithPeople() != null ?
+                                UserResponse.from(anniversary.getWithPeople().toDomain())
+                                : null,
                         anniversary.calculateDaysToAnniversary()
                 ))
                 .collect(Collectors.toList());
