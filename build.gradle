@@ -35,7 +35,7 @@ sonarqube {
         property "sonar.projectKey", "bit-o-gi_Bit-O-BE_AZb1pW95UJeT8Av_8zhy"
         property "sonar.coverage.jacoco.xmlReportPaths", layout.buildDirectory.file("reports/jacoco/test/jacocoTestReport.xml").get().asFile.path
         property "sonar.java.coveragePlugin", "jacoco"
-        property "sonar.coverage.exclusions", "**/dto/**, **/entity/**, **/model/**, **/domain/**, **/config/**, **/configuration/**, **/generated/**, **/constant/**, **/util/**, **/exception/**, **/Application.java, **/Main.java"
+        property "sonar.coverage.exclusions", "**/dto/**, **/model/**, **/config/**, **/configuration/**, **/generated/**, **/constant/**, **/util/**, **/exception/**, **/Application.java, **/Main.java"
     }
 }
 
