@@ -3,8 +3,9 @@ package bit.day.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import bit.day.dto.DayFileCreateData;
-import bit.day.dto.DayFileUpdateData;
+import bit.app.day.domain.DayFile;
+import bit.app.day.dto.DayFileCreateData;
+import bit.app.day.dto.DayFileUpdateData;
 import org.junit.jupiter.api.Test;
 
 class DayFileTest {

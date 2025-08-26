@@ -1,7 +1,7 @@
 package bit.user.mock;
 
-import bit.user.domain.User;
-import bit.user.repository.UserRepository;
+import bit.app.user.domain.User;
+import bit.app.user.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

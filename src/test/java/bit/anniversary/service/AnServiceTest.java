@@ -6,20 +6,21 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import bit.anniversary.dto.AnDto;
-import bit.anniversary.dto.AnReqDto;
-import bit.anniversary.dto.AnResDto;
-import bit.anniversary.entity.Anniversary;
-import bit.anniversary.repository.AnRepository;
-import bit.auth.domain.UserPrincipal;
-import bit.couple.domain.Couple;
-import bit.couple.dto.CoupleResponseDto;
-import bit.couple.enums.CoupleStatus;
+import bit.app.anniversary.dto.AnDto;
+import bit.app.anniversary.dto.AnReqDto;
+import bit.app.anniversary.dto.AnResDto;
+import bit.app.anniversary.entity.Anniversary;
+import bit.app.anniversary.repository.AnRepository;
+import bit.app.anniversary.service.AnService;
+import bit.app.auth.domain.UserPrincipal;
+import bit.app.couple.domain.Couple;
+import bit.app.couple.dto.CoupleResponseDto;
+import bit.app.couple.enums.CoupleStatus;
+import bit.app.couple.service.CoupleService;
+import bit.app.user.domain.User;
+import bit.app.user.entity.UserEntity;
+import bit.app.user.repository.UserJpaRepository;
 import bit.couple.fixture.CoupleTestFixture;
-import bit.couple.service.CoupleService;
-import bit.user.domain.User;
-import bit.user.entity.UserEntity;
-import bit.user.repository.UserJpaRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -62,7 +63,7 @@ class AnServiceTest {
 
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
 
         // Fixture에서 Couple 생성
@@ -180,7 +181,8 @@ class AnServiceTest {
 
         Page<Anniversary> mockPage = new PageImpl<>(List.of(anniversary));
 
-        when(anRepository.findAllByDateRangeAndUserInvolvedById(startDate, endDate, mockUserPrincipal.getId(), pageable))
+        when(anRepository.findAllByDateRangeAndUserInvolvedById(startDate, endDate, mockUserPrincipal.getId(),
+                pageable))
                 .thenReturn(mockPage);
 
         List<AnResDto> results = anService.findAnniversariesInRange(mockUserPrincipal, startDate, endDate, pageable);

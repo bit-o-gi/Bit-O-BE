@@ -1,6 +1,6 @@
 package bit.couple.service;
 
-import static bit.user.enums.OauthPlatformType.KAKAO;
+import static bit.app.user.enums.OauthPlatformType.KAKAO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.any;
@@ -10,21 +10,22 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import bit.couple.domain.Couple;
-import bit.couple.dto.CoupleRcodeReqestDto;
-import bit.couple.dto.CoupleRcodeResponseDto;
-import bit.couple.dto.CoupleResponseDto;
-import bit.couple.dto.CoupleStartDayRequest;
-import bit.couple.enums.CoupleStatus;
-import bit.couple.exception.CoupleException;
+import bit.app.couple.domain.Couple;
+import bit.app.couple.dto.CoupleRcodeReqestDto;
+import bit.app.couple.dto.CoupleRcodeResponseDto;
+import bit.app.couple.dto.CoupleResponseDto;
+import bit.app.couple.dto.CoupleStartDayRequest;
+import bit.app.couple.enums.CoupleStatus;
+import bit.app.couple.exception.CoupleException;
+import bit.app.couple.repository.CoupleRepository;
+import bit.app.couple.service.CoupleService;
+import bit.app.couple.vo.CodeEntryVo;
+import bit.app.day.service.DayService;
+import bit.app.user.domain.User;
+import bit.app.user.entity.UserEntity;
+import bit.app.user.repository.UserJpaRepository;
+import bit.app.user.service.UserServiceImpl;
 import bit.couple.fixture.CoupleTestFixture;
-import bit.couple.repository.CoupleRepository;
-import bit.couple.vo.CodeEntryVo;
-import bit.day.service.DayService;
-import bit.user.domain.User;
-import bit.user.entity.UserEntity;
-import bit.user.repository.UserJpaRepository;
-import bit.user.service.UserServiceImpl;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.util.List;
@@ -218,7 +219,6 @@ class CoupleServiceTest {
     @DisplayName("커플 승인 테스트")
     void testConfirmCouple() {
         CoupleRcodeReqestDto request = new CoupleRcodeReqestDto("some-code");
-//        UserEntity userB = users.get(1);
         Couple couple = Couple.of(userA, userB, CoupleStatus.APPROVED);
 
         when(userService.findById(userB.getId())).thenReturn(Optional.of(userB.toDomain()));
@@ -241,7 +241,6 @@ class CoupleServiceTest {
     @DisplayName("존재하지 않는 코드 승인 시 예외 발생")
     void testConfirmCouple_CodeNotFound() {
         CoupleRcodeReqestDto request = new CoupleRcodeReqestDto("invalid-code");
-        UserEntity userB = users.get(1);
 
         when(userService.findById(userB.getId())).thenReturn(Optional.of(userB.toDomain()));
 

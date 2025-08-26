@@ -5,16 +5,16 @@ import static bit.schedule.util.ScheduleFixture.getNewSchedule;
 import static bit.schedule.util.UserEntityFixture.getNewUserEntity;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import bit.couple.domain.Couple;
-import bit.couple.enums.CoupleStatus;
+import bit.app.couple.domain.Couple;
+import bit.app.couple.enums.CoupleStatus;
+import bit.app.schedule.domain.Schedule;
+import bit.app.schedule.repository.ScheduleRepository;
+import bit.app.user.entity.UserEntity;
 import bit.schedule.config.TestConfig;
-import bit.schedule.domain.Schedule;
-import bit.user.entity.UserEntity;
 import jakarta.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ import org.springframework.test.context.ActiveProfiles;
 @DataJpaTest
 @ActiveProfiles("test")
 @Import(TestConfig.class)
-public class ScheduleRepositoryTest {
+class ScheduleRepositoryTest {
 
 
     @Autowired
@@ -34,10 +34,6 @@ public class ScheduleRepositoryTest {
 
     @Autowired
     private EntityManager entityManager;
-
-    @BeforeEach
-    void setUp() {
-    }
 
     @Test
     @DisplayName("커플의 일정을 조회한다")
@@ -60,14 +56,14 @@ public class ScheduleRepositoryTest {
 
         // when
         List<Schedule> result = scheduleRepository.findAllCoupleScheduleByYearAndMonth(user1.getId(), now.getYear(),
-            now.getMonthValue());
+                now.getMonthValue());
 
         // then
         assertThat(result).hasSize(2).containsOnly(schedule1, schedule2);
 
         // user2로도 동일한 결과를 가져오는지 확인
         List<Schedule> result2 = scheduleRepository.findAllCoupleScheduleByYearAndMonth(user2.getId(), now.getYear(),
-            now.getMonthValue());
+                now.getMonthValue());
         assertThat(result2).hasSize(2).containsOnly(schedule1, schedule2);
     }
 
@@ -87,7 +83,7 @@ public class ScheduleRepositoryTest {
 
         // when
         List<Schedule> result3 = scheduleRepository.findAllCoupleScheduleByYearAndMonth(user1.getId(), now.getYear(),
-            now.getMonthValue());
+                now.getMonthValue());
 
         // then
         assertThat(result3).hasSize(2).containsOnly(schedule1, schedule2);
@@ -105,7 +101,7 @@ public class ScheduleRepositoryTest {
 
         // when
         Optional<Schedule> schedule = scheduleRepository.findSchedule(user1.getId(),
-            schedule1.getId());
+                schedule1.getId());
 
         assertThat(schedule).isPresent();
         assertThat(schedule.get()).isEqualTo(schedule1);
@@ -127,7 +123,7 @@ public class ScheduleRepositoryTest {
 
         // when
         List<Schedule> result = scheduleRepository.findAllUserScheduleByYearAndMonth(user1.getId(), now.getYear(),
-            now.getMonthValue());
+                now.getMonthValue());
 
         // then
         assertThat(result).hasSize(3).containsOnly(schedule1, schedule2, schedule3);

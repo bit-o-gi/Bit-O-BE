@@ -1,8 +1,8 @@
 package bit.day.fixture;
 
-import bit.couple.domain.Couple;
-import bit.day.domain.Day;
-import bit.day.domain.DayFile;
+import bit.app.couple.domain.Couple;
+import bit.app.day.domain.Day;
+import bit.app.day.domain.DayFile;
 import java.time.LocalDate;
 
 public class DayTestFixture {

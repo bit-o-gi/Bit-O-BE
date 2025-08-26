@@ -1,23 +1,22 @@
 package bit.config.jwt;
 
-import bit.auth.domain.UserPrincipal;
-import bit.user.domain.User;
-import bit.user.service.UserDetailService;
+import bit.app.auth.domain.UserPrincipal;
+import bit.app.user.domain.User;
+import bit.app.user.service.UserDetailService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import java.time.Duration;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
-
-import java.time.Duration;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Set;
 
 @RequiredArgsConstructor
 @Service

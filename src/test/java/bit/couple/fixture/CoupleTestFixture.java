@@ -1,10 +1,10 @@
 package bit.couple.fixture;
 
-import bit.couple.domain.Couple;
-import bit.couple.enums.CoupleStatus;
-import bit.user.domain.User;
-import bit.user.entity.UserEntity;
-import bit.user.enums.OauthPlatformType;
+import bit.app.couple.domain.Couple;
+import bit.app.couple.enums.CoupleStatus;
+import bit.app.user.domain.User;
+import bit.app.user.entity.UserEntity;
+import bit.app.user.enums.OauthPlatformType;
 import java.util.List;
 
 public class CoupleTestFixture {

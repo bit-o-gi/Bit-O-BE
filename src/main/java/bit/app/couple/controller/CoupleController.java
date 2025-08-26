@@ -1,0 +1,90 @@
+package bit.app.couple.controller;
+
+import bit.app.auth.domain.UserPrincipal;
+import bit.app.couple.dto.CoupleRcodeReqestDto;
+import bit.app.couple.dto.CoupleRcodeResponseDto;
+import bit.app.couple.dto.CoupleRequestDto;
+import bit.app.couple.dto.CoupleResponseDto;
+import bit.app.couple.dto.CoupleStartDayRequest;
+import bit.app.couple.service.CoupleService;
+import bit.app.couple.swagger.CoupleControllerDocs;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/v1/couple")
+public class CoupleController implements CoupleControllerDocs {
+
+    private final CoupleService coupleService;
+
+    // NOTE: 현재 로그인한 사용자의 커플 정보 조회
+    @GetMapping("")
+    public ResponseEntity<CoupleResponseDto> getCoupleInfo(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        CoupleResponseDto response = coupleService.getCoupleByUserId(userPrincipal.getId());
+        return ResponseEntity.ok(response);
+    }
+
+    // NOTE: 커플 인증코드 발급 완료
+    @PostMapping("/code")
+    public ResponseEntity<CoupleRcodeResponseDto> createCode(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                                             @RequestBody @Valid CoupleStartDayRequest request) {
+        CoupleRcodeResponseDto response = coupleService.createCode(userPrincipal.getId(), request);
+        return ResponseEntity.status(201).body(response);
+    }
+
+    // NOTE: 커플 인증코드 조회
+    @GetMapping("/code")
+    public ResponseEntity<CoupleRcodeResponseDto> searchCode(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        CoupleRcodeResponseDto response = coupleService.getCodeByUser(userPrincipal.getId());
+        return ResponseEntity.ok(response);
+    }
+
+    // NOTE: 커플 찾기
+    @GetMapping("/{coupleId}")
+    public ResponseEntity<CoupleResponseDto> getCouple(@PathVariable Long coupleId) {
+        CoupleResponseDto response = coupleService.getCoupleById(coupleId);
+        return ResponseEntity.ok(response);
+    }
+
+    // NOTE: 커플 연결
+    @PostMapping("/confirm")
+    public ResponseEntity<Void> confirmCouple(
+            @AuthenticationPrincipal UserPrincipal userPrincipal,
+            @RequestBody CoupleRcodeReqestDto coupleCreateRequest) {
+        coupleService.confirmCouple(userPrincipal.getId(), coupleCreateRequest);
+        return ResponseEntity.status(201).build();
+    }
+
+    // NOTE: 커플에 속한 유저 수정
+    @PutMapping
+    public ResponseEntity<Void> updateCouple(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                             @RequestBody CoupleRequestDto coupleRequestDto) {
+        coupleService.updateCouple(userPrincipal.getId(), coupleRequestDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{coupleId}")
+    public ResponseEntity<Void> approveCouple(@AuthenticationPrincipal UserPrincipal userPrincipal,
+                                              @PathVariable Long coupleId) {
+        coupleService.coupleApprove(userPrincipal.getId(), coupleId);
+        return ResponseEntity.ok().build();
+    }
+
+    // NOTE: 커플 삭제
+    @DeleteMapping("/{coupleId}")
+    public ResponseEntity<Void> deleteCouple(@PathVariable Long coupleId) {
+        coupleService.deleteCouple(coupleId);
+        return ResponseEntity.noContent().build();
+    }
+}

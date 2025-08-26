@@ -1,13 +1,18 @@
 package bit.integration.auth;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import bit.app.auth.domain.RefreshToken;
+import bit.app.auth.dto.AccessTokenCreateRequest;
+import bit.app.auth.repository.RefreshTokenRepository;
+import bit.app.user.domain.User;
+import bit.app.user.repository.UserRepository;
 import bit.config.jwt.JwtFactory;
 import bit.config.jwt.JwtProperties;
-import bit.auth.domain.RefreshToken;
-import bit.user.domain.User;
-import bit.auth.dto.AccessTokenCreateRequest;
-import bit.auth.repository.RefreshTokenRepository;
-import bit.user.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,12 +26,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.Map;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -36,18 +35,14 @@ class AuthControllerIntegrationTest {
 
     @Autowired
     protected ObjectMapper objectMapper;
-
-    @Autowired
-    private WebApplicationContext context;
-
-    @Autowired
-    private JwtProperties jwtProperties;
-
     @Autowired
     UserRepository userRepository;
-
     @Autowired
     RefreshTokenRepository refreshTokenRepository;
+    @Autowired
+    private WebApplicationContext context;
+    @Autowired
+    private JwtProperties jwtProperties;
 
     @BeforeEach
     void setUp() {
@@ -66,7 +61,8 @@ class AuthControllerIntegrationTest {
                         .build()
         );
 
-        String refreshToken = JwtFactory.builder().claims(Map.of("id", testUser.getId())).build().createToken(jwtProperties);
+        String refreshToken = JwtFactory.builder().claims(Map.of("id", testUser.getId())).build()
+                .createToken(jwtProperties);
 
         refreshTokenRepository.save(new RefreshToken(testUser.getId(), refreshToken));
 
@@ -76,7 +72,8 @@ class AuthControllerIntegrationTest {
         String requestBody = objectMapper.writeValueAsString(requestDto);
 
         // when
-        ResultActions resultActions = mockmvc.perform(post("/api/v1/auth/token").contentType(MediaType.APPLICATION_JSON).content(requestBody));
+        ResultActions resultActions = mockmvc.perform(
+                post("/api/v1/auth/token").contentType(MediaType.APPLICATION_JSON).content(requestBody));
 
         // then
         resultActions.andExpect(status().isCreated())

@@ -1,9 +1,10 @@
 package bit.user.domain;
 
-import static bit.user.enums.OauthPlatformType.KAKAO;
+import static bit.app.user.enums.OauthPlatformType.KAKAO;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import bit.user.dto.UserCreateRequest;
+import bit.app.user.domain.User;
+import bit.app.user.dto.UserCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

@@ -2,11 +2,11 @@ package bit.integration.jwt;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import bit.app.user.domain.User;
+import bit.app.user.repository.UserRepository;
 import bit.config.jwt.JwtFactory;
 import bit.config.jwt.JwtProperties;
 import bit.config.jwt.TokenProvider;
-import bit.user.domain.User;
-import bit.user.repository.UserRepository;
 import io.jsonwebtoken.Jwts;
 import jakarta.transaction.Transactional;
 import java.time.Duration;

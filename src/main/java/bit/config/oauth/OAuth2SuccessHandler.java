@@ -1,11 +1,11 @@
 package bit.config.oauth;
 
+import bit.app.auth.domain.RefreshToken;
+import bit.app.auth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
+import bit.app.auth.repository.RefreshTokenRepository;
+import bit.app.user.domain.User;
+import bit.app.user.service.UserService;
 import bit.config.jwt.TokenProvider;
-import bit.auth.domain.RefreshToken;
-import bit.user.domain.User;
-import bit.auth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
-import bit.auth.repository.RefreshTokenRepository;
-import bit.user.service.UserService;
 import bit.util.CookieUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,17 +26,16 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     public static final String REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
     public static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(14);
     public static final Duration ACCESS_TOKEN_DURATION = Duration.ofDays(1);
-
-    @Value("${spring.app.redirect.path}")
-    private String redirectPath;
-
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository;
     private final UserService userService;
+    @Value("${spring.app.redirect.path}")
+    private String redirectPath;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+                                        Authentication authentication) throws IOException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         Map<String, Object> kakaoAccount = (Map<String, Object>) oAuth2User.getAttributes().get("kakao_account");
         String email = (String) kakaoAccount.get("email");
@@ -68,7 +67,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     }
 
     // 생성된 리프레시 토큰을 쿠키에 저장
-    private void addRefreshTokenToCookie(HttpServletRequest request, HttpServletResponse response, String refreshToken) {
+    private void addRefreshTokenToCookie(HttpServletRequest request, HttpServletResponse response,
+                                         String refreshToken) {
         int cookieMaxAge = (int) REFRESH_TOKEN_DURATION.toSeconds();
         CookieUtil.deleteCookie(request, response, REFRESH_TOKEN_COOKIE_NAME);
         CookieUtil.addCookie(response, REFRESH_TOKEN_COOKIE_NAME, refreshToken, cookieMaxAge);
@@ -81,7 +81,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     }
 
     // 액세스 토큰을 패스에 추가
-    private String getTargetUrl(String token){
+    private String getTargetUrl(String token) {
         return UriComponentsBuilder.fromUriString(redirectPath)
                 .queryParam("token", token)
                 .build().toString();

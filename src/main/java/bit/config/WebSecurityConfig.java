@@ -1,12 +1,13 @@
 package bit.config;
 
+import bit.app.auth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
+import bit.app.auth.repository.RefreshTokenRepository;
+import bit.app.auth.service.OAuth2UserCustomService;
+import bit.app.user.service.UserService;
 import bit.config.jwt.TokenAuthenticationFilter;
 import bit.config.jwt.TokenProvider;
 import bit.config.oauth.OAuth2SuccessHandler;
-import bit.auth.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
-import bit.auth.repository.RefreshTokenRepository;
-import bit.auth.service.OAuth2UserCustomService;
-import bit.user.service.UserService;
+import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,8 +24,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.Arrays;
 
 @Configuration
 @RequiredArgsConstructor

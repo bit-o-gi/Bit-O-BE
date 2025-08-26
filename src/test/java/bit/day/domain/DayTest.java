@@ -3,11 +3,13 @@ package bit.day.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import bit.couple.domain.Couple;
-import bit.couple.enums.CoupleStatus;
+import bit.app.couple.domain.Couple;
+import bit.app.couple.enums.CoupleStatus;
+import bit.app.day.domain.Day;
+import bit.app.day.domain.DayFile;
+import bit.app.day.dto.DayRegisterCommand;
+import bit.app.day.dto.DayUpdateCommand;
 import bit.couple.fixture.CoupleTestFixture;
-import bit.day.dto.DayRegisterCommand;
-import bit.day.dto.DayUpdateCommand;
 import bit.day.fixture.DayTestFixture;
 import java.time.LocalDate;
 import org.junit.jupiter.api.DisplayName;
