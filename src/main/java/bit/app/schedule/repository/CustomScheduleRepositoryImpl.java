@@ -1,8 +1,8 @@
 package bit.app.schedule.repository;
 
+import bit.app.couple.domain.QCouple;
+import bit.app.schedule.domain.QSchedule;
 import bit.app.schedule.domain.Schedule;
-import bit.couple.domain.QCouple;
-import bit.schedule.domain.QSchedule;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
