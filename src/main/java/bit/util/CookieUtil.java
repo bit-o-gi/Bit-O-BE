@@ -44,14 +44,8 @@ public class CookieUtil {
 
     // 쿠키를 역직렬화해 객체로 변환
     @SuppressWarnings("unchecked")
-    public static <T> T deserialize(Cookie cookie) {
-        try {
-            byte[] decodedBytes = Base64.getUrlDecoder().decode(cookie.getValue());
-            return (T) SerializationUtils.deserialize(decodedBytes);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("쿠키 역직렬화 실패", e);
-        }
+    public static <T> T deserialize(Cookie cookie, Class<T> cls) {
+        return cls.cast(SerializationUtils.deserialize(Base64.getUrlDecoder().decode(cookie.getValue())));
     }
-
 
 }
