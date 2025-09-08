@@ -1,10 +1,8 @@
 package bit.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Base64;
 import org.springframework.util.SerializationUtils;
 
@@ -45,13 +43,13 @@ public class CookieUtil {
     }
 
     // 쿠키를 역직렬화해 객체로 변환
-    public static <T> T deserialize(Cookie cookie, Class<T> cls) {
-        ObjectMapper mapper = new ObjectMapper();
+    @SuppressWarnings("unchecked")
+    public static <T> T deserialize(Cookie cookie) {
         try {
-            String decodedValue = new String(Base64.getUrlDecoder().decode(cookie.getValue()));
-            return mapper.readValue(decodedValue, cls);
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Failed to deserialize cookie", e);
+            byte[] decodedBytes = Base64.getUrlDecoder().decode(cookie.getValue());
+            return (T) SerializationUtils.deserialize(decodedBytes);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("쿠키 역직렬화 실패", e);
         }
     }
 
